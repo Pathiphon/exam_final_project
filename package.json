@@ -3,12 +3,26 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.7.0",
+    "@emotion/styled": "^11.6.0",
+    "@mui/icons-material": "^5.2.0",
+    "@mui/lab": "^5.0.0-alpha.59",
+    "@mui/material": "^5.2.2",
+    "@mui/styled-engine-sc": "^5.1.0",
+    "@mui/x-data-grid": "^5.2.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.2.1",
+    "axios": "^0.25.0",
+    "bulma": "^0.9.3",
+    "dayjs": "^1.10.7",
+    "error-ex": "github:Qix-/node-error-ex",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-router-dom": "^6.0.2",
     "react-scripts": "5.0.0",
+    "styled-components": "^5.3.3",
+    "sweetalert2": "^11.3.10",
     "web-vitals": "^2.1.0"
   },
   "scripts": {
@@ -34,5 +48,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.2",
+    "postcss": "^8.4.5",
+    "tailwindcss": "^3.0.17"
   }
 }
