@@ -62,7 +62,7 @@ export default function Create_exam({ data }) {
     if (location.state !== null) {
       setId(location.state.id);
     }
-  }, [id,activeModal]);
+  }, [id,handleModal]);
   const get_Exam = async () => {
     await API_URL.get(`api/exam/${id}`)
       .then((res) => {

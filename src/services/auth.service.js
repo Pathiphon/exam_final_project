@@ -26,7 +26,7 @@ const register = (username, email, password) => {
 }
 
 const getCurrentUser = () => {
-  return JSON.parse(localStorage.getItem('awesomeLeadsToken'));;
+  return JSON.parse(localStorage.getItem('awesomeLeadsToken'));
 }
 
 export {

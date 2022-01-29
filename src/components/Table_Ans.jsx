@@ -199,7 +199,7 @@ export default function Table_Ans({ active,ques_id,handleModalAns,token, }) {
                 <TextField
                   label="คะแนน"
                   type="number"
-                  value={all_Answer?(all_Answer.score):('')}
+                  defaultValue={all_Answer?(all_Answer.score):('')}
                   required
                   variant="standard"
                   color="warning"
@@ -215,8 +215,8 @@ export default function Table_Ans({ active,ques_id,handleModalAns,token, }) {
               alignItems="center"
             >
               <Grid item xs={10}>
-              <Input type="hidden" value={answer?(answer.ans_id):""} />
-                <Input sx={{ width: "100%" }} value={answer?(answer.answer):""} onChange={(e)=>setAnswer({...answer,answer:e.target.value})} placeholder="ป้อนเฉลย" />
+              <Input type="hidden" defaultValue={answer?(answer.ans_id):""} />
+                <Input sx={{ width: "100%" }} defaultValue={answer?(answer.answer):""} onChange={(e)=>setAnswer({...answer,answer:e.target.value})} placeholder="ป้อนเฉลย" />
               </Grid>
               <Grid item xs={1}>
                 <IconButton  color="success" onClick={()=>createOrEditAnswer()}>

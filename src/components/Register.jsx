@@ -66,7 +66,7 @@ const Register = () => {
           <InputLabel>ชื่อ - นามสกุล</InputLabel>
           <Input
             variant="standard"
-            value={name}
+            defaultValue={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
@@ -79,7 +79,7 @@ const Register = () => {
           <InputLabel>E-mail</InputLabel>
           <Input
             variant="standard"
-            value={email}
+            defaultValue={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
@@ -93,7 +93,7 @@ const Register = () => {
           <Input
             variant="standard"
             type="password"
-            value={password}
+            defaultValue={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
@@ -107,7 +107,7 @@ const Register = () => {
           <Input
             variant="standard"
             type="password"
-            value={confirmationPassword}
+            defaultValue={confirmationPassword}
             onChange={(e) => setConfirmationPassword(e.target.value)}
             required
           />

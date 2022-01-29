@@ -75,6 +75,7 @@ export default function Manage_exam() {
     await API_URL.get(`api/exam/1/all`)
       .then((res) => {
         setExam(res.data);
+        return res.data
       })
       .catch((err) => {
         console.log(err);
@@ -118,10 +119,10 @@ export default function Manage_exam() {
       </div>
       {exam !== null ? (
         <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
-          {exam.map((exams) => (
+          {exam.map((exams,index) => (
             <Card
               sx={{ display: "flex", borderRadius: 5, mb: 2 }}
-              key={exams.id}
+              key={index}
             >
               <CardMedia
                 component="img"

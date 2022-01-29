@@ -24,7 +24,6 @@ export default function ExamModal({
 }) {
   const [name, setName] = useState("");
   const [errorMes, setErrorMes] = useState("");
-  const [exam_status, setExam_status] = useState(null);
   const [date_pre, setDate_pre] = useState("");
   const [time_pre, setTime_pre] = useState("");
   const [date_post, setDate_post] = useState("");
@@ -43,64 +42,71 @@ export default function ExamModal({
       name: name,
       date_pre: date_pre + " " + time_pre,
       date_post: date_post + " " + time_post,
-      id:1,
+      id: 1,
     })
       .then((res) => {
-          Id_toperent(res.data.exam_id);
-          console.log(res.data.exam_id);
-          cleanFormData();
-          handleModal();
-          Swal.fire("สร้างแบบทดสอบแล้ว!", "You clicked the button!", "success");
+        Id_toperent(res.data.exam_id);
+        cleanFormData();
+        handleModal();
+        Toast.fire({
+          icon: 'success',
+          title: 'สร้างแบบทดสอบแล้ว'
+        })
       })
       .catch((err) => {
         console.log(err);
       });
   };
+
   const handleUpdateExam = async (e) => {
     e.preventDefault();
-    const requestOptions = {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: name,
-        exam_status: exam_status,
-        date_pre: date_pre + " " + time_pre,
-        date_post: date_post + " " + time_post,
-      }),
-    };
-    const response = await fetch(`/api/exams/${id}`, requestOptions);
-    if (!response.ok) {
-      setErrorMes("Something went wrong when updating Exam");
-    } else {
-      handleModal();
-    }
+    await API_URL.put(`api/exam/${id}`, {
+      name: name,
+      date_pre: date_pre + " " + time_pre,
+      date_post: date_post + " " + time_post,
+    })
+      .then((res) => {
+        handleModal();
+      })
+      .catch((err) => {
+        setErrorMes("Something went wrong when updating Exam");
+        console.log(err);
+      });
   };
 
-  
-  
+  const get_Exam = async () => {
+    await API_URL.get(`api/exam/${id}`)
+      .then((res) => {
+        const data = res.data;
+        setName(data.name);
+        setDate_pre(dayjs(data.date_pre).format("YYYY-MM-DD"));
+        setDate_post(dayjs(data.date_post).format("YYYY-MM-DD"));
+
+        setTime_pre(dayjs(data.date_pre).format("HH:mm"));
+        setTime_post(dayjs(data.date_post).format("HH:mm"));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
-    const get_Exam = async () => {
-      await API_URL.get(`api/exam/${id}`)
-        .then((res) => {
-          const data = res.data;
-          setName(data.name);
-          setDate_pre(dayjs(data.date_pre).format("YYYY-MM-DD"));
-          setDate_post(dayjs(data.date_post).format("YYYY-MM-DD"));
-         
-          setTime_pre(dayjs(data.date_pre).format("HH:mm"));
-          setTime_post(dayjs(data.date_post).format("HH:mm"));
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
     if (id) {
       get_Exam();
     }
   }, [id]);
+
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'bottom-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  })
 
   return (
     <div className={`modal ${active && "is-active"}`}>
@@ -125,18 +131,21 @@ export default function ExamModal({
             noValidate
             autoComplete="off"
           >
-            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-              <SubtitlesIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-              <TextField
-                label="หัวข้อสอบ"
-                variant="standard"
-                id="margin-none"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </Box>
-            <Card className="p-2">
+            <div className="flex flex-wrap items-center w-full mb-3">
+              <div>
+              <SubtitlesIcon sx={{ color: "action.active" }} />
+              </div>
+              <div className="w-full flex-auto md:w-1/2 px-3">
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="appearance-none block w-full bg-gray-200 text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-200"
+                  placeholder="หัวข้อสอบ"
+                />
+              </div>
+            </div>
+            <Card className="p-4">
               <h4>กำหนดเวลาสอบ</h4>
               <Box
                 sx={{
@@ -152,7 +161,6 @@ export default function ExamModal({
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  defaultValue="2017/05/24"
                   value={date_pre}
                   onChange={(e) => setDate_pre(e.target.value)}
                 />

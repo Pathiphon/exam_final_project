@@ -10,11 +10,12 @@ import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import PercentIcon from "@mui/icons-material/Percent";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import API_URL from "../config/api";
+import Swal from "sweetalert2";
 
 export default function QModal({
   active,
   handleModalQ,
-  token,
   exam_id,
   ques_id,
   setErrorMessage,
@@ -27,119 +28,90 @@ export default function QModal({
   const [, setQues_id] = useState("");
   const [persent_checking, setPersent_checking] = useState(80);
 
-  const handleCreateQuestion = async (e) => {
-    e.preventDefault();
-    const requestOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify({
-        question: question,
-        persent_checking: persent_checking,
-      }),
-    };
-    const response = await fetch(
-      `/api/exams/${exam_id}/question`,
-      requestOptions
-    );
-    if (!response.ok) {
-      alert("มีข้อผิดพลาดในการเพิ่มข้อมูล");
-    } else {
-      handleModalQ();
-    }
+  const cleanFormData = () => {
+    setQuestion("");
+    setAnswer("");
+    setScore("");
+    setPersent_checking("");
   };
 
-  const handleCreateAnswer = async (e) => {
+  const handleCreateQuestion = async (e) => {
     e.preventDefault();
-    const requestOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify({
-        answer: answer,
-        score: score,
-      }),
-    };
-    const response = await fetch(
-      `/api/questions/${ques_id}/answer`,
-      requestOptions
-    );
-    if (!response.ok) {
-      setErrorMessage("มีข้อผิดพลาดในการเพิ่มข้อมูล");
-    }
+    await API_URL.post(`api/question/${exam_id}`, {
+      question: question,
+      persent_checking: persent_checking,
+      answer: answer,
+      score: score,
+    })
+      .then((res) => {
+        Toast.fire({
+          icon: 'success',
+          title: 'สร้างคำถามแล้ว'
+        })
+        return res.data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+      
   };
 
   useEffect(() => {
+    cleanFormData();
     if (ques_id && exam_id) {
       get_Question();
     }
   }, [ques_id, exam_id]);
 
   const get_Question = async () => {
-    const requestOptions = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-    };
-    const response = await fetch(
-      `/api/questions/${ques_id}`,
-      requestOptions
-    );
-    if (!response.ok) {
-      setErrorMessage("Something went wrong.Couldn't load the Exam");
-    } else {
-      const data = await response.json();
-      setPersent_checking(data.persent_checking);
-      setQuestion(data.question);
-    }
+     await API_URL.get(`api/question/${ques_id}`)
+      .then((res) => {
+        const data = res.data;
+        console.log(data);
+        setPersent_checking(data.persent_checking);
+        setQuestion(data.question);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+      
   };
 
   const handleUpdateQuestion = async (e) => {
     e.preventDefault();
-    const requestOptions = {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify({
-        question: question,
-        persent_checking:persent_checking,
-      }),
-    };
-    const response = await fetch(
-      `/api/questions/${ques_id}`,
-      requestOptions
-    );
-    if (!response.ok) {
-      setErrorMessage("Something went wrong when updating Exam");
-    } else {
-      handleModalQ();
-    }
+    await API_URL.put(`api/question/${ques_id}`, {
+      question: question,
+      persent_checking: persent_checking,
+    })
+      .then((res) => {
+        handleModalQ()
+        return res.data;
+      })
+      .catch((err) => {
+        console.log(err);
+        setErrorMessage("Something went wrong when updating Exam");
+      });
   };
 
-  const handleModalAns = () => {
-    setActiveModalAns(!activeModalAns);
-  };
-  const handleClickAns = () => {
-    setActiveModalAns(true);
-  };
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'bottom-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+    
+  })
+
+
 
   return (
     <div className={`modal ${active && "is-active"}`}>
       <div className="modal-background" onClick={handleModalQ}></div>
       <div className="modal-card">
-        <AnsModal
-          active={activeModalAns}
-          handleModalAns={handleModalAns}
-          token={token}
-        />
         <header className="modal-card-head has-text-white-ter">
           <h1 className="modal-card-title has-text-centered">
             {ques_id ? "แก้ไขคำถาม" : "เพิ่มคำถาม"}
@@ -247,27 +219,13 @@ export default function QModal({
                     }}
                     sx={{ flexGrow: 1 }}
                     size="medium"
-                    value={answer}
+                    value={ answer}
                     onChange={(e) => setAnswer(e.target.value)}
                     required
                   />
                 </Box>
               </>
             )}
-            {/* <Box sx={{ width: "100%",mt:2 }} container display="flex"
-              justifyContent="center"
-              alignItems="center">
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  sx={{ width: "75%" }}
-                  startIcon={<AddCircleIcon />}
-                  onClick={() =>
-                    handleClickAns()}
-                >
-                  เพิ่มเฉลย
-                </Button>
-              </Box> */}
           </Box>
         </section>
 
@@ -275,7 +233,7 @@ export default function QModal({
           <div className="container mx-auto text-center">
             {ques_id ? (
               <Button
-              className="mr-4"
+                className="mr-4"
                 color="warning"
                 variant="contained"
                 onClick={handleUpdateQuestion}

@@ -63,7 +63,7 @@ const Login = () => {
           <Input
             type="email"
             variant="standard"
-            value={email}
+            defaultValue={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
@@ -77,7 +77,7 @@ const Login = () => {
           <Input
             variant="standard"
             type="password"
-            value={password}
+            defaultValue={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />

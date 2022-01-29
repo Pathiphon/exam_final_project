@@ -189,7 +189,7 @@ export default function AnsModal({
                 <TextField
                   label="คะแนน"
                   type="number"
-                  value={scoreField}
+                  defaultValue={scoreField}
                   required
                   variant="standard"
                   color="warning"
@@ -205,8 +205,8 @@ export default function AnsModal({
               alignItems="center"
             >
               <Grid item xs={10}>
-              <Input type="hidden" value={answer.answer_id} />
-                <Input sx={{ width: "100%" }} value={answer.answer} onChange={(e)=>setAnswer({...answer,answer:e.target.value})} placeholder="ป้อนเฉลย" />
+              <Input type="hidden" defaultValue={answer.answer_id} />
+                <Input sx={{ width: "100%" }} defaultValue={answer.answer} onChange={(e)=>setAnswer({...answer,answer:e.target.value})} placeholder="ป้อนเฉลย" />
               </Grid>
               <Grid item xs={1}>
                 <IconButton  color="success" onClick={()=>createOrEditAnswer()}>
@@ -230,7 +230,7 @@ export default function AnsModal({
                 <TextField
           disabled
 
-          defaultValue={answerFields.answer}
+          defaultdefaultValue={answerFields.answer}
           variant="standard"
         />
                 </Grid>

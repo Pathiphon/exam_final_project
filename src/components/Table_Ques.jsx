@@ -14,6 +14,9 @@ import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import Swal from "sweetalert2";
+
+import API_URL from "../config/api";
 
 export default function Table_Ques({ exam_id, get_modal_create_exam }) {
   const [All_question, setAll_question] = useState(null);
@@ -26,27 +29,45 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
   const [errorMessage, setErrorMessage] = useState("");
 
   const get_Question = async () => {
-    const requestOptions = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const response = await fetch(`/exams/${exam_id}`, requestOptions);
-    if (!response.ok) {
-      setErrorMessage("Something went wrong.Couldn't load the Exam");
-    } else {
-      const data = await response.json();
-      console.log(data);
-      setAll_question(data.question);
-    }
+    await API_URL.get(`api/question/${exam_id}/all`)
+      .then((res) => {
+        const data = res.data;
+        console.log(data);
+        setAll_question(data.question);
+        return data
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const delete_Question = async (id, question) => {
+    // const response = await API_URL.delete(`/api/question/${id}`)
+     Swal.fire({
+      title: "ยืนยันที่จะลบคำถาม?",
+      text: question,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ลบคำถาม",
+    }).then((result) => {
+      if (result.isConfirmed) {
+         API_URL.delete(`/api/question/${id}`).then((res) => {
+          Swal.fire("Deleted!", "ทำการลบคำถามแล้ว.", "success");
+          get_Question()
+          return res.data;
+        });
+
+      }
+      
+    });
   };
 
   useEffect(() => {
     if (exam_id) {
       get_Question();
     }
-  }, [exam_id]);
+  },[exam_id]);
 
   const handleModalQ = async () => {
     get_Question();
@@ -87,7 +108,7 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
       />
       {All_question ? (
         <div>
-          {All_question.map((All_questions) => (
+          {All_question.map((All_questions, index) => (
             <Grid item sx={{ mb: 2 }} key={All_questions.ques_id}>
               <Card sx={{ display: "flex", borderRadius: 3, padding: 1 }}>
                 <Grid justify="space-between" sx={{ ml: 2 }} container>
@@ -100,7 +121,7 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
                   >
                     <CardContent>
                       <Typography component="div" variant="h6">
-                        คำถาม : {All_questions.question}
+                        ข้อ {index + 1}. {All_questions.question}
                       </Typography>
                       <Divider sx={{ m: 1 }} />
                       <Typography variant="subtitle1" component="div">
@@ -133,6 +154,12 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
                       sx={{ ml: 1 }}
                       variant="outlined"
                       color="error"
+                      onClick={() =>
+                        delete_Question(
+                          All_questions.ques_id,
+                          All_questions.question
+                        )
+                      }
                       startIcon={<DeleteForeverIcon />}
                     >
                       ลบ
