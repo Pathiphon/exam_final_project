@@ -35,27 +35,6 @@ export default function QModal({
     setPersent_checking("");
   };
 
-  const handleCreateQuestion = async (e) => {
-    e.preventDefault();
-    await API_URL.post(`api/question/${exam_id}`, {
-      question: question,
-      persent_checking: persent_checking,
-      answer: answer,
-      score: score,
-    })
-      .then((res) => {
-        Toast.fire({
-          icon: 'success',
-          title: 'สร้างคำถามแล้ว'
-        })
-        return res.data;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-      
-  };
-
   useEffect(() => {
     cleanFormData();
     if (ques_id && exam_id) {
@@ -64,7 +43,7 @@ export default function QModal({
   }, [ques_id, exam_id]);
 
   const get_Question = async () => {
-     await API_URL.get(`api/question/${ques_id}`)
+    await API_URL.get(`api/question/${ques_id}`)
       .then((res) => {
         const data = res.data;
         console.log(data);
@@ -74,7 +53,28 @@ export default function QModal({
       .catch((err) => {
         console.log(err);
       });
-      
+  };
+
+  const handleCreateQuestion = async (e) => {
+    e.preventDefault();
+    await API_URL.post(`api/question/${exam_id}`, {
+      question: question,
+      persent_checking: persent_checking,
+      answer: answer,
+      score: score,
+    })
+      .then((res) => {
+        cleanFormData();
+        Toast.fire({
+          icon: "success",
+          title: "สร้างคำถามแล้ว",
+        });
+        handleModalQ()
+        return res.data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleUpdateQuestion = async (e) => {
@@ -84,7 +84,9 @@ export default function QModal({
       persent_checking: persent_checking,
     })
       .then((res) => {
-        handleModalQ()
+        cleanFormData();
+        console.log(handleModalQ());
+        handleModalQ();
         return res.data;
       })
       .catch((err) => {
@@ -95,18 +97,15 @@ export default function QModal({
 
   const Toast = Swal.mixin({
     toast: true,
-    position: 'bottom-end',
+    position: "bottom-end",
     showConfirmButton: false,
     timer: 3000,
     timerProgressBar: true,
     didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-    
-  })
-
-
+      toast.addEventListener("mouseenter", Swal.stopTimer);
+      toast.addEventListener("mouseleave", Swal.resumeTimer);
+    },
+  });
 
   return (
     <div className={`modal ${active && "is-active"}`}>
@@ -219,7 +218,7 @@ export default function QModal({
                     }}
                     sx={{ flexGrow: 1 }}
                     size="medium"
-                    value={ answer}
+                    value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
                     required
                   />
@@ -250,6 +249,7 @@ export default function QModal({
               </Button>
             ) : (
               <Button
+                type="submit"
                 className="mr-4"
                 variant="contained"
                 onClick={handleCreateQuestion}

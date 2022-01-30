@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import Toast from "./Toast/Toast.js"
+
 import {
   Box,
   TextField,
@@ -14,7 +17,7 @@ import {
   Input,
   Chip,
   Button,
-  FormControl ,
+  FormControl,
   IconButton,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -22,146 +25,110 @@ import ErrorMessage from "./ErrorMessage";
 import EditIcon from "@mui/icons-material/Edit";
 import DataUsageIcon from "@mui/icons-material/DataUsage";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import API_URL from "../config/api";
 
-export default function Table_Ans({ active,ques_id,handleModalAns,token, }) {
-  const [all_Answer, setall_Answer] = useState(null);
+export default function Table_Ans({ active, ques_id, handleModalAns }) {
+  const [all_Answer, setAll_Answer] = useState([]);
   const [answer, setAnswer] = useState(null);
-  const [score, setScore] = useState(null);
-  const [ans_id, setAns_id] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
-    if(ques_id){
-      get_Answers()
+    console.log(answer);
+    setAnswer({ id: 0, answer: "",score:"" });
+    if (ques_id) {
+      get_Answers();
     }
   }, [ques_id]);
 
   const get_Answers = async () => {
-    const requestOptions = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-    };
-    const response = await fetch(
-      `/api/questions/${ques_id}/answers`,
-      requestOptions
-    );
-    if (!response.ok) {
-      setErrorMessage("Something went wrong.Couldn't load the Answer");
-    } else {
-      const data = await response.json();
-      setall_Answer(data)
-      console.log(all_Answer);
-    }
+    await API_URL.get(`api/answer/${ques_id}/all`)
+      .then((res) => {
+        const data = res.data;
+        console.log(data);
+        setAll_Answer(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const get_Answer = async (ans_id) => {
-    const requestOptions = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-    };
-    const response = await fetch(
-      `/api/questions/${ques_id}/answers/${ans_id}`,
-      requestOptions
-    );
-    if (!response.ok) {
-      setErrorMessage("Something went wrong.Couldn't load the Answer");
+    await API_URL.get(`api/answer/${ans_id}`)
+      .then((res) => {
+        const data = res.data;
+        setAnswer(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const createOrEditAnswer = async () => {
+    if (answer.ans_id) {
+      await API_URL.put(`api/answer/${answer.ans_id}`, {
+        answer: answer.answer,
+        score: answer.score,
+      })
+        .then((res) => {
+          get_Answers();
+          setAnswer({ id: 0, answer: "",score:"" });
+          Toast.fire({
+            icon: 'success',
+            title: 'แก้ไขเฉลยเสร็จสิ้น'
+          })
+          return res.data;
+        })
+        .catch((err) => {
+          
+          console.log(err);
+          setErrorMessage("Something went wrong when updating Exam");
+        });
     } else {
-      const data = await response.json();
-      setAnswer(data);
+      await API_URL.post(`api/answer`, {
+        answer: answer.answer,
+        score: answer.score,
+        ques_id:ques_id
+      })
+        .then((res) => {
+          get_Answers();
+          setAnswer({ id: 0, answer: "",score:"" });
+          Toast.fire({
+            icon: 'success',
+            title: 'เพิ่มเฉลยเสร็จสิ้น'
+          })
+          return res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
-  }
-
-  const createOrEditAnswer = async() =>{
-    if(answer.ans_id){
-      const requestOptions = {
-        method:"PUT" ,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-        body: JSON.stringify({
-          answer:answer.answer,
-          score:answer.score,
-        }),
-      };
-       await fetch(
-        `/api/questions/${ques_id}/answers/${answer.ans_id}`,
-        requestOptions
-      );
-    }else{
-      const requestOptions = {
-        method:"POST" ,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-        body: JSON.stringify({
-          answer:answer.answer,
-          answer:answer.score,
-        }),
-      };
-       await fetch(
-        `api/questions/${ques_id}/answer`,
-        requestOptions
-      );
-    }
-    get_Answers()
-    setAnswer({id:0,answer:""})
-    
-    
-  }
-
-  const deleteAnswer = async(ans_id)=>{
-    const requestOptions = {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-    };
-    const response = await fetch(`/api/exam_answers/${ans_id}`, requestOptions);
-    if (!response.ok) {
-      setErrorMessage("Failed to delete Answer");
-    }
-    get_Answers()
   };
 
-
-  const handleDeleteAns = async (ans_id) => {
-    const requestOptions = {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-    };
-    const response = await fetch(`/api/exam_questions/${ques_id}/exam_scores/${ans_id}`, requestOptions);
-    if (!response.ok) {
-      setErrorMessage("Failed to delete Answer");
-    }
-    handleClose()
-    get_Answer();
+  const deleteAnswer = async (ans_id,answer) => {
+    Swal.fire({
+      title: "ยืนยันที่จะลบเฉลย?",
+      text: answer,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ลบเฉลย",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        API_URL.delete(`/api/answer/${ans_id}`).then(() => {
+          get_Answers();
+          Toast.fire({
+            icon: "warning",
+            title: "ลบเฉลยเสร็จสิ้น",
+          });
+        }).catch((err)=>{
+          console.log(err);
+          setErrorMessage("Failed to delete Answer");
+        })  
+      }  
+    });
   };
 
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen =async (id,answer) => {
-    setAns_id(id)
-    setAnswer(answer)
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setAns_id(null)
-    setAnswer(null)
-  };
 
   return (
     <div className={`modal ${active && "is-active"}`}>
@@ -199,7 +166,10 @@ export default function Table_Ans({ active,ques_id,handleModalAns,token, }) {
                 <TextField
                   label="คะแนน"
                   type="number"
-                  defaultValue={all_Answer?(all_Answer.score):('')}
+                  value={answer ? answer.score : ""}
+                  onChange={(e) =>
+                    setAnswer({ ...answer, score: e.target.value })
+                  }
                   required
                   variant="standard"
                   color="warning"
@@ -215,62 +185,88 @@ export default function Table_Ans({ active,ques_id,handleModalAns,token, }) {
               alignItems="center"
             >
               <Grid item xs={10}>
-              <Input type="hidden" defaultValue={answer?(answer.ans_id):""} />
-                <Input sx={{ width: "100%" }} defaultValue={answer?(answer.answer):""} onChange={(e)=>setAnswer({...answer,answer:e.target.value})} placeholder="ป้อนเฉลย" />
+                <Input
+                  type="hidden"
+                  value={answer ? answer.ans_id : ""}
+                />
+                <Input
+                  sx={{ width: "100%" }}
+                  value={answer ? answer.answer : ""}
+                  onChange={(e) =>
+                    setAnswer({ ...answer, answer: e.target.value })
+                  }
+                  placeholder="ป้อนเฉลย"
+                />
               </Grid>
               <Grid item xs={1}>
-                <IconButton  color="success" onClick={()=>createOrEditAnswer()}>
-                  <AddCircleIcon  />
+                <IconButton
+                  color="success"
+                  onClick={() => createOrEditAnswer()}
+                >
+                  <AddCircleIcon />
                 </IconButton>
               </Grid>
             </Grid>
-            <Divider sx={{mt:1}}>
+            <Divider sx={{ mt: 1 }}>
               <Chip label="เฉลยทั้งหมด" />
             </Divider>
             <TableContainer>
-        <Table sx={{ minWidth: 600 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>เฉลย</TableCell>
-              <TableCell align="center">คะแนน</TableCell>
-              <TableCell align="center">การจัดการ</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {all_Answer?(<>
-            {all_Answer.map((answers) => (
-              <TableRow
-              key={answers.ans_id}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                <Typography
-                  sx={{
-                    textOverflow: "ellipsis",
-                    width: "15rem",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {answers.answer}
-                </Typography>
-              </TableCell>
+              <Table sx={{ minWidth: 600 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>เฉลย</TableCell>
+                    <TableCell align="center">คะแนน</TableCell>
+                    <TableCell align="center">การจัดการ</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {all_Answer ? (
+                    <>
+                      {all_Answer.map((answers) => (
+                        <TableRow
+                          key={answers.ans_id}
+                          sx={{
+                            "&:last-child td, &:last-child th": { border: 0 },
+                          }}
+                        >
+                          <TableCell component="th" scope="row">
+                            <Typography
+                              sx={{
+                                textOverflow: "ellipsis",
+                                width: "15rem",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {answers.answer}
+                            </Typography>
+                          </TableCell>
 
-              <TableCell align="center">{answers.score}</TableCell>
-              <TableCell align="center">
-              <IconButton color="warning" onClick={()=>get_Answer(answers.ans_id)}>
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton aria-label="delete" color="error" onClick={()=>deleteAnswer(answers.ans_id)}>
-                    <DeleteForeverIcon />
-                  </IconButton>
-              </TableCell>
-            </TableRow>
-            ))}
-          </> ):(<></>)}
-          </TableBody>
-          </Table>
-          </TableContainer>
+                          <TableCell align="center">{answers.score}</TableCell>
+                          <TableCell align="center">
+                            <IconButton
+                              color="warning"
+                              onClick={() => get_Answer(answers.ans_id)}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton
+                              aria-label="delete"
+                              color="error"
+                              onClick={() => deleteAnswer(answers.ans_id,answers.answer)}
+                            >
+                              <DeleteForeverIcon />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Box>
         </section>
 

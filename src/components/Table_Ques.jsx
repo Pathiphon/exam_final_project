@@ -34,14 +34,12 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
         const data = res.data;
         console.log(data);
         setAll_question(data.question);
-        return data
       })
       .catch((err) => {
         console.log(err);
       });
   };
-  const delete_Question = async (id, question) => {
-    // const response = await API_URL.delete(`/api/question/${id}`)
+  const delete_Question =  (id, question) => {
      Swal.fire({
       title: "ยืนยันที่จะลบคำถาม?",
       text: question,
@@ -52,22 +50,24 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
       confirmButtonText: "ลบคำถาม",
     }).then((result) => {
       if (result.isConfirmed) {
-         API_URL.delete(`/api/question/${id}`).then((res) => {
+        API_URL.delete(`/api/question/${id}`).then(() => {
+        }).catch((err)=>{
+          console.log(err);
           Swal.fire("Deleted!", "ทำการลบคำถามแล้ว.", "success");
-          get_Question()
-          return res.data;
-        });
-
+        })
+        
       }
       
     });
+    
+    
   };
 
   useEffect(() => {
     if (exam_id) {
       get_Question();
     }
-  },[exam_id]);
+  },[exam_id,ques_id]);
 
   const handleModalQ = async () => {
     get_Question();
