@@ -2,7 +2,9 @@ import { Card } from "@mui/material";
 import React, { useState, useEffect, useContext } from "react";
 import QModal from "./QModal";
 import Table_Ans from "./Table_Ans";
+import Toast from "./Toast/Toast.js";
 import {
+  Button,
   Divider,
   Chip,
   Box,
@@ -10,10 +12,11 @@ import {
   Typography,
   Grid,
 } from "@mui/material";
-import Button from "@mui/material/Button";
+import ArticleIcon from "@mui/icons-material/Article";
 import EditIcon from "@mui/icons-material/Edit";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Swal from "sweetalert2";
 
 import API_URL from "../config/api";
@@ -39,8 +42,8 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
         console.log(err);
       });
   };
-  const delete_Question =  (id, question) => {
-     Swal.fire({
+  const delete_Question = (id, question) => {
+    Swal.fire({
       title: "ยืนยันที่จะลบคำถาม?",
       text: question,
       icon: "warning",
@@ -50,24 +53,31 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
       confirmButtonText: "ลบคำถาม",
     }).then((result) => {
       if (result.isConfirmed) {
-        API_URL.delete(`/api/question/${id}`).then(() => {
-        }).catch((err)=>{
-          console.log(err);
-          Swal.fire("Deleted!", "ทำการลบคำถามแล้ว.", "success");
-        })
-        
+        API_URL.delete(`/api/question/${id}`)
+          .then(() => {
+            Toast.fire({
+              icon: "warning",
+              title: "ลบคำถามเสร็จสิ้น",
+            });
+            get_Question();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        API_URL.delete(`/api/answer/${id}/byQues`)
+          .then(() => {})
+          .catch((err) => {
+            console.log(err);
+          });
       }
-      
     });
-    
-    
   };
 
   useEffect(() => {
     if (exam_id) {
       get_Question();
     }
-  },[exam_id,ques_id]);
+  }, [exam_id, ques_id]);
 
   const handleModalQ = async () => {
     get_Question();
@@ -78,7 +88,6 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
   const handleClickQ = async (id) => {
     setQues_id(id);
     setActiveModalQ(true);
-    get_modal_create_exam(!activeModalQ);
   };
   const handleModalAns = async () => {
     get_Question();
@@ -89,16 +98,21 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
   const handleClickAns = async (id) => {
     setQues_id(id);
     setActiveModalAns(true);
-    get_modal_create_exam(!activeModalAns);
   };
 
   return (
     <div>
-      <Table_Ans
-        active={activeModalAns}
-        handleModalAns={handleModalAns}
-        ques_id={ques_id}
-      />
+      {ques_id ? (
+        <div>
+          <Table_Ans
+            active={activeModalAns}
+            handleModalAns={handleModalAns}
+            ques_id={ques_id}
+          />
+        </div>
+      ) : (
+        <></>
+      )}
       <QModal
         active={activeModalQ}
         handleModalQ={handleModalQ}
@@ -108,6 +122,40 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
       />
       {All_question ? (
         <div>
+          <Box sx={{ flexGrow: 1, display: "flex", p: 1 }}>
+            <Grid
+              container
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="center"
+            >
+              <ArticleIcon sx={{ m: 1 }} />
+              <Typography component="div" variant="p" sx={{ m: 1 }}>
+                จำนวนข้อ :
+              </Typography>
+              <Typography
+                sx={{
+                  bgcolor: "#DDF4E1",
+                  color: "text.primary",
+                  borderRadius: "16px",
+                  m: 1,
+                  p: 1,
+                }}
+              >
+                จำนวนข้อ :
+              </Typography>
+              <Typography component="div" variant="h5" sx={{ m: 1 }}>
+                |
+              </Typography>
+              <button
+                className="shadow border border-gray-400 bg-gray-700 hover:bg-slate-800 text-white py-3 px-6 rounded-full"
+                onClick={() => setActiveModalQ(true)}
+              >
+                เพิ่มคำถาม <AddCircleIcon sx={{ ml: 3 }} />
+              </button>
+            </Grid>
+          </Box>
+
           {All_question.map((All_questions, index) => (
             <Grid item sx={{ mb: 2 }} key={All_questions.ques_id}>
               <Card sx={{ display: "flex", borderRadius: 3, padding: 1 }}>
@@ -171,7 +219,7 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
           ))}
         </div>
       ) : (
-        <Divider sx={{ mt: 10 }}>ทำการสร้างโจทย์ใหม่</Divider>
+        <Divider sx={{ mt: 10 }}>ทำการสร้างแบบทดสอบใหม่</Divider>
       )}
     </div>
   );

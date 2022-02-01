@@ -17,9 +17,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import Divider from "@mui/material/Divider";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import ArticleIcon from "@mui/icons-material/Article";
+
 
 import API_URL from "../config/api";
 
@@ -63,6 +62,7 @@ export default function Create_exam({ data }) {
       setId(location.state.id);
     }
   }, [id,handleModal]);
+
   const get_Exam = async () => {
     await API_URL.get(`api/exam/${id}`)
       .then((res) => {
@@ -82,7 +82,7 @@ export default function Create_exam({ data }) {
   };
 
   return (
-    <Box className="container">
+    <Box className="w-full">
       <ExamModal
         active={activeModal}
         handleModal={handleModal}
@@ -90,19 +90,10 @@ export default function Create_exam({ data }) {
         Id_toperent={Id_toperent}
         setErrorMessage={setErrorMessage}
       />
-      <QModal
-        active={activeModalQ}
-        handleModalQ={handleModalQ}
-        ques_id={ques_id}
-        exam_id={id}
-        setErrorMessage={setErrorMessage}
-      />
       <Box>
         <CssBaseline />
-        {activeModalQ === false ? (
-          <AppBar
-            position="fixed"
-            sx={{ width: `calc(100% )` }}
+          <div
+            className="shadow-md"
             style={{ background: "white" }}
           >
             <Toolbar>
@@ -117,17 +108,10 @@ export default function Create_exam({ data }) {
                 จัดการข้อสอบ
               </Button>
             </Toolbar>
-          </AppBar>
-        ) : (
-          <AppBar
-            position="fixed"
-            sx={{ width: `calc(100% )` }}
-            style={{ background: "white", ZIndex: -1 }}
-          ></AppBar>
-        )}
+          </div>
       </Box>
-      <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
-        <Toolbar />
+      <Box className="container" sx={{ flexGrow: 1, p: 2 }}>
+
         <Card sx={{ display: "flex", borderRadius: 5 }}>
           <CardMedia
             component="img"
@@ -182,44 +166,10 @@ export default function Create_exam({ data }) {
           </Box>
         </Card>
       </Box>
-      <Box>
+      <Box className="container">
         <Divider variant="middle" />
 
-        <Box sx={{ flexGrow: 1, display: "flex", p: 1 }}>
-          <Grid
-            container
-            direction="row"
-            justifyContent="flex-start"
-            alignItems="center"
-          >
-            <ArticleIcon sx={{ m: 1 }} />
-            <Typography component="div" variant="p" sx={{ m: 1 }}>
-              จำนวนข้อ :
-            </Typography>
-            <Typography
-              sx={{
-                bgcolor: "#DDF4E1",
-                color: "text.primary",
-                borderRadius: "16px",
-                m: 1,
-                p: 1,
-              }}
-            >
-              จำนวนข้อ :
-            </Typography>
-            <Typography component="div" variant="h5" sx={{ m: 1 }}>
-              |
-            </Typography>
-            <Button
-              variant="contained"
-              size="large"
-              sx={{ borderRadius: "20px" }}
-              onClick={() => setActiveModalQ(true)}
-            >
-              เพิ่มคำถาม <AddCircleIcon sx={{ ml: 3 }} />
-            </Button>
-          </Grid>
-        </Box>
+        
         <Table_Ques
           exam_id={id}
           get_modal_create_exam={get_modal_create_exam}

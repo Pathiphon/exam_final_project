@@ -12,6 +12,7 @@ import PercentIcon from "@mui/icons-material/Percent";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import API_URL from "../config/api";
 import Swal from "sweetalert2";
+import Toast from "./Toast/Toast.js"
 
 export default function QModal({
   active,
@@ -20,12 +21,11 @@ export default function QModal({
   ques_id,
   setErrorMessage,
 }) {
-  const [activeModalAns, setActiveModalAns] = useState(false);
+
   const [errorMessage] = useState("");
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [score, setScore] = useState("");
-  const [, setQues_id] = useState("");
   const [persent_checking, setPersent_checking] = useState(80);
 
   const cleanFormData = () => {
@@ -46,7 +46,6 @@ export default function QModal({
     await API_URL.get(`api/question/${ques_id}`)
       .then((res) => {
         const data = res.data;
-        console.log(data);
         setPersent_checking(data.persent_checking);
         setQuestion(data.question);
       })
@@ -85,7 +84,10 @@ export default function QModal({
     })
       .then((res) => {
         cleanFormData();
-        console.log(handleModalQ());
+        Toast.fire({
+          icon: "success",
+          title: "แก้ไขคำถามแล้ว",
+        });
         handleModalQ();
         return res.data;
       })
@@ -95,17 +97,6 @@ export default function QModal({
       });
   };
 
-  const Toast = Swal.mixin({
-    toast: true,
-    position: "bottom-end",
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener("mouseenter", Swal.stopTimer);
-      toast.addEventListener("mouseleave", Swal.resumeTimer);
-    },
-  });
 
   return (
     <div className={`modal ${active && "is-active"}`}>

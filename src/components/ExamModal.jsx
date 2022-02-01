@@ -68,6 +68,10 @@ export default function ExamModal({
     })
       .then((res) => {
         handleModal();
+        Toast.fire({
+          icon: 'success',
+          title: 'แก้ไขแบบทดสอบแล้ว'
+        })
       })
       .catch((err) => {
         setErrorMes("Something went wrong when updating Exam");
@@ -92,6 +96,7 @@ export default function ExamModal({
   };
 
   useEffect(() => {
+    cleanFormData()
     if (id) {
       get_Exam();
     }

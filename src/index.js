@@ -4,11 +4,16 @@ import App from './App';
 import Swal from 'sweetalert2'
 import './index.css'
 import './App.css'
-import { BrowserRouter } from 'react-router-dom'
+import ExamForm from './components/ExamForm/ExamForm'
+import { BrowserRouter,Route,Routes,Link } from 'react-router-dom'
 
 ReactDOM.render(
   <BrowserRouter>
-    <App />
+  {/* <App/> */}
+    <Routes>
+    <Route path="/" element={<App />} ></Route>
+    <Route path="/ExamForm" element={<ExamForm />} ></Route>
+    </Routes>
   </BrowserRouter>,
   document.getElementById('root')
 );

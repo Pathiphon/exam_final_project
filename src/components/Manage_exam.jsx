@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState, useRouteMatch } from "react";
 import dayjs from "dayjs";
 import { Link, useNavigate } from "react-router-dom";
-
-import ErrorMessage from "./ErrorMessage";
+import ShareExam_Modal from "./ShareExam_Modal";
 import Manage_exam_full from "../img/manage_exam_full.png";
 import { styled, alpha } from "@mui/material/styles";
 import {
@@ -24,18 +23,23 @@ import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import EditIcon from "@mui/icons-material/Edit";
 import SearchIcon from "@mui/icons-material/Search";
 import ShareIcon from "@mui/icons-material/Share";
-import LinearProgress from "@mui/material/LinearProgress";
 import API_URL from "../config/api";
 
 export default function Manage_exam() {
   const [exam, setExam] = useState(null);
   const [erroorMessage, setErrorMessage] = useState("");
   const [loaded, setLoaded] = useState(false);
-  const [activeModal, setActiveModal] = useState(false);
+  const [ques_id, setQues_id] = useState(null);
+  const [activeModalExamForm, setActiveModalExamForm] = useState(false);
   const [id, setId] = useState(null);
   const [token] = useState(localStorage.getItem("awesomeLeadsToken"));
 
   let navigate = useNavigate();
+
+  const handleModalExamForm = () => {
+    setActiveModalExamForm(!activeModalExamForm);
+  };
+
   const Search = styled("div")(({ theme }) => ({
     position: "relative",
     borderRadius: theme.shape.borderRadius,
@@ -61,7 +65,6 @@ export default function Manage_exam() {
     color: "inherit",
     "& .MuiInputBase-input": {
       padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
       paddingLeft: `calc(1em + ${theme.spacing(4)})`,
       transition: theme.transitions.create("width"),
       width: "100%",
@@ -75,7 +78,7 @@ export default function Manage_exam() {
     await API_URL.get(`api/exam/1/all`)
       .then((res) => {
         setExam(res.data);
-        return res.data
+        return res.data;
       })
       .catch((err) => {
         console.log(err);
@@ -93,9 +96,15 @@ export default function Manage_exam() {
 
   return (
     <div className="container ml-4">
+      <ShareExam_Modal
+            active={activeModalExamForm}
+            handleModalExamForm={handleModalExamForm}
+            exam_id={ques_id}
+          />
       <Toolbar />
       <div className="flex  justify-center items-center">
         <div className="flex-auto w-70 ">
+          
           <Search sx={{ boxShadow: 3 }}>
             <SearchIconWrapper>
               <SearchIcon />
@@ -107,7 +116,7 @@ export default function Manage_exam() {
           </Search>
         </div>
         <div className="flex-auto">
-          <Link to="/Create_exam" >
+          <Link to="/Create_exam">
             <button className=" text-white bg-zinc-800 hover:bg-slate-800 p-3 ml-2 font-bold  px-4 rounded-xl shadow-lg">
               <div className="flex">
                 <CreateNewFolderIcon className="icon_nav mr-4" />
@@ -119,11 +128,8 @@ export default function Manage_exam() {
       </div>
       {exam !== null ? (
         <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
-          {exam.map((exams,index) => (
-            <Card
-              sx={{ display: "flex", borderRadius: 5, mb: 2 }}
-              key={index}
-            >
+          {exam.map((exams, index) => (
+            <Card sx={{ display: "flex", borderRadius: 5, mb: 2 }} key={index}>
               <CardMedia
                 component="img"
                 sx={{ width: 150, padding: 1, borderRadius: 5 }}
@@ -182,7 +188,11 @@ export default function Manage_exam() {
                 >
                   แก้ไข
                 </Button>
-                <Button variant="contained" startIcon={<ShareIcon />}>
+                <Button
+                  variant="contained"
+                  startIcon={<ShareIcon />}
+                  onClick={() => setActiveModalExamForm(true)}
+                >
                   ส่งลิงค์ข้อสอบ
                 </Button>
               </Box>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import Toast from "./Toast/Toast.js"
+import Toast from "./Toast/Toast.js";
 
 import {
   Box,
@@ -33,11 +33,11 @@ export default function Table_Ans({ active, ques_id, handleModalAns }) {
   const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
-    console.log(answer);
-    setAnswer({ id: 0, answer: "",score:"" });
+    setAnswer({ id: 0, answer: "", score: "" });
     if (ques_id) {
       get_Answers();
     }
+
   }, [ques_id]);
 
   const get_Answers = async () => {
@@ -71,15 +71,14 @@ export default function Table_Ans({ active, ques_id, handleModalAns }) {
       })
         .then((res) => {
           get_Answers();
-          setAnswer({ id: 0, answer: "",score:"" });
+          setAnswer({ id: 0, answer: "", score: "" });
           Toast.fire({
-            icon: 'success',
-            title: 'แก้ไขเฉลยเสร็จสิ้น'
-          })
+            icon: "success",
+            title: "แก้ไขเฉลยเสร็จสิ้น",
+          });
           return res.data;
         })
         .catch((err) => {
-          
           console.log(err);
           setErrorMessage("Something went wrong when updating Exam");
         });
@@ -87,15 +86,15 @@ export default function Table_Ans({ active, ques_id, handleModalAns }) {
       await API_URL.post(`api/answer`, {
         answer: answer.answer,
         score: answer.score,
-        ques_id:ques_id
+        ques_id: ques_id,
       })
         .then((res) => {
           get_Answers();
-          setAnswer({ id: 0, answer: "",score:"" });
+          setAnswer({ id: 0, answer: "", score: "" });
           Toast.fire({
-            icon: 'success',
-            title: 'เพิ่มเฉลยเสร็จสิ้น'
-          })
+            icon: "success",
+            title: "เพิ่มเฉลยเสร็จสิ้น",
+          });
           return res.data;
         })
         .catch((err) => {
@@ -104,7 +103,7 @@ export default function Table_Ans({ active, ques_id, handleModalAns }) {
     }
   };
 
-  const deleteAnswer = async (ans_id,answer) => {
+  const deleteAnswer = async (ans_id, answer) => {
     Swal.fire({
       title: "ยืนยันที่จะลบเฉลย?",
       text: answer,
@@ -115,20 +114,21 @@ export default function Table_Ans({ active, ques_id, handleModalAns }) {
       confirmButtonText: "ลบเฉลย",
     }).then((result) => {
       if (result.isConfirmed) {
-        API_URL.delete(`/api/answer/${ans_id}`).then(() => {
-          get_Answers();
-          Toast.fire({
-            icon: "warning",
-            title: "ลบเฉลยเสร็จสิ้น",
+        API_URL.delete(`/api/answer/${ans_id}`)
+          .then(() => {
+            get_Answers();
+            Toast.fire({
+              icon: "warning",
+              title: "ลบเฉลยเสร็จสิ้น",
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            setErrorMessage("Failed to delete Answer");
           });
-        }).catch((err)=>{
-          console.log(err);
-          setErrorMessage("Failed to delete Answer");
-        })  
-      }  
+      }
     });
   };
-
 
   return (
     <div className={`modal ${active && "is-active"}`}>
@@ -158,60 +158,84 @@ export default function Table_Ans({ active, ques_id, handleModalAns }) {
               alignItems="center"
             >
               <Grid item>
-                <DataUsageIcon
-                  sx={{ color: "action.active", mr: 1, my: 0.5 }}
-                />
+                <DataUsageIcon sx={{ color: "warning", mr: 1, my: 0.5 }} />
               </Grid>
+              
               <Grid item>
                 <TextField
                   label="คะแนน"
                   type="number"
+                  InputProps={{ inputProps: { min: 0, max: 500 } }}
                   value={answer ? answer.score : ""}
                   onChange={(e) =>
                     setAnswer({ ...answer, score: e.target.value })
                   }
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                   required
-                  variant="standard"
+                  size="small"
                   color="warning"
                   focused
                 />
               </Grid>
             </Grid>
-            <Grid
-              container
-              spacing={2}
-              direction="row"
-              justifyContent="flex-start"
-              alignItems="center"
+            <div
+              className="flex w-full justify-center items-center"
             >
-              <Grid item xs={10}>
-                <Input
-                  type="hidden"
-                  value={answer ? answer.ans_id : ""}
-                />
-                <Input
-                  sx={{ width: "100%" }}
-                  value={answer ? answer.answer : ""}
-                  onChange={(e) =>
-                    setAnswer({ ...answer, answer: e.target.value })
-                  }
-                  placeholder="ป้อนเฉลย"
-                />
-              </Grid>
-              <Grid item xs={1}>
-                <IconButton
-                  color="success"
-                  onClick={() => createOrEditAnswer()}
-                >
-                  <AddCircleIcon />
-                </IconButton>
-              </Grid>
-            </Grid>
-            <Divider sx={{ mt: 1 }}>
-              <Chip label="เฉลยทั้งหมด" />
-            </Divider>
+              <div className="flex-auto w-5/6" >
+                <Input type="hidden" value={answer ? answer.ans_id : ""} />
+                <div className="flex flex-wrap items-center w-full mb-3">
+                  <div className="w-full flex-auto md:w-1/2 px-3">
+                    <textarea
+                      sx={{ width: "100%" }}
+                      value={answer ? answer.answer : ""}
+                      onChange={(e) =>
+                        setAnswer({ ...answer, answer: e.target.value })
+                      }
+                      className="appearance-none block w-full bg-gray-200 text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-200"
+                      placeholder="ป้อนเฉลย"
+                      rows="2"
+                      cols="10"
+                      required
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+              <div className="flex-auto w-1/6">
+                {answer?(
+                !answer.ans_id ? (
+                  <Button
+                    color="success"
+                    variant="contained"
+                    startIcon={<AddCircleIcon />}
+                    onClick={() => createOrEditAnswer()}
+                  >
+                    เพิ่ม
+                  </Button>
+                ) : (
+                  <Button
+                    color="warning"
+                    variant="contained"
+                    startIcon={<EditIcon />}
+                    onClick={() => createOrEditAnswer()}
+                  >
+                    แก้ไข
+                  </Button>
+                )
+                ):""}
+              </div>
+            </div>
+            <Divider sx={{ m: 2 }} />
             <TableContainer>
-              <Table sx={{ minWidth: 600 }} aria-label="simple table">
+              <Table
+                sx={{
+                  minWidth: 600,
+                  backgroundColor: "#EEEEEC",
+                  borderRadius: "5px",
+                }}
+                aria-label="simple table"
+              >
                 <TableHead>
                   <TableRow>
                     <TableCell>เฉลย</TableCell>
@@ -244,19 +268,28 @@ export default function Table_Ans({ active, ques_id, handleModalAns }) {
 
                           <TableCell align="center">{answers.score}</TableCell>
                           <TableCell align="center">
-                            <IconButton
+                            <Button
+                              startIcon={<EditIcon />}
+                              sx={{ whiteSpace: "nowrap" }}
+                              variant="outlined"
                               color="warning"
+                              size="small"
                               onClick={() => get_Answer(answers.ans_id)}
                             >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              aria-label="delete"
+                              แก้ไข
+                            </Button>
+                            <Button
+                              sx={{ ml: 1 }}
+                              size="small"
+                              variant="outlined"
                               color="error"
-                              onClick={() => deleteAnswer(answers.ans_id,answers.answer)}
+                              startIcon={<DeleteForeverIcon />}
+                              onClick={() =>
+                                deleteAnswer(answers.ans_id, answers.answer)
+                              }
                             >
-                              <DeleteForeverIcon />
-                            </IconButton>
+                              ลบ
+                            </Button>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -269,17 +302,6 @@ export default function Table_Ans({ active, ques_id, handleModalAns }) {
             </TableContainer>
           </Box>
         </section>
-
-        <footer className="modal-card-foot">
-          <div>
-            {errorMessage ? <ErrorMessage message={errorMessage} /> : <></>}
-          </div>
-          <Button className="Button is-info">แก้ไข</Button>
-
-          <Button variant="outlined" color="error">
-            ยกเลิก
-          </Button>
-        </footer>
       </div>
     </div>
   );
