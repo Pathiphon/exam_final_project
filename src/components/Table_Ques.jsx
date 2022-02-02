@@ -35,7 +35,6 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
     await API_URL.get(`api/question/${exam_id}/all`)
       .then((res) => {
         const data = res.data;
-        console.log(data);
         setAll_question(data.question);
       })
       .catch((err) => {

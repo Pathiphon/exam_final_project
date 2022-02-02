@@ -10,6 +10,7 @@ import {
 import Button from "@mui/material/Button";
 import Manage_exam from "./Manage_exam";
 import Create_exam from "./Create_exam";
+import Profile from './Profile'
 
 import { Box, Container,Avatar } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
@@ -60,6 +61,9 @@ const Header = () => {
         break;
       case "/Report":
         setBarname("รายงานผลสอบ");
+        break;
+        case "/Profile":
+        setBarname("จัดการโปรไฟล์");
         break;
     }
   };
@@ -170,8 +174,8 @@ const Header = () => {
                 <Container>
                   <Box component="main" sx={{ p: 4 }}>
                     <Routes>
-                      {/* <Route path='/Create_exam' element={<Create_exam/>}/> */}
                       <Route path="/" element={<Manage_exam />} />
+                      <Route path="/Profile" element={<Profile />} />
                     </Routes>
                   </Box>
                 </Container>

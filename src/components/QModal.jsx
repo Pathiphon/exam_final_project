@@ -134,7 +134,7 @@ export default function QModal({
               }}
               sx={{ width: "25%" }}
               size="small"
-              value={persent_checking}
+              value={persent_checking || ""}
               onChange={(e) => setPersent_checking(e.target.value)}
               required
             />
@@ -160,7 +160,7 @@ export default function QModal({
                   shrink: true,
                 }}
                 size="medium"
-                value={question}
+                value={question || ""}
                 onChange={(e) => setQuestion(e.target.value)}
                 required
               />
@@ -191,7 +191,7 @@ export default function QModal({
                       shrink: true,
                     }}
                     size="small"
-                    value={score}
+                    value={score || ""}
                     onChange={(e) => setScore(e.target.value)}
                     required
                   />
@@ -209,7 +209,7 @@ export default function QModal({
                     }}
                     sx={{ flexGrow: 1 }}
                     size="medium"
-                    value={answer}
+                    value={answer || ""}
                     onChange={(e) => setAnswer(e.target.value)}
                     required
                   />

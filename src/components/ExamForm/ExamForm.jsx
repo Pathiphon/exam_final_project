@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import Swal from "sweetalert2";
+import API_URL from "../../config/api";
 import {
   AppBar,
   Toolbar,
@@ -14,38 +15,81 @@ import {
 } from "@mui/material";
 
 export default function ExamForm() {
+  const [All_question, setAll_question] = useState(null);
   const { exam_id } = useParams();
+  const [inputField, setInputField] = useState([]);
   const [stuCode, setStuCode] = useState("");
   const [name, setName] = useState("");
 
+  const handleChangeInput = (id, e) => {
+    const newInputFields = inputField.map((i) => {
+      if (id === i.id) {
+        i[e.target.name] = e.target.value;
+      }
+      return i;
+    });
+
+    setInputField(newInputFields);
+  };
+
+  const get_Question = async () => {
+    await API_URL.get(`api/question/${exam_id}/all`)
+      .then((res) => {
+        if (res.data) {
+          const data = res.data;
+          setAll_question(data.question);
+          for (let item of data.question) {
+            setInputField((prevState) => [
+              ...prevState,
+              {
+                id: item.ques_id,
+              },
+            ]);
+            // console.log(item.ques_id);
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  useEffect(() => {
+    get_Question();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (stuCode.length !== 9 || name.length <= 0) {
-      console.log("ผิด");
-    } else {
-      let timerInterval;
-      Swal.fire({
-        title: "กำลังส่งคำตอบ",
-        html: "I will close in <b></b> milliseconds.",
-        timer: 2000,
-        timerProgressBar: true,
-        didOpen: () => {
-          Swal.showLoading();
-          const b = Swal.getHtmlContainer().querySelector("b");
-          timerInterval = setInterval(() => {
-            b.textContent = Swal.getTimerLeft();
-          }, 100);
-        },
-        willClose: () => {
-          clearInterval(timerInterval);
-        },
-      }).then((result) => {
-        /* Read more about handling dismissals below */
-        if (result.dismiss === Swal.DismissReason.timer) {
-          console.log("I was closed by the timer");
-        }
-      });
-    }
+    // if (stuCode.length !== 9 || name.length <= 0) {
+    //   console.log("ผิด");
+    // } else {
+    //   let timerInterval;
+    //   Swal.fire({
+    //     title: "กำลังส่งคำตอบ",
+    //     html: "I will close in <b></b> milliseconds.",
+    //     timer: 2000,
+    //     timerProgressBar: true,
+    //     didOpen: () => {
+    //       Swal.showLoading();
+    //       const b = Swal.getHtmlContainer().querySelector("b");
+    //       timerInterval = setInterval(() => {
+    //         b.textContent = Swal.getTimerLeft();
+    //       }, 100);
+    //     },
+    //     willClose: () => {
+    //       clearInterval(timerInterval);
+    //     },
+    //   }).then((result) => {
+    //     /* Read more about handling dismissals below */
+    //     if (result.dismiss === Swal.DismissReason.timer) {
+    //       console.log("I was closed by the timer");
+    //     }
+    //   });
+
+    // }
+    // console.log("inputFields", inputField);
+    // console.log(inputField);
+    const aws = [{ code: stuCode }, { name: name }, ...inputField];
+    console.log(aws);
   };
 
   return (
@@ -77,9 +121,9 @@ export default function ExamForm() {
         </div>
       </AppBar>
       <Toolbar />
-      <Container sx={{ width: "80%" }}>
+      <Container maxWidth="md">
         <Box sx={{ my: 2 }}>
-          <form class="w-full" onSubmit={handleSubmit}>
+          <form className="w-full sm:mt-10" onSubmit={handleSubmit}>
             <div>
               <p className="text-2xl">ฐานข้อมูล บทที่ 1</p>
               <p className="text-base mt-2">
@@ -87,15 +131,15 @@ export default function ExamForm() {
               </p>
             </div>
 
-            <div className="bg-gray-200 px-8 py-3 rounded-xl mt-4">
-              <div class="flex flex-wrap -mx-3 mb-3">
-                <div class="w-full px-3">
-                  <label class="block uppercase tracking-wide text-gray-700 text-base mb-1">
+            <div className="bg-gray-200 px-8 py-3  rounded-xl mt-4">
+              <div className="flex flex-wrap -mx-3 mb-3">
+                <div className="w-full md:w-2/6 px-3 ">
+                  <label className="block uppercase tracking-wide text-gray-700 text-base mb-1">
                     รหัสนักศึกษา
                   </label>
                   <input
-                    class=" bg-white appearance-none border-2 border-gray-200 rounded-lg w-2/6 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-600"
-                    min="0"
+                    className="bg-white appearance-none border-2 border-gray-200 rounded-lg w-100  py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-600"
+                    min="111111111"
                     max="999999999"
                     type="number"
                     placeholder="รหัสนักศึกษา"
@@ -106,13 +150,13 @@ export default function ExamForm() {
                 </div>
               </div>
 
-              <div class="flex flex-wrap -mx-3 mb-3">
-                <div class="w-full px-3">
-                  <label class="block uppercase tracking-wide text-gray-700 text-base mb-1">
+              <div className="flex flex-wrap -mx-3 mb-3">
+                <div className="w-full md:w-4/6 px-3">
+                  <label className="block uppercase tracking-wide text-gray-700 text-base mb-1">
                     ชื่อ - นามสกุล
                   </label>
                   <input
-                    class=" bg-white appearance-none border-2 border-gray-200 rounded-lg w-4/6 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-600"
+                    className=" bg-white appearance-none border-2 border-gray-200 rounded-lg w-100 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-600"
                     maxLength="100"
                     placeholder="ชื่อ - นามสกุล"
                     value={name}
@@ -125,21 +169,37 @@ export default function ExamForm() {
             <Divider
               sx={{ my: 2, borderBottomWidth: 5, backgroundColor: "#000000" }}
             />
-
-            <div className="bg-gray-100 px-8 py-3 rounded-xl mt-4 mb-4">
-              <div class="flex flex-wrap -mx-3 mb-3">
-                <div class="w-full px-3">
-                  <label class="block uppercase tracking-wide text-gray-700 text-lg mb-3">
-                    ข้อที่ 1. ฐานข้อมูลคืออะไร
-                  </label>
-                  <TextareaAutosize class=" bg-white appearance-none border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-600" />
+            {All_question &&
+              All_question.map((All_questions, index) => (
+                <div
+                  key={All_questions.ques_id}
+                  className="bg-gray-200 px-8 py-3 rounded-xl mt-4 mb-4"
+                >
+                  <div className="flex flex-wrap -mx-3 mb-3">
+                    <div className="w-full px-3">
+                      <label
+                        htmlFor={`${All_questions.ques_id}`}
+                        className="block uppercase tracking-wide text-gray-700 text-lg mb-3"
+                      >
+                        ข้อ {index + 1}. {All_questions.question}
+                      </label>
+                      <TextareaAutosize
+                        id={`${All_questions.ques_id}`}
+                        // name={`${All_questions.ques_id}`}
+                        name="answer_stu"
+                        value={inputField[All_questions.ques_id]}
+                        onChange={(e) => {
+                          handleChangeInput(All_questions.ques_id, e);
+                        }}
+                        className=" bg-white appearance-none border-2 border-gray-200 rounded-lg w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-600"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            <div class="flex items-center justify-around mt-6">
+              ))}
+            <div className="flex items-center justify-around mt-6">
               <button
-                class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-20 rounded-lg focus:outline-none focus:shadow-outline"
+                className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-20 rounded-lg focus:outline-none focus:shadow-outline"
                 type="submit"
               >
                 ส่งคำตอบ
