@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import Swal from "sweetalert2";
+import dayjs from "dayjs";
 import API_URL from "../../config/api";
 import {
   AppBar,
@@ -17,19 +18,56 @@ import {
 export default function ExamForm() {
   const [All_question, setAll_question] = useState(null);
   const { exam_id } = useParams();
+  const [exam_name, setExam_name] = useState(null);
+  const [date_pre, setDate_pre] = useState("");
+  const [date_post, setDate_post] = useState("");
   const [inputField, setInputField] = useState([]);
   const [stuCode, setStuCode] = useState("");
   const [name, setName] = useState("");
+  // const date1 =dayjs('');
+  // const date2 = dayjs('');
 
-  const handleChangeInput = (id, e) => {
+  var buddhistEra = require("dayjs/plugin/buddhistEra");
+  dayjs.extend(buddhistEra);
+
+  const handleCreateReply = async (e) => {
+    e.preventDefault();
+    await API_URL.post(`api/reply/${exam_id}`, {
+      inputField
+    })
+      .then((res) => {
+        return res.data
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleChangeInput = (ques_id, e) => {
     const newInputFields = inputField.map((i) => {
-      if (id === i.id) {
+      if (ques_id === i.ques_id) {
         i[e.target.name] = e.target.value;
       }
       return i;
     });
 
     setInputField(newInputFields);
+  };
+  const get_Exam = async () => {
+    await API_URL.get(`api/exam/${exam_id}`)
+      .then((res) => {
+        const data = res.data;
+        setExam_name(data.name);
+        setDate_pre(dayjs(data.date_pre).format("DD/MM/BBBB HH:mm"));
+        setDate_post(dayjs(data.date_post).format("DD/MM/BBBB HH:mm"));
+        const date1 = dayjs(data.date_pre)
+        const date2 = dayjs(data.date_post)
+       
+        // console.log( date2.diff(date1,'m',true));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const get_Question = async () => {
@@ -42,7 +80,7 @@ export default function ExamForm() {
             setInputField((prevState) => [
               ...prevState,
               {
-                id: item.ques_id,
+                ques_id: item.ques_id,
               },
             ]);
             // console.log(item.ques_id);
@@ -55,6 +93,7 @@ export default function ExamForm() {
   };
   useEffect(() => {
     get_Question();
+    get_Exam();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -88,8 +127,38 @@ export default function ExamForm() {
     // }
     // console.log("inputFields", inputField);
     // console.log(inputField);
-    const aws = [{ code: stuCode }, { name: name }, ...inputField];
-    console.log(aws);
+    // const aws = [{ stu_code: stuCode }, { name: name }, ...inputField];
+    const aws = inputField
+    for(var j =0;j<aws.length;j++){
+      Object.assign(aws[j],{name:name},{stu_code:stuCode},{exam_id:exam_id})
+    }
+    
+    // console.log(aws);
+    // let MergeData =[]
+
+    // for(const [key,value] of Object.entries(aws)){
+    //   MergeData.push({
+    //     "ques_id":aws.ques_id,
+    //     "answer_stu":aws.answer_stu,
+    //     "stu_code":stuCode,
+    //     "name" : name,
+    //     [key]:value
+    //   })
+    // }
+    // console.log(MergeData);
+
+    // for (var n =0;n<aws.length;n++){
+      await API_URL.post(`api/reply`, aws)
+      .then((res) => {
+        // return res.data
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // }
+    
+    
   };
 
   return (
@@ -125,9 +194,10 @@ export default function ExamForm() {
         <Box sx={{ my: 2 }}>
           <form className="w-full sm:mt-10" onSubmit={handleSubmit}>
             <div>
-              <p className="text-2xl">ฐานข้อมูล บทที่ 1</p>
+              <p className="text-2xl">{exam_name ? exam_name : <>...</>}</p>
               <p className="text-base mt-2">
-                เวลาสอบ 10/12/2563 11:00 ถึง 10/12/2563 13:50
+                เวลาสอบ {date_pre ? date_pre : <>...</>} ถึง{" "}
+                {date_post ? date_post : <>...</>}
               </p>
             </div>
 
@@ -139,8 +209,8 @@ export default function ExamForm() {
                   </label>
                   <input
                     className="bg-white appearance-none border-2 border-gray-200 rounded-lg w-100  py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-600"
-                    min="111111111"
-                    max="999999999"
+                    // min="111111111"
+                    // max="999999999"
                     type="number"
                     placeholder="รหัสนักศึกษา"
                     value={stuCode}
