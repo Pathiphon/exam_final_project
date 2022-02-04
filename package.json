@@ -15,6 +15,7 @@
     "@testing-library/user-event": "^13.2.1",
     "axios": "^0.25.0",
     "bulma": "^0.9.3",
+    "date-fns": "^2.28.0",
     "dayjs": "^1.10.7",
     "error-ex": "github:Qix-/node-error-ex",
     "react": "^17.0.2",
