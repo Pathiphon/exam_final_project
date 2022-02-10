@@ -35,6 +35,7 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
     await API_URL.get(`api/question/${exam_id}/all`)
       .then((res) => {
         const data = res.data;
+        console.log(data);
         setAll_question(data.question);
       })
       .catch((err) => {
@@ -129,19 +130,19 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
               alignItems="center"
             >
               <ArticleIcon sx={{ m: 1 }} />
-              <Typography component="div" variant="p" sx={{ m: 1 }}>
-                จำนวนข้อ :
-              </Typography>
+              <p className="text-lg m-1">
+                จำนวนข้อ : {All_question.length}
+              </p>
               <Typography
                 sx={{
                   bgcolor: "#DDF4E1",
                   color: "text.primary",
                   borderRadius: "16px",
                   m: 1,
-                  p: 1,
+                  p: 2,
                 }}
               >
-                จำนวนข้อ :
+                ทั้งหมด 0000 คะแนน
               </Typography>
               <Typography component="div" variant="h5" sx={{ m: 1 }}>
                 |
@@ -170,15 +171,27 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
                       <Typography component="div" variant="h6">
                         ข้อ {index + 1}. {All_questions.question}
                       </Typography>
-                      <Divider sx={{ m: 1 }} />
+                      <Divider sx={{ my: 1, borderBottomWidth: 1, backgroundColor: "#000000" }} />
                       <Typography variant="subtitle1" component="div">
-                        จำนวนเฉลย
+                        จำนวนเฉลย( {All_questions.answers.length} ) <Button
+                      sx={{ whiteSpace: "nowrap", ml: 1 }}
+                      variant="outlined"
+                      color="secondary"
+                      startIcon={<AssignmentTurnedInIcon />}
+                      onClick={() => handleClickAns(All_questions.ques_id)}
+                    >
+                       เพิ่ม / แก้ไขเฉลย
+                    </Button>
                       </Typography>
                     </CardContent>
                   </Box>
                 </Grid>
                 <Grid item>
-                  <Box sx={{ display: "flex" }}>
+                  <div className="flex-col">
+                    <div className="bg-green-50 rounded-md grid  justify-items-center">
+                      <p className="p-1 text-base text-black ">เต็ม {All_questions.full_score} คะแนน</p>
+                    </div>
+                    <div className="flex mt-3">
                     <Button
                       sx={{ whiteSpace: "nowrap" }}
                       variant="outlined"
@@ -188,15 +201,7 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
                     >
                       แก้ไขคำถาม
                     </Button>
-                    <Button
-                      sx={{ whiteSpace: "nowrap", ml: 1 }}
-                      variant="outlined"
-                      color="secondary"
-                      startIcon={<AssignmentTurnedInIcon />}
-                      onClick={() => handleClickAns(All_questions.ques_id)}
-                    >
-                      แก้ไขเฉลย
-                    </Button>
+                    
                     <Button
                       sx={{ ml: 1 }}
                       variant="outlined"
@@ -211,7 +216,8 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
                     >
                       ลบ
                     </Button>
-                  </Box>
+                    </div>
+                  </div>
                 </Grid>
               </Card>
             </Grid>

@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect } from "react";
+import useState from "react-usestateref";
+import { useParams, useNavigate, Route, Routes } from "react-router-dom";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import Swal from "sweetalert2";
 import dayjs from "dayjs";
 import { add } from "date-fns";
 import API_URL from "../../config/api";
 import { useTicker } from "./useTicker";
+import ExamForm_Finish from "./ExamForm_Finish";
 import {
   AppBar,
   Toolbar,
@@ -30,11 +32,12 @@ export default function ExamForm() {
   const [exam_name, setExam_name] = useState(null);
   const [date_pre, setDate_pre] = useState("");
   const [date_post, setDate_post] = useState("");
-  const [inputField, setInputField] = useState([]);
+  const [inputField, setInputField] = React.useState([]);
   const [stuCode, setStuCode] = useState("");
   const [name, setName] = useState("");
-  const [check_start, setCheck_start] = useState("");
-  const [check_end,setCheck_end] =useState("");
+  var [check_start, setCheck_start, check_startRef] = useState(null);
+  var [check_end, setCheck_end, check_endRef] = useState(null);
+  let navigate = useNavigate();
 
   var buddhistEra = require("dayjs/plugin/buddhistEra");
   dayjs.extend(buddhistEra);
@@ -73,12 +76,13 @@ export default function ExamForm() {
         setDate_pre(dayjs(data.date_pre).format("DD/MM/BBBB HH:mm"));
         setDate_post(dayjs(data.date_post).format("DD/MM/BBBB HH:mm"));
         const date1 = dayjs(data.date_pre);
-        let date2 = dayjs();
+        const date2 = dayjs();
         const date3 = dayjs(data.date_post);
+        const start = date2.diff(date1, "m", true);
 
-        setCheck_start(date2.diff(date1, "m", true));
-        setCheck_end(date3.diff(date2,"m",true));
-        console.log(check_end,date2,check_start);
+        setCheck_start(start);
+        setCheck_end(date3.diff(date2, "m", true));
+        console.log(check_startRef.current, check_endRef.current);
         var day_diff = date3.diff(date2, "day", true);
         var day = Math.floor(day_diff);
         var hour = Math.floor((day_diff - day) * 24);
@@ -120,15 +124,40 @@ export default function ExamForm() {
       });
   };
   useEffect(() => {
-    if (isTimeUp) {
-      alert("หมดเวลา");
-    }
     get_Exam();
-    get_Question();
-  }, []);
+    console.log(All_question);
+    if (All_question === null) {
+      get_Question();
+    }
+    if (isTimeUp) {
+      let timerInterval;
+      Swal.fire({
+        title: "หมดเวลาสอบ!",
+        html: "กำลังส่งคำตอบของคุณ.",
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+          const b = Swal.getHtmlContainer().querySelector("b");
+          timerInterval = setInterval(() => {
+            b.textContent = Swal.getTimerLeft();
+          }, 100);
+        },
+        willClose: () => {
+          clearInterval(timerInterval);
+        },
+      }).then(() => {
+        if (stuCode.length === 9) {
+          CreateReply();
+        } else {
+          navigate("/ExamForm_Finish", { state: { name: exam_name } });
+          window.location.reload();
+        }
+      });
+    }
+  }, [isTimeUp]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const CreateReply = async () => {
     const aws = inputField;
     for (var j = 0; j < aws.length; j++) {
       Object.assign(
@@ -138,16 +167,35 @@ export default function ExamForm() {
         { exam_id: exam_id }
       );
     }
-    console.log(inputField);
     console.log(aws);
     await API_URL.post(`api/reply`, aws)
       .then((res) => {
         console.log(res.data);
+        setAll_question(null);
+        setInputField("");
+        setName("");
+        setStuCode("");
+        navigate("/ExamForm_Finish", { state: { name: exam_name } });
+        window.location.reload();
       })
       .catch((err) => {
         console.log(err);
       });
-    // }
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    Swal.fire({
+      title: "ยืนยันที่จะส่งคำตอบ",
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ส่งคำตอบ",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        CreateReply();
+      }
+    });
   };
 
   return (
@@ -161,7 +209,7 @@ export default function ExamForm() {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <AssignmentIcon className="mr-2" />
-            <Typography variant="h6">ฟอร์มสอบ</Typography>
+            <Typography variant="h6" className="text-white">ฟอร์มสอบ</Typography>
           </div>
           {check_start > 0 ? (
             <div className="md:flex md:items-center ">
@@ -195,7 +243,7 @@ export default function ExamForm() {
                 {dayjs(date_post).format("HH:mm")}
               </p>
             </div>
-          ) :check_start>0&&check_end>0? (
+          ) : check_start > 0 && check_end > 0 ? (
             <form className="w-full sm:mt-10" onSubmit={handleSubmit}>
               <div>
                 <p className="text-2xl">{exam_name ? exam_name : <>...</>}</p>
@@ -213,8 +261,8 @@ export default function ExamForm() {
                     </label>
                     <input
                       className="bg-white appearance-none border-2 border-gray-200 rounded-lg w-100  py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-600"
-                      // min="111111111"
-                      // max="999999999"
+                      min="111111111"
+                      max="999999999"
                       type="number"
                       placeholder="รหัสนักศึกษา"
                       value={stuCode}
@@ -243,7 +291,7 @@ export default function ExamForm() {
               <Divider
                 sx={{ my: 2, borderBottomWidth: 5, backgroundColor: "#000000" }}
               />
-              {All_question &&
+              {All_question &&stuCode.length === 9 &&
                 All_question.map((All_questions, index) => (
                   <div
                     key={All_questions.ques_id}
@@ -260,7 +308,7 @@ export default function ExamForm() {
                         <TextareaAutosize
                           id={`${All_questions.ques_id}`}
                           name="answer_stu"
-                          value={inputField[All_questions.ques_id]}
+                          // value={inputField[All_questions.ques_id]}
                           onChange={(e) => {
                             handleChangeInput(All_questions.ques_id, e);
                           }}
@@ -270,30 +318,26 @@ export default function ExamForm() {
                     </div>
                   </div>
                 ))}
-              <div className="flex items-center justify-around mt-6">
-                <button
-                  className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-20 rounded-lg focus:outline-none focus:shadow-outline"
-                  type="submit"
-                >
-                  ส่งคำตอบ
-                </button>
-              </div>
+              {stuCode.length === 9 ? (
+                <div className="flex items-center justify-around mt-6">
+                  <button
+                    className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-20 rounded-lg focus:outline-none focus:shadow-outline"
+                    type="submit"
+                  >
+                    ส่งคำตอบ
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <p className="text-2xl text-orange-700">
+                    ป้อนรหัสนักศึกษาก่อนทำข้อสอบ
+                  </p>
+                </>
+              )}
             </form>
-          ):isTimeUp?(
-            <div className="bg-gray-200 px-8 py-3  rounded-xl mt-4">
-            <p className="text-3xl m-4">{exam_name}</p>
-            <p className="text-2xl m-3">
-              ส่งคำตอบของคุณเรียบร้อยแล้ว............................
-            </p>
-            <button
-              className="bg-zinc-800 hover:bg-zinc-600 text-white font-bold py-3 px-8 rounded-lg m-4 focus:outline-none focus:shadow-outline"
-              type="submit"
-            >
-              ส่งคำตอบเพิ่มเติม
-            </button>
-          </div> 
-          ):(<></>)}
-       
+          ) : (
+            <></>
+          )}
         </Box>
       </Container>
     </div>

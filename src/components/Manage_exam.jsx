@@ -24,15 +24,17 @@ import EditIcon from "@mui/icons-material/Edit";
 import SearchIcon from "@mui/icons-material/Search";
 import ShareIcon from "@mui/icons-material/Share";
 import API_URL from "../config/api";
+import { getCurrentUser } from "../services/auth.service";
 
 export default function Manage_exam() {
-  const [exam, setExam] = useState(null);
+  const [exam, setExam] = useState([]);
+  const [exam_id,setExam_id] =useState(null);
   const [erroorMessage, setErrorMessage] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [ques_id, setQues_id] = useState(null);
   const [activeModalExamForm, setActiveModalExamForm] = useState(false);
   const [id, setId] = useState(null);
-  const [token] = useState(localStorage.getItem("awesomeLeadsToken"));
+  const [token] = useState(getCurrentUser());
 
   let navigate = useNavigate();
 
@@ -75,7 +77,7 @@ export default function Manage_exam() {
   }));
 
   const get_Exam = async () => {
-    await API_URL.get(`api/exam/1/all`)
+    await API_URL.get(`api/exam/${ token && token.user.id}/all`)
       .then((res) => {
         setExam(res.data);
         return res.data;
@@ -87,6 +89,7 @@ export default function Manage_exam() {
 
   useEffect(() => {
     get_Exam();
+
   }, [token]);
 
   const handleUpdate = async (id) => {
@@ -94,14 +97,21 @@ export default function Manage_exam() {
     navigate("/Create_exam", { state: { id: id } });
   };
 
+  const handleModalShare = (exam_id)=>{
+      setExam_id(exam_id)
+      setActiveModalExamForm(true)
+  }
+
   return (
     <div className="container ml-4">
       <ShareExam_Modal
             active={activeModalExamForm}
             handleModalExamForm={handleModalExamForm}
-            exam_id={ques_id}
+            exam_id={exam_id}
           />
-      <Toolbar />
+      
+      {exam.length !==0  ? (
+        <>
       <div className="flex  justify-center items-center">
         <div className="flex-auto w-70 ">
           
@@ -126,7 +136,7 @@ export default function Manage_exam() {
           </Link>
         </div>
       </div>
-      {exam !== null ? (
+      
         <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
           {exam.map((exams, index) => (
             <Card sx={{ display: "flex", borderRadius: 5, mb: 2 }} key={index}>
@@ -154,21 +164,19 @@ export default function Manage_exam() {
                       variant="subtitle1"
                       flexGrow={0.3}
                     >
-                      จำนวนข้อ :
+                     <p className="text-lg"> จำนวนข้อ : {exams.question.length}</p>
                     </Typography>
-                    <Typography component="div" variant="subtitle1">
-                      คะแนนเต็ม :
-                    </Typography>
+                  
                   </Box>
                   <Typography
                     variant="subtitle1"
-                    color="text.secondary"
+                    
                     sx={{ display: "flex" }}
                     component="div"
                     className="mb-1"
                   >
                     ระยะเวลาทำข้อสอบ :{" "}
-                    {dayjs(exams.date_pre).format("DD/MM/YYYY HH:mm")} -{" "}
+                    {dayjs(exams.date_pre).format("DD/MM/YYYY HH:mm")} --{" "}
                     {dayjs(exams.date_post).format("DD/MM/YYYY HH:mm")}
                   </Typography>
                 </CardContent>
@@ -191,7 +199,7 @@ export default function Manage_exam() {
                 <Button
                   variant="contained"
                   startIcon={<ShareIcon />}
-                  onClick={() => setActiveModalExamForm(true)}
+                  onClick={() =>handleModalShare(exams.exam_id) }
                 >
                   ส่งลิงค์ข้อสอบ
                 </Button>
@@ -199,6 +207,7 @@ export default function Manage_exam() {
             </Card>
           ))}
         </Box>
+        </>
       ) : (
         <div className="text-center m-52">
           <Divider className="w-100">

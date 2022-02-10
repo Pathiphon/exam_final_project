@@ -15,6 +15,7 @@ import Box from "@mui/material/Box";
 import SubtitlesIcon from "@mui/icons-material/Subtitles";
 import ErrorMessage from "./ErrorMessage";
 import API_URL from "../config/api";
+import { getCurrentUser } from "../services/auth.service";
 
 export default function ExamModal({
   active,
@@ -29,6 +30,7 @@ export default function ExamModal({
   const [time_pre, setTime_pre] = useState("");
   const [date_post, setDate_post] = useState("");
   const [time_post, setTime_post] = useState("");
+  const [token] = useState(getCurrentUser());
 
   const cleanFormData = () => {
     setName("");
@@ -43,7 +45,7 @@ export default function ExamModal({
       name: name,
       date_pre: date_pre + " " + time_pre,
       date_post: date_post + " " + time_post,
-      id: 1,
+      id: token.user.id,
     })
       .then((res) => {
         Id_toperent(res.data.exam_id);

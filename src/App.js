@@ -2,15 +2,16 @@ import Register from './components/Register'
 import Header from './components/Header';
 import Login from './components/Login'
 import 'bulma/css/bulma.min.css';
+import './App.css'
 import { AppBar, Toolbar, Typography, Button, Container, Box, CssBaseline, Grid } from '@mui/material';
 import index_img from "./img/index.png";
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import React, {  useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const App = () => {
-  const [token, setToken] = useState(localStorage.getItem("awesomeLeadsToken"))
+  const [token] = useState(localStorage.getItem("awesomeLeadsToken"))
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
@@ -23,8 +24,8 @@ const App = () => {
     <div >
       {!token ? (
         <>
-          <Toolbar/>
-          <Toolbar/>
+          <Toolbar />
+          <Toolbar />
           <Box sx={{ flexGrow: 1 }}>
             <CssBaseline />
             <AppBar style={{ background: 'white' }}>
@@ -35,25 +36,27 @@ const App = () => {
                   </Typography>
                 </Link>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                  News
+
                 </Typography>
                 <Button size="large" className="mr-4">เกี่ยวกับเรา</Button>
-                <Button variant="contained" size="large" endIcon={<ArrowForwardIosIcon />} style={{ fontSize: '15px' }} sx={{
-                  backgroundColor: "#000000", ':hover': {
-                    bgcolor: '#000033'
+                <Link to="./Register">
+                  <Button variant="contained" size="large" endIcon={<ArrowForwardIosIcon />} style={{ fontSize: '15px' }} sx={{
+                    backgroundColor: "#000000", ':hover': {
+                      bgcolor: '#000033'
 
-                  }, borderRadius: '30px'
-                }}>
-                  ลงทะเบียน
-                </Button>
+                    }, borderRadius: '30px'
+                  }}>
+                    ลงทะเบียน
+                  </Button>
+                </Link>
               </Toolbar>
 
             </AppBar>
           </Box>
 
-          <Container>
+          <Container maxWidth="lg">
             <div sx={{ width: '100%' }} style={{ backgroundColor: "#DBDEFF", borderRadius: '10px' }}>
-              
+
               <Grid container spacing={2} sx={{ padding: '70px' }} >
                 {pathname === "/" ? (
                   <Grid item xs={6} md={8}>
@@ -118,7 +121,7 @@ const App = () => {
       ) : (
         <Header />
       )}
-    
+
 
     </div>
 

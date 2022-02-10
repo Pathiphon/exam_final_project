@@ -1,16 +1,14 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, {  useState, useEffect } from "react";
 import {
   Routes,
   Route,
   Link,
-  useNavigate,
-  useParams,
   useLocation,
 } from "react-router-dom";
-import Button from "@mui/material/Button";
 import Manage_exam from "./Manage_exam";
 import Create_exam from "./Create_exam";
 import Profile from './Profile'
+import Reply_Exam from './Reply/Reply_Exam'
 
 import { Box, Container,Avatar } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
@@ -23,9 +21,6 @@ import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import FaceIcon from "@mui/icons-material/Face";
-import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
-import DataUsageIcon from "@mui/icons-material/DataUsage";
 import DescriptionIcon from "@mui/icons-material/Description";
 import FindInPageIcon from "@mui/icons-material/FindInPage";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
@@ -56,7 +51,7 @@ const Header = () => {
       case "/":
         setBarname("จัดการข้อสอบ");
         break;
-      case "/Check_exam":
+      case "/Reply":
         setBarname("ตรวจข้อสอบ");
         break;
       case "/Report":
@@ -70,7 +65,7 @@ const Header = () => {
 
   return (
     <>
-      <div>
+      <div >
         {token && (
           <Box sx={{ display: "flex" }}>
             {pathname !== "/Create_exam" ? (
@@ -109,13 +104,13 @@ const Header = () => {
                   variant="permanent"
                   anchor="left"
                 >
-                  <h4 className="mx-auto pt-3">ระบบตรวจข้อสอบ</h4>
-                  <Toolbar />
+                  <p className="mx-auto pt-3 text-white text-2xl">ระบบตรวจข้อสอบ</p>
+                  
                   <Avatar src="/broken-image.jpg" className="mx-auto " sx={{ width: 56, height: 56 }} />
-                  <h6 className="mx-auto pt-3">
+                  <p className="mx-auto pt-3 text-white text-base">
                     {token && token.user.username}
-                  </h6>
-                  <Divider className="mt-5" />
+                  </p>
+                  <Divider className="mt-3" />
                   <List>
                     <Link className="textDec" to="/">
                       <ListItem button>
@@ -125,7 +120,7 @@ const Header = () => {
                         <ListItemText primary="จัดการข้อสอบ" />
                       </ListItem>
                     </Link>
-                    <Link className="textDec" to="/Check_exam">
+                    <Link className="textDec" to="/Reply">
                       <ListItem button>
                         <ListItemIcon>
                           <FindInPageIcon className="icon_nav" />
@@ -173,9 +168,11 @@ const Header = () => {
                 <Toolbar />
                 <Container>
                   <Box component="main" sx={{ p: 4 }}>
+                  <Toolbar />
                     <Routes>
                       <Route path="/" element={<Manage_exam />} />
                       <Route path="/Profile" element={<Profile />} />
+                      <Route path="/Reply" element={<Reply_Exam />} />
                     </Routes>
                   </Box>
                 </Container>

@@ -1,28 +1,27 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import Manage_exam_full from "../img/manage_exam_full.png";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ExamModal from "./ExamModal";
-import QModal from "./QModal";
 import dayjs from "dayjs";
 import Table_Ques from "./Table_Ques";
 
-import Button from "@mui/material/Button";
-import { Box, Drawer, TextField, Grid } from "@mui/material";
-import CardContent from "@mui/material/CardContent";
-import CssBaseline from "@mui/material/CssBaseline";
-import AppBar from "@mui/material/AppBar";
-import CardMedia from "@mui/material/CardMedia";
-import Toolbar from "@mui/material/Toolbar";
+import {
+  Box,
+  Card,
+  CardContent,
+  CssBaseline,
+  CardMedia,
+  Toolbar,
+  Typography,
+  Button,
+  Divider,
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import Divider from "@mui/material/Divider";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-
 
 import API_URL from "../config/api";
 
-export default function Create_exam({ data }) {
+export default function Create_exam() {
   const [activeModal, setActiveModal] = useState(false);
   const [activeModalQ, setActiveModalQ] = useState(false);
   const [name, setName] = useState("");
@@ -33,7 +32,6 @@ export default function Create_exam({ data }) {
   const [exam, setExam] = useState(null);
   const [id, setId] = useState(null);
   const [ques_id, setQues_id] = useState(null);
-  
 
   const location = useLocation();
 
@@ -61,7 +59,7 @@ export default function Create_exam({ data }) {
     if (location.state !== null) {
       setId(location.state.id);
     }
-  }, [id,handleModal]);
+  }, [id, handleModal]);
 
   const get_Exam = async () => {
     await API_URL.get(`api/exam/${id}`)
@@ -75,7 +73,6 @@ export default function Create_exam({ data }) {
         console.log(err);
       });
   };
-  
 
   const get_modal_create_exam = () => {
     setActiveModalQ(!activeModalQ);
@@ -92,26 +89,22 @@ export default function Create_exam({ data }) {
       />
       <Box>
         <CssBaseline />
-          <div
-            className="shadow-md"
-            style={{ background: "white" }}
-          >
-            <Toolbar>
-              <Button
-                variant="outlined"
-                size="large"
-                startIcon={<ArrowBackIosIcon />}
-                style={{ fontSize: "18px" }}
-                onClick={handleClick}
-              >
-                {" "}
-                จัดการข้อสอบ
-              </Button>
-            </Toolbar>
-          </div>
+        <div className="shadow-md" style={{ background: "white" }}>
+          <Toolbar>
+            <Button
+              variant="outlined"
+              size="large"
+              startIcon={<ArrowBackIosIcon />}
+              style={{ fontSize: "18px" }}
+              onClick={handleClick}
+            >
+              {" "}
+              จัดการข้อสอบ
+            </Button>
+          </Toolbar>
+        </div>
       </Box>
       <Box className="container" sx={{ flexGrow: 1, p: 2 }}>
-
         <Card sx={{ display: "flex", borderRadius: 5 }}>
           <CardMedia
             component="img"
@@ -169,7 +162,6 @@ export default function Create_exam({ data }) {
       <Box className="container">
         <Divider variant="middle" />
 
-        
         <Table_Ques
           exam_id={id}
           get_modal_create_exam={get_modal_create_exam}

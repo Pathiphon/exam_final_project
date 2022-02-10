@@ -1,18 +1,31 @@
 @import url('https://fonts.googleapis.com/css?family=Itim');
 
 html {
-  background-color: #F8F8F8;
+  background-color: #fafafa;
 } 
 main{
-  background-color: #F8F8F8;
+  background-color: #fafafa;
 }
 body {
-  background-color: #F8F8F8;
+  background-color: #fafafa;
 } 
 #root{
-  background-color: #F8F8F8;
+  background-color: #fafafa;
 }
-
+#main{
+  background-color: #fafafa;
+}
+/* .ant-table-cell{
+  padding: 0 !important;
+} */
+.ant-table{
+  @apply border-2 rounded-xl !important;
+}
+/* .header_table{
+  @apply bg-gray-900 text-white p-3
+}
+thead[className*="ant-table-cell"] th{
+} */
 .icon_nav{
   color: white;
 }

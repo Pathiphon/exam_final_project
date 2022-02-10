@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AnsModal from "./AnsModal";
-import { Box, TextField, Typography, Divider, Button } from "@mui/material";
+import { Box, TextField, Typography,FormControl,IconButton  , Divider, Button } from "@mui/material";
 import DataUsageIcon from "@mui/icons-material/DataUsage";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -12,7 +12,7 @@ import PercentIcon from "@mui/icons-material/Percent";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import API_URL from "../config/api";
 import Swal from "sweetalert2";
-import Toast from "./Toast/Toast.js"
+import Toast from "./Toast/Toast.js";
 
 export default function QModal({
   active,
@@ -21,7 +21,6 @@ export default function QModal({
   ques_id,
   setErrorMessage,
 }) {
-
   const [errorMessage] = useState("");
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
@@ -48,6 +47,7 @@ export default function QModal({
         const data = res.data;
         setPersent_checking(data.persent_checking);
         setQuestion(data.question);
+        setScore(data.full_score)
       })
       .catch((err) => {
         console.log(err);
@@ -56,6 +56,12 @@ export default function QModal({
 
   const handleCreateQuestion = async (e) => {
     e.preventDefault();
+    if(question.length===0&&persent_checking.length===0&&answer.length===0&&score.length===0){
+      Toast.fire({
+        icon: "error",
+        title: "ป้อนข้อมูลให้ครบถ้วน",
+      });
+    }else{
     await API_URL.post(`api/question/${exam_id}`, {
       question: question,
       persent_checking: persent_checking,
@@ -68,12 +74,13 @@ export default function QModal({
           icon: "success",
           title: "สร้างคำถามแล้ว",
         });
-        handleModalQ()
+        handleModalQ();
         return res.data;
       })
       .catch((err) => {
         console.log(err);
       });
+    }
   };
 
   const handleUpdateQuestion = async (e) => {
@@ -81,6 +88,7 @@ export default function QModal({
     await API_URL.put(`api/question/${ques_id}`, {
       question: question,
       persent_checking: persent_checking,
+      full_score:score,
     })
       .then((res) => {
         cleanFormData();
@@ -96,7 +104,6 @@ export default function QModal({
         setErrorMessage("Something went wrong when updating Exam");
       });
   };
-
 
   return (
     <div className={`modal ${active && "is-active"}`}>
@@ -114,34 +121,7 @@ export default function QModal({
         </header>
         <section className="modal-card-body">
           <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="subtitle2" className="mr-1">
-              หมายเหตุ:ป้อนเปอร์เซ็นต์การตรวจที่ต้องการตรงกับเฉลย
-            </Typography>
-            <TextField
-              className="mr-1"
-              autoComplete="off"
-              label="เปอร์เซ็นต์การตรวจ"
-              InputProps={{ inputProps: { min: 0, max: 500 } }}
-              type="number"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              sx={{ width: "25%" }}
-              size="small"
-              value={persent_checking || ""}
-              onChange={(e) => setPersent_checking(e.target.value)}
-              required
-            />
-            <PercentIcon />
-          </Box>
-          <Box
-            component="form"
+          component="form"
             sx={{
               "& .MuiTextField-root": { m: 1, width: "100%" },
             }}
@@ -168,34 +148,51 @@ export default function QModal({
             <Divider
               sx={{ m: 1, borderBottomWidth: 3, backgroundColor: "black" }}
             />
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <DataUsageIcon color="warning" />
+              <TextField
+                color="warning"
+                focused
+                label="คะแนน"
+                InputProps={{ inputProps: { min: 0, max: 500 } }}
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                size="small"
+                value={score || ""}
+                onChange={(e) => setScore(e.target.value)}
+                required
+              />
+              <TextField
+                className="mr-1"
+                autoComplete="off"
+                label="เปอร์เซ็นต์การตรวจ"
+                InputProps={{ inputProps: { min: 0, max: 100 } }}
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                sx={{ width: "25%" }}
+                size="small"
+                value={persent_checking || ""}
+                onChange={(e) => setPersent_checking(e.target.value)}
+                required
+              />
+              <PercentIcon />
+            </Box>
             {ques_id ? (
               <></>
             ) : (
               <>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                    width: "40%",
-                  }}
-                >
-                  <DataUsageIcon color="warning" />
-                  <TextField
-                    color="warning"
-                    focused
-                    label="คะแนน"
-                    InputProps={{ inputProps: { min: 0, max: 500 } }}
-                    type="number"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    size="small"
-                    value={score || ""}
-                    onChange={(e) => setScore(e.target.value)}
-                    required
-                  />
-                </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <AssignmentTurnedInIcon
                     sx={{ flexGrow: 0, color: "action.active" }}
@@ -220,6 +217,7 @@ export default function QModal({
         </section>
 
         <footer className="modal-card-foot">
+
           <div className="container mx-auto text-center">
             {ques_id ? (
               <Button
@@ -239,8 +237,8 @@ export default function QModal({
                 แก้ไข
               </Button>
             ) : (
-              <Button
-                type="submit"
+              <Button 
+                type="sub"
                 className="mr-4"
                 variant="contained"
                 onClick={handleCreateQuestion}
@@ -257,7 +255,7 @@ export default function QModal({
                 บันทึก
               </Button>
             )}
-            <Button
+            <Button 
               variant="outlined"
               color="error"
               sx={{ borderRadius: "7px" }}

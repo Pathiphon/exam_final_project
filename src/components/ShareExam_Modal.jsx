@@ -2,7 +2,7 @@ import React from "react";
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
-export default function ShareExam_Modal({active, handleModalExamForm, ques_id}) {
+export default function ShareExam_Modal({active, handleModalExamForm, exam_id}) {
   return (
     <div className={`modal ${active && "is-active"}`}>
       <div className="modal-background" onClick={handleModalExamForm}></div>
@@ -21,7 +21,7 @@ export default function ShareExam_Modal({active, handleModalExamForm, ques_id}) 
               <input
                 className=" appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
                 type="url"
-                value="/id/question"
+                value={`http://localhost:3000/ExamForm/${exam_id}`}
                 disabled
                 placeholder="LINK"
                 aria-label="LINK"
@@ -29,7 +29,7 @@ export default function ShareExam_Modal({active, handleModalExamForm, ques_id}) 
               <button
                 className="flex-shrink-0 bg-sky-700 hover:bg-sky-800 border-sky-700 hover:border-sky-800 text-sm border-4 text-white py-1 px-2 rounded"
                 type="button"
-                onClick={() => {navigator.clipboard.writeText("/id/question")}}
+                onClick={() => {navigator.clipboard.writeText(`http://localhost:3000/ExamForm/${exam_id}`)}}
               >
                   <ContentCopyIcon className="mr-2"/>
                 คัดลอก
