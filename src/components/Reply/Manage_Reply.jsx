@@ -56,7 +56,7 @@ const Manage_Reply = () => {
     {
       title:<div className="header_table">ข้อที่</div> ,
       dataIndex: 'question',
-      render:(question,index)=>(<p className="text-lg "  > {question}</p>)
+      render:(question,index)=>(<p className="text-base "  > {question}</p>)
       // render:(question)=>(<p className="text-lg " > {question}</p>)
     },
     // },
