@@ -9,6 +9,7 @@ import Manage_exam from "./Manage_exam";
 import Create_exam from "./Create_exam";
 import Profile from './Profile'
 import Reply_Exam from './Reply/Reply_Exam'
+import Report_Exam from "./Report/Report_Exam";
 
 import { Box, Container,Avatar } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
@@ -173,6 +174,7 @@ const Header = () => {
                       <Route path="/" element={<Manage_exam />} />
                       <Route path="/Profile" element={<Profile />} />
                       <Route path="/Reply" element={<Reply_Exam />} />
+                      <Route path="/Report" element={<Report_Exam />} />
                     </Routes>
                   </Box>
                 </Container>

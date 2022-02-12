@@ -107,7 +107,7 @@ const Manage_Reply_one = () => {
       title: "สถานะ",
       dataIndex: "check_status",
       key: "",
-      sorter: (a, b) => a.check_status - b.check_status,
+      sorter: (c, d) => c.check_status - d.check_status,
       // defaultSortOrder: "ascend",
       render: (check_status) => (
         <>

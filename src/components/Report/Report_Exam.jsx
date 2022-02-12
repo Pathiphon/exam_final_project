@@ -3,6 +3,7 @@ import useState from "react-usestateref";
 import { Link } from "react-router-dom";
 import { Table, Tag } from "antd";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import API_URL from "../../config/api";
 import { getCurrentUser } from "../../services/auth.service";
 import {
@@ -21,11 +22,10 @@ import {
   Toolbar,
 } from "@mui/material";
 
-function Reply_Exam() {
+export default function Report_Exam() {
   const [exam, setExam, examRef] = useState([]);
   const [token] = useState(getCurrentUser());
   const [exam_data, setExam_data] = useState([]);
-
   const get_Exam = async () => {
     await API_URL.get(`api/reply/${token && token.user.id}/all`)
       .then((res) => {
@@ -53,7 +53,7 @@ function Reply_Exam() {
 
   const columns = [
     {
-      title: <div className="header_table">แบบทดสอบ</div>,
+      title: <div className="header_table max-w-xs truncate">แบบทดสอบ</div>,
       dataIndex: "name",
       render: (name) => <p className="text-lg max-w-xs truncate">{name}</p>,
     },
@@ -63,7 +63,7 @@ function Reply_Exam() {
       sorter: (a, b) => a.question_num - b.question_num,
       align: "center",
       render: (question_num) => (
-        <div >
+        <div>
           <p className="text-base my-auto">{question_num}</p>
         </div>
       ),
@@ -73,37 +73,37 @@ function Reply_Exam() {
       dataIndex: "stu_num",
       align: "center",
     },
-    {
-      title: "จำนวนที่ต้องพิจารณา",
-      dataIndex: "check_num",
-      align: "center",
-      sorter: (a, b) => a.check_num - b.check_num,
-      render: (check_num) => (
-        <Tag key={check_num} color="volcano">
-          <p className="text-base my-auto">{check_num}</p>
-        </Tag>
-      ),
-    },
+   
     {
       title: "การจัดการ",
       dataIndex: "exam_id",
       key: "exam_id",
-      render: (exam_id,index) => (
-        <Link key={index} to={`/${exam_id}/Manage_Reply`}>
+      render: (exam_id, index) => (
+          <div>
+        <Link key={index} to={`/${exam_id}/Report_Exam_one`}>
           <Button
             variant="outlined"
             color="success"
-            size="large"
+
             startIcon={<ManageSearchIcon />}
             //   onClick={() => handleUpdate(exams.exam_id)}
           >
-            ตรวจ
+            ดูเพิ่มเติม
           </Button>
-        </Link>
+          </Link>
+          <Button
+            variant="outlined"
+            color="error"
+            className="mx-2"
+            startIcon={<DeleteForeverIcon />}
+            //   onClick={() => handleUpdate(exams.exam_id)}
+          >
+            ลบ
+          </Button>
+          </div>
       ),
     },
   ];
-
   return (
     <div className=" mx-3">
       <Table
@@ -115,5 +115,3 @@ function Reply_Exam() {
     </div>
   );
 }
-
-export default Reply_Exam;
