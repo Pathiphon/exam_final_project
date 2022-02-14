@@ -127,17 +127,17 @@ const Manage_Reply = () => {
             </Button>
           </div>
           <div className="md:flex  w-full md:w-3/6 justify-end">
-            <div className="flex-col mx-2 bg-gray-50 rounded-xl p-3 text-center">
+            <div className="flex-col mx-2  rounded-xl p-3 text-center shadow-md" style={{backgroundColor:"#F7DBA7"}}>
               <p className="text-md">จำนวนที่ต้องพิจารณา</p>
-              <p>{count_false}</p>
+              <p className="font-medium">{count_false}</p>
             </div>
-            <div className="flex-col mx-2 bg-gray-50 rounded-xl px-5 py-3 text-center">
+            <div className="flex-col mx-2  rounded-xl px-5 py-3 text-center shadow-md" style={{backgroundColor:"#F7DBA7"}}>
               <p className="text-md">คำถาม</p>
-              <p>{count_exam}</p>
+              <p className="font-medium">{count_exam}</p>
             </div>
-            <div className="flex-col mx-2 bg-gray-50 rounded-xl py-3 px-5 text-center">
+            <div className="flex-col mx-2  rounded-xl py-3 px-5 text-center shadow-md" style={{backgroundColor:"#F7DBA7"}}>
               <p className="text-md">ผู้เข้าสอบ</p>
-              <p>1</p>
+              <p className="font-medium">1</p>
             </div>
           </div>
         </div>

@@ -204,7 +204,7 @@ export default function ExamForm() {
 
       <AppBar
         style={{ background: "#2E303B" }}
-        sx={{ p: 1, justifyContent: "center" }}
+        sx={{ p: 0.5, justifyContent: "center" }}
       >
         <div className="flex justify-between items-center">
           <div className="flex items-center">
@@ -228,7 +228,7 @@ export default function ExamForm() {
         <Box sx={{ my: 2 }}>
           {check_start <= 0 ? (
             <div className="bg-gray-200 px-8 py-3 text-center rounded-xl mt-4">
-              <p className="bg-stone-50 p-2 rounded-md text-3xl m-3">
+              <p className="bg-stone-50 p-2 rounded-md text-3xl m-3 truncate w-full">
                 {exam_name}
               </p>
               <p className="text-xl m-2">

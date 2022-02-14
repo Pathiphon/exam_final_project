@@ -72,6 +72,8 @@ const Manage_Reply_one = () => {
       title: <div>ชื่อ - นามสกุล</div>,
       dataIndex: "name",
       key: "name",
+    
+      render: (name) => <p className="text-lg truncate max-w-name">{name}</p>,
     },
     {
       title: <div>คำตอบ</div>,
