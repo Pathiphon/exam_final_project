@@ -28,15 +28,21 @@ export default function Report_Exam() {
   const [exam_data, setExam_data] = useState([]);
   const get_Exam = async () => {
     await API_URL.get(`api/reply/${token && token.user.id}/all`)
-      .then((res) => {
+      .then( async(res) => {
         setExam(res.data);
         const data_table = examRef.current;
+        let stu_length = 0;
         console.log(data_table);
         for (var j = 0; j < data_table.length; j++) {
+          await API_URL.get(`api/student/${data_table[j].exam_id}`)
+          .then((stu)=>{
+              stu_length=stu.data.length;
+          })
           Object.assign(
             data_table[j],
             { question_num: data_table[j].question.length },
-            { check_num: data_table[j].replies.length }
+            { check_num: data_table[j].replies.length },
+            {stu_length:stu_length}
           );
         }
         setExam_data(data_table);
@@ -70,7 +76,7 @@ export default function Report_Exam() {
     },
     {
       title: "จำนวนผู้เข้าสอบ",
-      dataIndex: "stu_num",
+      dataIndex: "stu_length",
       align: "center",
     },
    

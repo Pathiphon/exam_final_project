@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import useState from "react-usestateref";
 import Toast from "../Toast/Toast.js";
 import { Checkbox, FormGroup, Divider, Button } from "@mui/material";
@@ -6,15 +6,22 @@ import API_URL from "../../config/api";
 import logo_stu from "../../img/logo_stu.png";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import PrintIcon from "@mui/icons-material/Print";
+import Report_Student from "./Report_Student.jsx";
+import { useReactToPrint } from "react-to-print";
 
 export default function Stu_report_Modal({
   active,
   handleModalReport,
   exam_id,
   stu_code,
+  exam,
 }) {
   const [students, setStudents] = useState([]);
   const [replies, setReplies] = useState([]);
+  let componentRef = useRef(null);
+  const handlePrint_stu = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
   useEffect(() => {
     get_Students();
@@ -68,14 +75,17 @@ export default function Stu_report_Modal({
             </div>
             <div className="flex-col justify-end ">
               <div className="bg-green-50 rounded-md p-3 h-10  mb-2 text-center">
-                <p className="text-base justify-end">ทั้งหมด {students.score_stu_full}/{students.score_full_ques} คะแนน</p>
+                <p className="text-base justify-end">
+                  ทั้งหมด {students.score_stu_full}/{students.score_full_ques}{" "}
+                  คะแนน
+                </p>
               </div>
 
               <Button
                 variant="outlined"
                 startIcon={<PrintIcon />}
                 className="w-36"
-                //   onClick={() => handleUpdate(exams.exam_id)}
+                onClick={handlePrint_stu}
               >
                 พิมพ์
               </Button>
@@ -102,11 +112,11 @@ export default function Stu_report_Modal({
                     key={reply.ques_id}
                   >
                     <div className="flex justify-between items-center">
-                      <div className="flex my-auto">
-                        <p className="text-base text-gray-500 mx-2 my-auto">
+                      <div className="flex my-auto w-11/12">
+                        <p className="text-base text-gray-500 mx-2 w-16 my-auto">
                           ข้อที่ {index + 1}.
                         </p>
-                        <p className="text-base my-auto">
+                        <p className="text-base my-auto max-w-xl">
                           {reply.question.question}
                         </p>
                       </div>
@@ -138,9 +148,15 @@ export default function Stu_report_Modal({
               <></>
             )}
           </div>
+          <div className="hidden">
+            <Report_Student
+              ref={componentRef}
+              exam={exam}
+              student={students}
+              reply={replies}
+            />
+          </div>
         </section>
-
-       
       </div>
     </div>
   );

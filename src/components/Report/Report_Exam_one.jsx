@@ -1,31 +1,36 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useRef  } from "react";
 import useState from "react-usestateref";
-import { Table, Tag } from "antd";
+import { Table } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { CssBaseline, Toolbar, Button, Divider, Tab, Box } from "@mui/material";
+import { CssBaseline, Toolbar, Button, Tab, Box } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import EditIcon from "@mui/icons-material/Edit";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import API_URL from "../../config/api";
 import Stu_report_Modal from "./Stu_report_Modal";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ArticleIcon from "@mui/icons-material/Article";
-import PersonIcon from "@mui/icons-material/Person";
+import Question_report_Modal from "./Question_report_Modal";
+import Report_Reply from "./Report_Reply";
+import { useReactToPrint  } from 'react-to-print';
+
 
 export default function Report_Exam_one() {
   const { exam_id } = useParams();
   const [exam, setExam, examRef] = useState([]);
-  const [exam_data, setExam_data] = useState([]);
-  const [count_false, setCount_false] = useState([]);
-  const [count_exam, setCount_exam] = useState([]);
   const [students, setStudents] = useState([]);
   const [stu_code, setStu_code] = useState(null);
   const [score_allstu, setScore_allstu] = useState(null);
+  const [stu_ques_id, setStu_ques_id] = useState(null);
   const [stu_exam_id, setStu_exam_id] = useState(null);
   const [activeModalReport, setActiveModalReport] = useState(false);
+  const [activeModalReport_ques, setActiveModalReport_ques] = useState(false);
   const [value, setValue] = useState("1");
   const [question, setQuestion] = useState(null);
+  let componentRef = useRef(null);
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+ 
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -40,6 +45,14 @@ export default function Report_Exam_one() {
     setActiveModalReport(!activeModalReport);
     setStu_code(null);
     setStu_exam_id(null);
+  };
+  const handleClickReport_ques = async (ques_id) => {
+    setStu_ques_id(ques_id.ques_id);
+    setActiveModalReport_ques(true);
+  };
+  const handleModalReport_ques = async () => {
+    setActiveModalReport_ques(!activeModalReport_ques);
+    setStu_ques_id(null);
   };
 
   let navigate = useNavigate();
@@ -89,7 +102,7 @@ export default function Report_Exam_one() {
           Object.assign(student[j], { score_stu_full: sum_score });
           sum_score = 0;
         }
-        console.log(sum_score_allStu);
+        console.log(student);
         setScore_allstu(sum_score_allStu);
         setStudents(student);
         return res.data;
@@ -199,15 +212,15 @@ export default function Report_Exam_one() {
     },
     {
       title: "การจัดการ",
-      dataIndex: "question",
-      key: "question",
+      dataIndex: "ques_id",
+      key: "ques_id",
       width: "20%",
-      render: (question) => (
+      render: (ques_id) => (
         <Button
           variant="outlined"
           color="success"
           size="large"
-          onClick={() => handleClickReport({ question })}
+          onClick={() => handleClickReport_ques({ ques_id })}
           startIcon={<ManageSearchIcon />}
         >
           ดูเพิ่มเติม
@@ -238,14 +251,16 @@ export default function Report_Exam_one() {
           <div className="flex-col items-center w-full md:w-3/6 justify-center text-center">
             <p className="text-xl truncate">{exam.name} </p>
             <div className="flex">
+              
               <Button
                 variant="outlined"
                 startIcon={<ArticleIcon />}
                 className="w-48 border-2 shadow-md"
-                //   onClick={() => handleUpdate(exams.exam_id)}
+                onClick={handlePrint}
               >
                 ดาวน์โหลดรายงาน
               </Button>
+           
               
             </div>
           </div>
@@ -301,42 +316,6 @@ export default function Report_Exam_one() {
           </div>
         </TabPanel>
         <TabPanel value="2">
-          {/* <div className="w-4/5 mx-auto">
-            {question ? (
-              question.map((questions, index) => (
-                <div
-                  key={index}
-                  className="shadow-sm bg-white rounded-md p-4 mb-3"
-                >
-                  <div className="flex my-auto items-center justify-between">
-                    <div className="flex my-auto items-center">
-                      <p>
-                        {index + 1}. {questions.question}
-                      </p>
-                      <p className="p-2 bg-green-50 ml-2 rounded-xl max-w-lg truncate">
-                        คะแนนเต็ม {questions.full_score}
-                      </p>
-                    </div>
-                    <div className="bg-orange-100 rounded-lg px-5 py-1 text-center">
-                      <PersonIcon />
-                      <p className="m-0">มี {questions.replies.length} คน</p>
-                    </div>
-                  </div>
-                  {questions.replies?questions.replies.map((reply,index)=>(
-                  <div className="my-2 bg-gray-50 rounded-md p-2 flex justify-between" key={index}>
-                    <div className="flex">
-                    <p className="flex-1 w-40 truncate my-auto ">{reply.student.name}</p>
-                    <p className="max-w-md truncate my-auto ml-5">{reply.answer_stu}</p>
-                    </div>
-                    <p className="max-w-md truncate my-auto ml-1 bg-green-100 rounded-md px-5">{reply.score_stu}คะแนน</p>
-                  </div>
-                  )):(<></>)}
-                </div>
-              ))
-            ) : (
-              <></>
-            )}
-          </div> */}
           <div className="w-11/12 mx-auto">
            <Table columns={columns_question} dataSource={question} rowKey="ques_id" />
            </div>
@@ -349,11 +328,24 @@ export default function Report_Exam_one() {
             handleModalReport={handleModalReport}
             exam_id={stu_exam_id}
             stu_code={stu_code}
+            exam={exam}
           />
         </>
       ) : (
         <></>
       )}
+      {activeModalReport_ques===true?(<>
+        <Question_report_Modal
+            active={activeModalReport_ques}
+            handleModalReport_ques={handleModalReport_ques}
+            exam_id={exam_id}
+            ques_id={stu_ques_id}
+          />
+      </>):(<></>)}
+       {/* {verPdf? <Report_Reply ref={componentRef} exam={exam}/>:null}  */}
+      <div className="hidden">
+      <Report_Reply ref={componentRef} exam={exam} student={students}/> 
+      </div>
     </div>
   );
 }
