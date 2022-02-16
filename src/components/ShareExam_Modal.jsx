@@ -1,10 +1,18 @@
 import React from "react";
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import Toast from './Toast/Toast.js'
 
 export default function ShareExam_Modal({active, handleModalExamForm, exam_id}) {
+  const copytoClipboard=()=>{
+    Toast.fire({
+      icon: "info",
+      title: "คัดลอกลิงค์ข้อสอบแล้ว",
+    });
+    navigator.clipboard.writeText(`http://localhost:3000/ExamForm/${exam_id}`)
+  }
   return (
-    <div className={`modal ${active && "is-active"}`}>
+    <div className={`modal ml-24 ${active && "is-active"}`}>
       <div className="modal-background" onClick={handleModalExamForm}></div>
       <div className="modal-card">
         <header className="modal-card-head ">     
@@ -16,7 +24,7 @@ export default function ShareExam_Modal({active, handleModalExamForm, exam_id}) 
           ></button>
         </header>
         <section className="modal-card-body w-full">
-          <div className="w-100 max-w-sm">
+          <div className="w-100 max-w-full">
             <div className="flex items-center border-b border-teal-500 py-2 w-100">
               <input
                 className=" appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
@@ -27,9 +35,9 @@ export default function ShareExam_Modal({active, handleModalExamForm, exam_id}) 
                 aria-label="LINK"
               />
               <button
-                className="flex-shrink-0 bg-sky-700 hover:bg-sky-800 border-sky-700 hover:border-sky-800 text-sm border-4 text-white py-1 px-2 rounded"
+                className="flex-shrink-0 bg-orange-400 hover:bg-orange-700 border-orange-400 hover:border-orange-700 text-sm border-4 text-white py-1 px-2 rounded"
                 type="button"
-                onClick={() => {navigator.clipboard.writeText(`http://localhost:3000/ExamForm/${exam_id}`)}}
+                onClick={copytoClipboard}
               >
                   <ContentCopyIcon className="mr-2"/>
                 คัดลอก

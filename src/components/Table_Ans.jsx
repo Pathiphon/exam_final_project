@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import Toast from "./Toast/Toast.js";
-
 import {
   Box,
   TextField,
@@ -15,19 +14,20 @@ import {
   TableHead,
   TableRow,
   Input,
-  Chip,
   Button,
-  FormControl,
-  IconButton,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import ErrorMessage from "./ErrorMessage";
 import EditIcon from "@mui/icons-material/Edit";
 import DataUsageIcon from "@mui/icons-material/DataUsage";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import API_URL from "../config/api";
 
-export default function Table_Ans({ active, ques_id, handleModalAns }) {
+export default function Table_Ans({
+  active,
+  ques_id,
+  handleModalAns,
+  full_score,
+}) {
   const [all_Answer, setAll_Answer] = useState([]);
   const [answer, setAnswer] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -37,7 +37,6 @@ export default function Table_Ans({ active, ques_id, handleModalAns }) {
     if (ques_id) {
       get_Answers();
     }
-
   }, [ques_id]);
 
   const get_Answers = async () => {
@@ -64,42 +63,53 @@ export default function Table_Ans({ active, ques_id, handleModalAns }) {
   };
 
   const createOrEditAnswer = async () => {
-    if (answer.ans_id) {
-      await API_URL.put(`api/answer/${answer.ans_id}`, {
-        answer: answer.answer,
-        score: answer.score,
-      })
-        .then((res) => {
-          get_Answers();
-          setAnswer({ id: 0, answer: "", score: "" });
-          Toast.fire({
-            icon: "success",
-            title: "แก้ไขเฉลยเสร็จสิ้น",
-          });
-          return res.data;
-        })
-        .catch((err) => {
-          console.log(err);
-          setErrorMessage("Something went wrong when updating Exam");
-        });
+    if (
+      answer.score > full_score ||
+      answer.score.length === 0 ||
+      answer.answer.length === 0
+    ) {
+      Toast.fire({
+        icon: "error",
+        title: "ป้อนข้อมูลให้ถูกต้องครบถ้วน",
+      });
     } else {
-      await API_URL.post(`api/answer`, {
-        answer: answer.answer,
-        score: answer.score,
-        ques_id: ques_id,
-      })
-        .then((res) => {
-          get_Answers();
-          setAnswer({ id: 0, answer: "", score: "" });
-          Toast.fire({
-            icon: "success",
-            title: "เพิ่มเฉลยเสร็จสิ้น",
-          });
-          return res.data;
+      if (answer.ans_id) {
+        await API_URL.put(`api/answer/${answer.ans_id}`, {
+          answer: answer.answer,
+          score: answer.score,
         })
-        .catch((err) => {
-          console.log(err);
-        });
+          .then((res) => {
+            get_Answers();
+            setAnswer({ id: 0, answer: "", score: "" });
+            Toast.fire({
+              icon: "success",
+              title: "แก้ไขเฉลยเสร็จสิ้น",
+            });
+            return res.data;
+          })
+          .catch((err) => {
+            console.log(err);
+            setErrorMessage("Something went wrong when updating Exam");
+          });
+      } else {
+        await API_URL.post(`api/answer`, {
+          answer: answer.answer,
+          score: answer.score,
+          ques_id: ques_id,
+        })
+          .then((res) => {
+            get_Answers();
+            setAnswer({ id: 0, answer: "", score: "" });
+            Toast.fire({
+              icon: "success",
+              title: "เพิ่มเฉลยเสร็จสิ้น",
+            });
+            return res.data;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     }
   };
 
@@ -158,10 +168,12 @@ export default function Table_Ans({ active, ques_id, handleModalAns }) {
               alignItems="center"
             >
               <Grid item>
-                <DataUsageIcon sx={{ color: "warning", mr: 1, my: 0.5 }} />
+                <DataUsageIcon
+                  color="warning"
+                  sx={{ color: "warning", mr: 1, my: 0.5 }}
+                />
               </Grid>
-              
-              <Grid item>
+              <Grid item className="flex">
                 <TextField
                   label="คะแนน"
                   type="number"
@@ -178,12 +190,11 @@ export default function Table_Ans({ active, ques_id, handleModalAns }) {
                   color="warning"
                   focused
                 />
+                <p className="w-52 my-auto text-sm">***เต็ม {full_score?full_score:''} คะแนน</p>
               </Grid>
             </Grid>
-            <div
-              className="flex w-full justify-center items-center"
-            >
-              <div className="flex-auto w-5/6" >
+            <div className="flex w-full justify-center items-center">
+              <div className="flex-auto w-5/6">
                 <Input type="hidden" value={answer ? answer.ans_id : ""} />
                 <div className="flex flex-wrap items-center w-full mb-3">
                   <div className="w-full flex-auto md:w-1/2 px-3">
@@ -203,27 +214,29 @@ export default function Table_Ans({ active, ques_id, handleModalAns }) {
                 </div>
               </div>
               <div className="flex-auto w-1/6">
-                {answer?(
-                !answer.ans_id ? (
-                  <Button
-                    color="success"
-                    variant="contained"
-                    startIcon={<AddCircleIcon />}
-                    onClick={() => createOrEditAnswer()}
-                  >
-                    เพิ่ม
-                  </Button>
+                {answer ? (
+                  !answer.ans_id ? (
+                    <Button
+                      color="success"
+                      variant="contained"
+                      startIcon={<AddCircleIcon />}
+                      onClick={() => createOrEditAnswer()}
+                    >
+                      เพิ่ม
+                    </Button>
+                  ) : (
+                    <Button
+                      color="warning"
+                      variant="contained"
+                      startIcon={<EditIcon />}
+                      onClick={() => createOrEditAnswer()}
+                    >
+                      แก้ไข
+                    </Button>
+                  )
                 ) : (
-                  <Button
-                    color="warning"
-                    variant="contained"
-                    startIcon={<EditIcon />}
-                    onClick={() => createOrEditAnswer()}
-                  >
-                    แก้ไข
-                  </Button>
-                )
-                ):""}
+                  ""
+                )}
               </div>
             </div>
             <Divider sx={{ m: 2 }} />
@@ -231,7 +244,7 @@ export default function Table_Ans({ active, ques_id, handleModalAns }) {
               <Table
                 sx={{
                   minWidth: 600,
-                  backgroundColor: "#EEEEEC",
+                  backgroundColor: "#F5F5F5",
                   borderRadius: "5px",
                 }}
                 aria-label="simple table"

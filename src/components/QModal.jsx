@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
 import AnsModal from "./AnsModal";
-import { Box, TextField, Typography,FormControl,IconButton  , Divider, Button } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Typography,
+  FormControl,
+  IconButton,
+  Divider,
+  Button,
+} from "@mui/material";
 import DataUsageIcon from "@mui/icons-material/DataUsage";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -21,10 +29,9 @@ export default function QModal({
   ques_id,
   setErrorMessage,
 }) {
-  const [errorMessage] = useState("");
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
-  const [score, setScore] = useState("");
+  const [score, setScore] = useState(0);
   const [persent_checking, setPersent_checking] = useState(80);
 
   const cleanFormData = () => {
@@ -47,7 +54,7 @@ export default function QModal({
         const data = res.data;
         setPersent_checking(data.persent_checking);
         setQuestion(data.question);
-        setScore(data.full_score)
+        setScore(data.full_score);
       })
       .catch((err) => {
         console.log(err);
@@ -56,53 +63,71 @@ export default function QModal({
 
   const handleCreateQuestion = async (e) => {
     e.preventDefault();
-    if(question.length===0&&persent_checking.length===0&&answer.length===0&&score.length===0){
+    if (
+      question.length === 0 ||
+      persent_checking.length === 0 ||
+      answer.length === 0 ||
+      score.length === 0 ||persent_checking>100||persent_checking<0
+     
+    ) {
       Toast.fire({
         icon: "error",
-        title: "ป้อนข้อมูลให้ครบถ้วน",
+        title: "ป้อนข้อมูลให้ถูกต้องครบถ้วน",
       });
-    }else{
-    await API_URL.post(`api/question/${exam_id}`, {
-      question: question,
-      persent_checking: persent_checking,
-      answer: answer,
-      score: score,
-    })
-      .then((res) => {
-        cleanFormData();
-        Toast.fire({
-          icon: "success",
-          title: "สร้างคำถามแล้ว",
-        });
-        handleModalQ();
-        return res.data;
+    } else {
+      await API_URL.post(`api/question/${exam_id}`, {
+        question: question,
+        persent_checking: persent_checking,
+        answer: answer,
+        score: score,
       })
-      .catch((err) => {
-        console.log(err);
-      });
+        .then((res) => {
+          cleanFormData();
+          Toast.fire({
+            icon: "success",
+            title: "สร้างคำถามแล้ว",
+          });
+          handleModalQ();
+          return res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
   const handleUpdateQuestion = async (e) => {
     e.preventDefault();
-    await API_URL.put(`api/question/${ques_id}`, {
-      question: question,
-      persent_checking: persent_checking,
-      full_score:score,
-    })
-      .then((res) => {
-        cleanFormData();
-        Toast.fire({
-          icon: "success",
-          title: "แก้ไขคำถามแล้ว",
-        });
-        handleModalQ();
-        return res.data;
-      })
-      .catch((err) => {
-        console.log(err);
-        setErrorMessage("Something went wrong when updating Exam");
+    if (
+      question.length === 0 ||
+      score.length === 0 ||
+      persent_checking > 100 ||
+      persent_checking < 0 || persent_checking.length === 0 
+    ) {
+      Toast.fire({
+        icon: "error",
+        title: "ป้อนข้อมูลให้ถูกต้องครบถ้วน",
       });
+    } else {
+      await API_URL.put(`api/question/${ques_id}`, {
+        question: question,
+        persent_checking: persent_checking,
+        full_score: score,
+      })
+        .then((res) => {
+          cleanFormData();
+          Toast.fire({
+            icon: "success",
+            title: "แก้ไขคำถามแล้ว",
+          });
+          handleModalQ();
+          return res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+          setErrorMessage("Something went wrong when updating Exam");
+        });
+    }
   };
 
   return (
@@ -121,7 +146,7 @@ export default function QModal({
         </header>
         <section className="modal-card-body">
           <Box
-          component="form"
+            component="form"
             sx={{
               "& .MuiTextField-root": { m: 1, width: "100%" },
             }}
@@ -168,7 +193,7 @@ export default function QModal({
                   shrink: true,
                 }}
                 size="small"
-                value={score || ""}
+                value={score || ''}
                 onChange={(e) => setScore(e.target.value)}
                 required
               />
@@ -183,7 +208,7 @@ export default function QModal({
                 }}
                 sx={{ width: "25%" }}
                 size="small"
-                value={persent_checking || ""}
+                value={persent_checking || ''}
                 onChange={(e) => setPersent_checking(e.target.value)}
                 required
               />
@@ -217,7 +242,6 @@ export default function QModal({
         </section>
 
         <footer className="modal-card-foot">
-
           <div className="container mx-auto text-center">
             {ques_id ? (
               <Button
@@ -237,7 +261,7 @@ export default function QModal({
                 แก้ไข
               </Button>
             ) : (
-              <Button 
+              <Button
                 type="sub"
                 className="mr-4"
                 variant="contained"
@@ -255,7 +279,7 @@ export default function QModal({
                 บันทึก
               </Button>
             )}
-            <Button 
+            <Button
               variant="outlined"
               color="error"
               sx={{ borderRadius: "7px" }}

@@ -22,7 +22,7 @@ const Manage_Reply_one = () => {
 
   function handleClick_Back() {
     navigate(`/${exam_id}/Manage_Reply`);
-    window.location.reload();
+    
   }
   const handleClickStu = async (stu) => {
     setStu_code(stu.stu.stu_code);
@@ -170,14 +170,6 @@ const Manage_Reply_one = () => {
 
       return (
         <div>
-          {/* <div style={{ marginBottom: 16 }}>
-            <Button type="primary" onClick={this.start} disabled={!hasSelected}>
-              Reload
-            </Button>
-            <span style={{ marginLeft: 8 }}>
-              {hasSelected ? `Selected ${selectedRowKeys.length} items` : ""}
-            </span>
-          </div> */}
           <Table
           className="-mt-14"
             rowSelection={{

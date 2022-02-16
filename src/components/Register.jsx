@@ -1,14 +1,13 @@
-import { TextField, Typography, InputLabel, Input } from "@mui/material";
-import React, { useState, useContext } from "react";
+import {  Typography, InputLabel, Input } from "@mui/material";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import ErrorMessage from "./ErrorMessage";
 
 import { useNavigate } from "react-router-dom";
-
-import Card from "@mui/material/Card";
 import FormControl from "@mui/material/FormControl";
 
 import { register } from "../services/auth.service";
+import Toast from "./Toast/Toast"
 
 const Register = () => {
 
@@ -24,12 +23,20 @@ const Register = () => {
     try {
       const res = await register(name, email, password);
       if(res.status === 200){
+        Toast.fire({
+          icon: "info",
+          title: "สมัครสมาชิกเรียบร้อย ทำการเข้าสู่ระบบ",
+        });
         navigate("/Login");
       }else{
         alert(res.data)
       }
     } catch (error) {
       console.log(error);
+      Toast.fire({
+        icon: "error",
+        title: "มีข้อผิดพลาดในการสมัครสมาชิก",
+      });
     }
   };
 

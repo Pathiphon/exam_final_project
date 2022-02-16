@@ -16,6 +16,7 @@ import index_img from "../img/index.png";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useNavigate } from "react-router-dom";
 import { signin } from "../services/auth.service";
+import Toast from "./Toast/Toast"
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -27,11 +28,18 @@ const Login = () => {
   const submitLogin = async () => {
     await signin(email, password)
       .then((res) => {
+        Toast.fire({
+          icon: "success",
+          title: "เข้าสู่ระบบแล้ว",
+        });
         navigate('/')
         window.location.reload();
       })
       .catch((err) => {
-        console.log(err);
+        Toast.fire({
+          icon: "error",
+          title: "มีข้อผิดพลาดในการเข้าสู่ระบบ",
+        });
       });
   };
 

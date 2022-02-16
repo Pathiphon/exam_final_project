@@ -7,18 +7,6 @@ import API_URL from "../../config/api";
 import { getCurrentUser } from "../../services/auth.service";
 import {
   Button,
-  InputBase,
-  IconButton,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Divider,
-  Box,
-  Typography,
-  CardContent,
-  CardMedia,
-  Card,
-  Toolbar,
 } from "@mui/material";
 
 function Reply_Exam() {
@@ -28,17 +16,22 @@ function Reply_Exam() {
 
   const get_Exam = async () => {
     await API_URL.get(`api/reply/${token && token.user.id}/all`)
-      .then((res) => {
-        setExam(res.data);
-        const data_table = examRef.current;
-        console.log(data_table);
+      .then(async(res) => {
+        const data_table = res.data;
+        let stu_length = 0;
         for (var j = 0; j < data_table.length; j++) {
+          await API_URL.get(`api/student/${data_table[j].exam_id}`)
+          .then((stu)=>{
+              stu_length=stu.data.length;
+          })
           Object.assign(
             data_table[j],
             { question_num: data_table[j].question.length },
-            { check_num: data_table[j].replies.length }
+            { check_num: data_table[j].replies.length },
+            {stu_length:stu_length}
           );
         }
+        console.log(data_table);
         setExam_data(data_table);
         return res.data;
       })
@@ -64,14 +57,20 @@ function Reply_Exam() {
       align: "center",
       render: (question_num) => (
         <div >
-          <p className="text-base my-auto">{question_num}</p>
+          <p className="text-base my-auto font-semibold">{question_num}</p>
         </div>
       ),
     },
     {
       title: "จำนวนผู้เข้าสอบ",
-      dataIndex: "stu_num",
+      dataIndex: "stu_length",
       align: "center",
+      sorter: (a, b) => a.stu_length - b.stu_length,
+      render: (stu_length) => (
+        <div>
+          <p className="text-base my-auto font-semibold">{stu_length}</p>
+        </div>
+      ),
     },
     {
       title: "จำนวนที่ต้องพิจารณา",
@@ -80,7 +79,7 @@ function Reply_Exam() {
       sorter: (a, b) => a.check_num - b.check_num,
       render: (check_num) => (
         <Tag key={check_num} color="volcano">
-          <p className="text-base my-auto">{check_num}</p>
+          <p className="text-base font-semibold my-auto">{check_num}</p>
         </Tag>
       ),
     },

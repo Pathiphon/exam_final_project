@@ -129,7 +129,7 @@ export default function ExamForm() {
     if (All_question === null) {
       get_Question();
     }
-    if (isTimeUp) {
+    if (isTimeUp&&stuCode.length===9) {
       let timerInterval;
       Swal.fire({
         title: "หมดเวลาสอบ!",
@@ -154,6 +154,9 @@ export default function ExamForm() {
           window.location.reload();
         }
       });
+    }else if(isTimeUp){
+      navigate("/ExamForm_Finish");
+          window.location.reload();
     }
   }, [isTimeUp]);
 

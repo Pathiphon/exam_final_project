@@ -12,6 +12,7 @@ import {
   Typography,
   Grid,
 } from "@mui/material";
+import EditRoadIcon from '@mui/icons-material/EditRoad';
 import ArticleIcon from "@mui/icons-material/Article";
 import EditIcon from "@mui/icons-material/Edit";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
@@ -34,9 +35,16 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
   const get_Question = async () => {
     await API_URL.get(`api/question/${exam_id}/all`)
       .then((res) => {
-        const data = res.data;
-        console.log(data);
-        setAll_question(data.question);
+        let sum_quesiton_score = 0;
+        const question = res.data.question;
+        for(var n =0;n<question.length;n++ ){
+          sum_quesiton_score+= question[n].full_score;
+        }
+        Object.assign(
+          question,
+          { sum_quesiton_score: sum_quesiton_score }
+        );
+        setAll_question(question);
       })
       .catch((err) => {
         console.log(err);
@@ -94,9 +102,12 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
     get_modal_create_exam(!activeModalAns);
     setActiveModalAns(!activeModalAns);
     setQues_id(null);
+    setScore(null)
   };
-  const handleClickAns = async (id) => {
+  const handleClickAns = async (id,score) => {
     setQues_id(id);
+    setScore(score);
+    console.log(score);
     setActiveModalAns(true);
   };
 
@@ -108,6 +119,7 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
             active={activeModalAns}
             handleModalAns={handleModalAns}
             ques_id={ques_id}
+            full_score={score}
           />
         </div>
       ) : (
@@ -134,15 +146,17 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
                 จำนวนข้อ : {All_question.length}
               </p>
               <Typography
+              className="shadow-sm font-semibold"
                 sx={{
-                  bgcolor: "#DDF4E1",
+                  bgcolor: "#fff1b8",
                   color: "text.primary",
-                  borderRadius: "16px",
+                  borderRadius: "13px",
+                 
                   m: 1,
                   p: 2,
                 }}
               >
-                ทั้งหมด 0000 คะแนน
+                ทั้งหมด {All_question?All_question.sum_quesiton_score:''} คะแนน
               </Typography>
               <Typography component="div" variant="h5" sx={{ m: 1 }}>
                 |
@@ -177,8 +191,10 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
                       sx={{ whiteSpace: "nowrap", ml: 1 }}
                       variant="outlined"
                       color="secondary"
-                      startIcon={<AssignmentTurnedInIcon />}
-                      onClick={() => handleClickAns(All_questions.ques_id)}
+                      className="shadow-md"
+                      size="large"
+                      startIcon={<EditRoadIcon fontSize="large"/>}
+                      onClick={() => handleClickAns(All_questions.ques_id,All_questions.full_score)}
                     >
                        เพิ่ม / แก้ไขเฉลย
                     </Button>
@@ -189,13 +205,14 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
                 <Grid item>
                   <div className="flex-col">
                     <div className="bg-green-50 rounded-md grid  justify-items-center">
-                      <p className="p-1 text-base text-black ">เต็ม {All_questions.full_score} คะแนน</p>
+                      <p className="p-1 text-base text-black my-auto">เต็ม {All_questions.full_score} คะแนน</p>
                     </div>
                     <div className="flex mt-3">
                     <Button
                       sx={{ whiteSpace: "nowrap" }}
                       variant="outlined"
                       color="warning"
+                      className="shadow-md"
                       startIcon={<EditIcon />}
                       onClick={() => handleClickQ(All_questions.ques_id)}
                     >
@@ -206,6 +223,7 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
                       sx={{ ml: 1 }}
                       variant="outlined"
                       color="error"
+                      className="shadow-md"
                       onClick={() =>
                         delete_Question(
                           All_questions.ques_id,
@@ -224,7 +242,7 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
           ))}
         </div>
       ) : (
-        <Divider sx={{ mt: 10 }}>ทำการสร้างแบบทดสอบใหม่</Divider>
+        <Divider sx={{ my: 10 }}>ทำการสร้างแบบทดสอบใหม่</Divider>
       )}
     </div>
   );

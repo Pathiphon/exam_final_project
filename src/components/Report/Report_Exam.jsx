@@ -1,25 +1,13 @@
 import React, { useEffect } from "react";
 import useState from "react-usestateref";
 import { Link } from "react-router-dom";
-import { Table, Tag } from "antd";
+import { Table } from "antd";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import API_URL from "../../config/api";
 import { getCurrentUser } from "../../services/auth.service";
 import {
   Button,
-  InputBase,
-  IconButton,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Divider,
-  Box,
-  Typography,
-  CardContent,
-  CardMedia,
-  Card,
-  Toolbar,
 } from "@mui/material";
 
 export default function Report_Exam() {
@@ -70,7 +58,7 @@ export default function Report_Exam() {
       align: "center",
       render: (question_num) => (
         <div>
-          <p className="text-base my-auto">{question_num}</p>
+          <p className="text-base my-auto font-semibold">{question_num}</p>
         </div>
       ),
     },
@@ -78,6 +66,12 @@ export default function Report_Exam() {
       title: "จำนวนผู้เข้าสอบ",
       dataIndex: "stu_length",
       align: "center",
+      sorter: (a, b) => a.stu_length - b.stu_length,
+      render: (stu_length) => (
+        <div>
+          <p className="text-base my-auto font-semibold">{stu_length}</p>
+        </div>
+      ),
     },
    
     {
@@ -90,9 +84,7 @@ export default function Report_Exam() {
           <Button
             variant="outlined"
             color="success"
-
             startIcon={<ManageSearchIcon />}
-            //   onClick={() => handleUpdate(exams.exam_id)}
           >
             ดูเพิ่มเติม
           </Button>
@@ -102,7 +94,6 @@ export default function Report_Exam() {
             color="error"
             className="mx-2"
             startIcon={<DeleteForeverIcon />}
-            //   onClick={() => handleUpdate(exams.exam_id)}
           >
             ลบ
           </Button>

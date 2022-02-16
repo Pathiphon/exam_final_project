@@ -6,8 +6,6 @@ import {
   Toolbar,
   Typography,
   CssBaseline,
-  Divider,
-  TextareaAutosize,
   Box,
   Container,
 } from "@mui/material";
@@ -57,7 +55,7 @@ export default function ExamForm_Finish() {
             </button>
           </div>
           ):(
-            <div className="bg-gray-200 px-8 py-3  rounded-xl mt-4">
+            <div className="bg-gray-200 px-8 py-3  rounded-xl my-4">
             <p className="text-2xl m-3">
               หมดเวลาสอบแล้ว............................
             </p>

@@ -1,21 +1,19 @@
-import React,{useEffect} from "react";
+import React, { useEffect } from "react";
 import useState from "react-usestateref";
-import { Table,Tag } from 'antd';
-import { useParams, useNavigate,Link } from "react-router-dom";
+import { Table, Tag } from "antd";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { CssBaseline, Toolbar, Button, Divider } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import EditIcon from "@mui/icons-material/Edit";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import API_URL from "../../config/api";
 
-
 const Manage_Reply = () => {
   const { exam_id } = useParams();
-  const [exam, setExam,examRef] = useState([]);
-  const [exam_data,setExam_data] = useState([]);
-  const [count_false,setCount_false] = useState([]);
-  const [count_exam,setCount_exam] = useState([])
-  
+  const [exam, setExam, examRef] = useState([]);
+  const [exam_data, setExam_data] = useState([]);
+  const [question, setQuestion] = useState([]);
+
   let navigate = useNavigate();
 
   function handleClick_Back() {
@@ -23,95 +21,156 @@ const Manage_Reply = () => {
   }
 
   const get_Exam = async () => {
-    await API_URL.get(`api/reply/${exam_id}`)
+    await API_URL.get(`api/reply/${exam_id}/allreply`)
       .then((res) => {
-        setExam(res.data);
-        console.log(examRef.current);
-        // for (var j =0;j<data_table.length;j++){
-        //   Object.assign(
-        //     data_table[j],
-        //     {question_num:data_table[j].question.length},
-        //     {check_num:data_table[j].replies.length}
-        //   )
-        // }
-        setExam_data(examRef.current.question);
-        setCount_false(examRef.current.replies.length);
-        setCount_exam(examRef.current.question.length);
+        const exam = res.data;
+        const question = res.data.question;
+        let sum_score = 0;
+        let sum_score_stu = 0;
+        let status_false = 0;
+        let status_true = 0;
+        let sum_status = 0;
+
+        for (var j = 0; j < question.length; j++) {
+          sum_score += question[j].full_score;
+          for (var i = 0; i < question[j].replies.length; i++) {
+            if (question[j].replies[i].check_status === true) {
+              status_true += 1;
+            } else {
+              status_false += 1;
+              sum_status += 1;
+            }
+            sum_score_stu += question[j].replies[i].score_stu;
+          }
+          Object.assign(
+            question[j],
+            { sum_scoreStu: sum_score_stu },
+            { avg_question: sum_score_stu / question[j].replies.length },
+            { status_false: status_false },
+            { status_true: status_true }
+          );
+          status_false = 0;
+          status_true = 0;
+          sum_score_stu = 0;
+        }
+        Object.assign(
+          exam,
+          { question_sum_score: sum_score },
+          { sum_status: sum_status }
+        );
+        setExam(exam);
+        console.log(question);
+        setQuestion(question);
+        console.log(exam);
 
         return res.data;
       })
       .catch((err) => {
         console.log(err);
       });
-      
-      
   };
 
   useEffect(() => {
     get_Exam();
-
   }, []);
 
   const columns = [
     {
-      title:<div className="header_table">ข้อที่</div> ,
-      dataIndex: 'question',
-      render:(question,index)=>(<p className="text-base "  > {question}</p>)
-      // render:(question)=>(<p className="text-lg " > {question}</p>)
-    },
-    // },
-    {
-      title:<div className="header_table">จำนวนคนที่ตรวจแล้ว</div> ,
-      dataIndex: 'check_status_true',
-      sorter: (a, b) => a.check_status_true - b.check_status_true,
-      align: 'center',
-      render:check_status_true=>(
-        <div><p className="text-base my-auto">{check_status_true}</p></div>
-      )
+      title: <div>ข้อที่</div>,
+      dataIndex: "",
+      key: "",
+      width: "8%",
+      render: (ques_id, record, index) => (
+        <div>
+          <p className="text-base my-auto">{index + 1}</p>
+        </div>
+      ),
     },
     {
-      title:"จำนวนที่ต้องพิจารณา",
-      dataIndex:'check_num',
-      align: 'center',
-      sorter: (a, b) => a.check_num - b.check_num,
-      render: check_num =>(
-            <Tag color='volcano'><p className="text-base my-auto">{check_num}</p></Tag>
-      )
+      title: <div className="header_table">คำถาม</div>,
+      dataIndex: "question",
+      width: "30%",
+      render: (question, index) => <p className="text-base max-w-sm truncate"> {question}</p>,
     },
     {
-      title:"การจัดการ",
-      dataIndex:"ques_id",
-      key:'ques_id',
-      render:ques_id =>
-      <Link  to={`/${exam_id}/Manage_Reply/${ques_id}`}>
-      <Button
-      variant="outlined"
-      color="success"
-      size="large"
-      startIcon={<ManageSearchIcon />}
-    >
-      ดูเพิ่มเติม
-    </Button>
-    </Link>
-    }
+      title: <div>คะแนนเต็ม</div>,
+      dataIndex: "full_score",
+      key: "full_score",
+      sorter: (a, b) => a.full_score - b.full_score,
+      align: "center",
+      render: (full_score) => (
+        <div>
+          <p className="text-base my-auto">{full_score}</p>
+        </div>
+      ),
+    },
+    {
+      title: <div className="header_table">จำนวนที่ตรวจแล้ว</div>,
+      dataIndex: "status_true",
+      sorter: (a, b) => a.status_true - b.status_true,
+      align: "center",
+      render: (status_true) => (
+        <Tag color="green">
+          <p className="text-base my-auto font-semibold">{status_true}</p>
+        </Tag>
+      ),
+    },
+    {
+      title: "จำนวนที่ต้องพิจารณา",
+      dataIndex: "status_false",
+      align: "center",
+      sorter: (a, b) => a.status_false - b.status_false,
+      render: (status_false) => (
+        <Tag color="volcano">
+          <p className="text-base my-auto font-semibold">{status_false}</p>
+        </Tag>
+      ),
+    },
+    {
+      title: "การจัดการ",
+      dataIndex: "ques_id",
+      key: "ques_id",
+      render: (ques_id) => (
+        <Link to={`/${exam_id}/Manage_Reply/${ques_id}`}>
+          <Button
+            variant="outlined"
+            color="success"
+            size="large"
+            startIcon={<ManageSearchIcon />}
+          >
+            ดูเพิ่มเติม
+          </Button>
+        </Link>
+      ),
+    },
   ];
 
   return (
     <div className="">
       <CssBaseline />
-      <div className="shadow-md" style={{ background: "white" }}>
-        <Toolbar>
-          <Button
-            variant="outlined"
-            size="large"
-            startIcon={<ArrowBackIosIcon />}
-            style={{ fontSize: "18px" }}
-            onClick={handleClick_Back}
-          >
-            {" "}
-            ตรวจข้อสอบ
-          </Button>
-        </Toolbar>
+      <div
+        className="shadow-zinc-500 flex justify-between items-center"
+        style={{ background: "white" }}
+      >
+        <div>
+          <Toolbar>
+            <Button
+              variant="outlined"
+              size="large"
+              startIcon={<ArrowBackIosIcon />}
+              style={{ fontSize: "18px" }}
+              onClick={handleClick_Back}
+            >
+              {" "}
+              ตรวจข้อสอบ
+            </Button>
+          </Toolbar>
+        </div>
+        <div className="items-center text-center bg-gray-500 text-white p-3 mx-2 rounded-md">
+          <p className="text-lg my-auto">
+            คะแนนเต็ม {exam ? exam.question_sum_score : ""} คะแนน{" "}
+          </p>
+        </div>
       </div>
       <div className="w-4/5 mx-auto shadow-md   bg-white rounded-xl">
         <div className="md:flex  items-center justify-between my-3 w-100 rounded-lg px-5 py-3">
@@ -127,15 +186,24 @@ const Manage_Reply = () => {
             </Button>
           </div>
           <div className="md:flex  w-full md:w-3/6 justify-end">
-            <div className="flex-col mx-2  rounded-xl p-3 text-center shadow-md" style={{backgroundColor:"#F7DBA7"}}>
+            <div
+              className="flex-col mx-2  rounded-xl p-3 text-center shadow-md"
+              style={{ backgroundColor: "#F7DBA7" }}
+            >
               <p className="text-md">จำนวนที่ต้องพิจารณา</p>
-              <p className="font-medium">{count_false}</p>
+              <p className="font-medium">{exam ? exam.sum_status : ""}</p>
             </div>
-            <div className="flex-col mx-2  rounded-xl px-5 py-3 text-center shadow-md" style={{backgroundColor:"#F7DBA7"}}>
+            <div
+              className="flex-col mx-2  rounded-xl px-5 py-3 text-center shadow-md"
+              style={{ backgroundColor: "#F7DBA7" }}
+            >
               <p className="text-md">คำถาม</p>
-              <p className="font-medium">{count_exam}</p>
+              <p className="font-medium">{question ? question.length : ""}</p>
             </div>
-            <div className="flex-col mx-2  rounded-xl py-3 px-5 text-center shadow-md" style={{backgroundColor:"#F7DBA7"}}>
+            <div
+              className="flex-col mx-2  rounded-xl py-3 px-5 text-center shadow-md"
+              style={{ backgroundColor: "#F7DBA7" }}
+            >
               <p className="text-md">ผู้เข้าสอบ</p>
               <p className="font-medium">1</p>
             </div>
@@ -151,9 +219,14 @@ const Manage_Reply = () => {
           backgroundColor: "#000000",
         }}
       />
-      <div className="w-4/5 mx-auto">
+      <div className="w-11/12 mx-auto">
         <p className="text-xl">คำถามทั้งหมด</p>
-        <Table columns={columns} className="rounded-lg" dataSource={exam_data} rowKey="ques_id"/>
+        <Table
+          columns={columns}
+          className="rounded-lg"
+          dataSource={question}
+          rowKey="ques_id"
+        />
       </div>
     </div>
   );

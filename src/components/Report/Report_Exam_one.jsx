@@ -1,4 +1,4 @@
-import React, { useEffect,useRef  } from "react";
+import React, { useEffect, useRef } from "react";
 import useState from "react-usestateref";
 import { Table } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
@@ -11,8 +11,7 @@ import Stu_report_Modal from "./Stu_report_Modal";
 import ArticleIcon from "@mui/icons-material/Article";
 import Question_report_Modal from "./Question_report_Modal";
 import Report_Reply from "./Report_Reply";
-import { useReactToPrint  } from 'react-to-print';
-
+import { useReactToPrint } from "react-to-print";
 
 export default function Report_Exam_one() {
   const { exam_id } = useParams();
@@ -30,7 +29,6 @@ export default function Report_Exam_one() {
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
- 
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -67,18 +65,23 @@ export default function Report_Exam_one() {
         const exam = res.data;
         const question = res.data.question;
         let sum_score = 0;
-        let sum_score_stu=0;
+        let sum_score_stu = 0;
 
         for (var j = 0; j < question.length; j++) {
           sum_score += question[j].full_score;
-          for(var i =0;i<question[j].replies.length;i++){
-            sum_score_stu+=question[j].replies[i].score_stu;
+          for (var i = 0; i < question[j].replies.length; i++) {
+            sum_score_stu += question[j].replies[i].score_stu;
           }
-          Object.assign(exam.question[j],{sum_scoreStu:sum_score_stu},{avg_question:sum_score_stu/question[j].replies.length});
-          sum_score_stu=0;
+          Object.assign(
+            exam.question[j],
+            { sum_scoreStu: sum_score_stu },
+            { avg_question: sum_score_stu / question[j].replies.length }
+          );
+          sum_score_stu = 0;
         }
         Object.assign(exam, { question_sum_score: sum_score });
         setExam(exam);
+        console.log(question);
         setQuestion(question);
         console.log(examRef.current);
 
@@ -119,10 +122,10 @@ export default function Report_Exam_one() {
 
   const columns = [
     {
-      title:"รหัสนักศึกษา",
+      title: "รหัสนักศึกษา",
       dataIndex: "stu_code",
       key: "stu_code",
-      width:"20%",
+      width: "20%",
       sorter: (a, b) => a.stu_code - b.stu_code,
       render: (stu_code) => (
         <div>
@@ -142,11 +145,21 @@ export default function Report_Exam_one() {
       align: "center",
       sorter: (a, b) => a.score_stu_full - b.score_stu_full,
       render: (score_stu_full) => (
-        <div className="bg-green-100 rounded-lg w-2/6 mx-auto  ">
-          <p className="text-base font-semibold my-auto text-black p-1">
-            {score_stu_full}
-          </p>
-        </div>
+        <>
+          {exam?score_stu_full >= exam.question_sum_score / 2 ? (
+            <div className="bg-green-200 rounded-xl w-2/6 mx-auto  ">
+              <p className="text-base font-semibold my-auto text-black p-1">
+                {score_stu_full}
+              </p>
+            </div>
+          ) : (
+            <div className="bg-red-200 rounded-xl w-2/6 mx-auto  ">
+              <p className="text-base font-semibold my-auto text-black p-1">
+                {score_stu_full}
+              </p>
+            </div>
+          ):''}
+        </>
       ),
     },
     {
@@ -171,11 +184,11 @@ export default function Report_Exam_one() {
     {
       title: <div>ข้อที่</div>,
       dataIndex: "",
-      key:'',
+      key: "",
       width: "8%",
-      render: (ques_id,record,index) => (
+      render: (ques_id, record, index) => (
         <div>
-          <p className="text-base my-auto">{index+1}</p>
+          <p className="text-base my-auto">{index + 1}</p>
         </div>
       ),
     },
@@ -183,7 +196,9 @@ export default function Report_Exam_one() {
       title: <div className="header_table">คำถาม</div>,
       dataIndex: "question",
       width: "30%",
-      render: (question) => <p className="text-base max-w-xs truncate"> {question}</p>,
+      render: (question) => (
+        <p className="text-base max-w-xs truncate"> {question}</p>
+      ),
     },
     {
       title: <div>คะแนนเต็ม</div>,
@@ -203,7 +218,7 @@ export default function Report_Exam_one() {
       align: "center",
       sorter: (a, b) => a.avg_question - b.avg_question,
       render: (avg_question) => (
-        <div className="bg-orange-100 rounded-lg w-2/6 mx-auto  ">
+        <div className="bg-orange-200 rounded-xl w-2/6 mx-auto  ">
           <p className="text-base font-medium my-auto text-black p-1">
             {avg_question}
           </p>
@@ -251,7 +266,6 @@ export default function Report_Exam_one() {
           <div className="flex-col items-center w-full md:w-3/6 justify-center text-center">
             <p className="text-xl truncate">{exam.name} </p>
             <div className="flex">
-              
               <Button
                 variant="outlined"
                 startIcon={<ArticleIcon />}
@@ -260,8 +274,6 @@ export default function Report_Exam_one() {
               >
                 ดาวน์โหลดรายงาน
               </Button>
-           
-              
             </div>
           </div>
           <div className="md:flex  w-full md:w-3/6 justify-end">
@@ -295,7 +307,9 @@ export default function Report_Exam_one() {
               style={{ backgroundColor: "#DBD8AE" }}
             >
               <p className="text-md">คะแนนเฉลี่ย</p>
-              <p className="font-medium">{students ? score_allstu/students.length : ""}</p>
+              <p className="font-medium">
+                {students ? score_allstu / students.length : ""}
+              </p>
             </div>
           </div>
         </div>
@@ -317,8 +331,12 @@ export default function Report_Exam_one() {
         </TabPanel>
         <TabPanel value="2">
           <div className="w-11/12 mx-auto">
-           <Table columns={columns_question} dataSource={question} rowKey="ques_id" />
-           </div>
+            <Table
+              columns={columns_question}
+              dataSource={question}
+              rowKey="ques_id"
+            />
+          </div>
         </TabPanel>
       </TabContext>
       {activeModalReport === true ? (
@@ -334,17 +352,21 @@ export default function Report_Exam_one() {
       ) : (
         <></>
       )}
-      {activeModalReport_ques===true?(<>
-        <Question_report_Modal
+      {activeModalReport_ques === true ? (
+        <>
+          <Question_report_Modal
             active={activeModalReport_ques}
             handleModalReport_ques={handleModalReport_ques}
             exam_id={exam_id}
             ques_id={stu_ques_id}
           />
-      </>):(<></>)}
-       {/* {verPdf? <Report_Reply ref={componentRef} exam={exam}/>:null}  */}
+        </>
+      ) : (
+        <></>
+      )}
+      {/* {verPdf? <Report_Reply ref={componentRef} exam={exam}/>:null}  */}
       <div className="hidden">
-      <Report_Reply ref={componentRef} exam={exam} student={students}/> 
+        <Report_Reply ref={componentRef} exam={exam} student={students} />
       </div>
     </div>
   );
