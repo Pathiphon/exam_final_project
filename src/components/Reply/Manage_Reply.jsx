@@ -11,7 +11,7 @@ import API_URL from "../../config/api";
 const Manage_Reply = () => {
   const { exam_id } = useParams();
   const [exam, setExam, examRef] = useState([]);
-  const [exam_data, setExam_data] = useState([]);
+  const [students, setStudents] = useState(null);
   const [question, setQuestion] = useState([]);
 
   let navigate = useNavigate();
@@ -44,6 +44,7 @@ const Manage_Reply = () => {
           }
           Object.assign(
             question[j],
+            {ques_index:j+1},
             { sum_scoreStu: sum_score_stu },
             { avg_question: sum_score_stu / question[j].replies.length },
             { status_false: status_false },
@@ -69,20 +70,30 @@ const Manage_Reply = () => {
         console.log(err);
       });
   };
+  const get_Students = async () => {
+    await API_URL.get(`api/student/${exam_id}`)
+      .then((res) => {
+        setStudents(res.data);    
+        return res.data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     get_Exam();
+    get_Students();
   }, []);
 
   const columns = [
     {
       title: <div>ข้อที่</div>,
-      dataIndex: "",
-      key: "",
-      width: "8%",
-      render: (ques_id, record, index) => (
+      dataIndex: "ques_index",
+      width: "7%",
+      render: (ques_index) => (
         <div>
-          <p className="text-base my-auto">{index + 1}</p>
+          <p className="text-base my-auto">{ques_index}</p>
         </div>
       ),
     },
@@ -90,7 +101,7 @@ const Manage_Reply = () => {
       title: <div className="header_table">คำถาม</div>,
       dataIndex: "question",
       width: "30%",
-      render: (question, index) => <p className="text-base max-w-sm truncate"> {question}</p>,
+      render: (question) => <p className="text-base max-w-sm truncate">{question}</p>,
     },
     {
       title: <div>คะแนนเต็ม</div>,
@@ -149,7 +160,7 @@ const Manage_Reply = () => {
     <div className="">
       <CssBaseline />
       <div
-        className="shadow-zinc-500 flex justify-between items-center"
+        className="shadow-zinc-500 flex justify-between items-center shadow-sm"
         style={{ background: "white" }}
       >
         <div>
@@ -188,24 +199,24 @@ const Manage_Reply = () => {
           <div className="md:flex  w-full md:w-3/6 justify-end">
             <div
               className="flex-col mx-2  rounded-xl p-3 text-center shadow-md"
-              style={{ backgroundColor: "#F7DBA7" }}
+              style={{ backgroundColor: "#ffffb8" }}
             >
               <p className="text-md">จำนวนที่ต้องพิจารณา</p>
               <p className="font-medium">{exam ? exam.sum_status : ""}</p>
             </div>
             <div
               className="flex-col mx-2  rounded-xl px-5 py-3 text-center shadow-md"
-              style={{ backgroundColor: "#F7DBA7" }}
+              style={{ backgroundColor: "#ffffb8" }}
             >
               <p className="text-md">คำถาม</p>
               <p className="font-medium">{question ? question.length : ""}</p>
             </div>
             <div
               className="flex-col mx-2  rounded-xl py-3 px-5 text-center shadow-md"
-              style={{ backgroundColor: "#F7DBA7" }}
+              style={{ backgroundColor: "#ffffb8" }}
             >
               <p className="text-md">ผู้เข้าสอบ</p>
-              <p className="font-medium">1</p>
+              <p className="font-medium">{students?students.length:''}</p>
             </div>
           </div>
         </div>

@@ -8,6 +8,9 @@ import {
   Button,
 } from "@mui/material";
 import API_URL from "../../config/api";
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 export default function Stu_Modal({
   active,
@@ -88,23 +91,25 @@ export default function Stu_Modal({
           ></button>
         </header>
         <section className="modal-card-body">
-          <div className="flex mb-2 items-center">
+          <div className="flex mb-1 items-center">
             <p className="text-base text-gray-500 mx-2">ชื่อ - นามสกุล</p>
             <p className="text-lg text-back mx-2">
               {exam_data ? exam_data[0].name : ""}
             </p>
           </div>
-          <div className="flex mb-2 items-center">
-            <p className="text-base text-gray-500 mx-2">สถานะ</p>
+          <div className="flex mb-5 items-center">
+            <p className="text-base text-gray-500 mx-2 my-auto">สถานะ</p>
             {exam_data ? (
               exam_data[0].check_status === true ? (
-                <p className="text-base text-green-600 font-bold mx-2">
-                  ตรวจแล้ว
-                </p>
+                <div className="flex">
+                <CheckCircleIcon fontSize="small" className="m-1 text-green-600"/>
+                <p className="text-base text-green-600 font-bold mx-2 my-auto">ตรวจแล้ว</p>
+              </div>
               ) : (
-                <p className="text-base text-red-700 font-bold mx-2">
-                  ยังไม่ได้ตรวจ
-                </p>
+                <div className="flex">
+                <CancelIcon fontSize="small" className="m-1 text-red-600"/>
+                <p className="text-base text-red-600 font-bold mx-2 my-auto">ยังไม่ได้ตรวจ</p>
+              </div>
               )
             ) : (
               ""
@@ -123,14 +128,9 @@ export default function Stu_Modal({
         <footer className="modal-card-foot justify-end ">
           <form className="w-5/6" onSubmit={handleUpdateReply}>
             <div className="flex  items-center justify-end">
-              <FormGroup >
-                <FormControlLabel
-                  control={<Checkbox checked={add_ans} onClick={()=>setAdd_ans(!add_ans)} />}
-                  label="นำคำตอบเพิ่มลงเฉลย"
-                />
-              </FormGroup>
-              <div className="flex flex-wrap items-center w-2/6">
-                <div className="w-full flex-auto md:w-1/2 px-3">
+            <div className="flex flex-wrap items-center w-2/6">
+            <DriveFileRenameOutlineIcon fontSize="large"/>
+                <div className="w-full flex-auto md:w-1/2 px-3">  
                   <input
                     value={score||""}
                     onChange={(e) => setScore(e.target.value)}
@@ -143,6 +143,13 @@ export default function Stu_Modal({
                   />
                 </div>
               </div>
+              <FormGroup >
+                <FormControlLabel
+                  control={<Checkbox checked={add_ans} onClick={()=>setAdd_ans(!add_ans)} />}
+                  label="นำคำตอบเพิ่มลงเฉลย"
+                />
+              </FormGroup>
+              
               <Button
                 className="mr-4"
                 color="success"

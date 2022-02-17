@@ -75,7 +75,11 @@ export default function Report_Exam_one() {
           Object.assign(
             exam.question[j],
             { sum_scoreStu: sum_score_stu },
-            { avg_question: sum_score_stu / question[j].replies.length }
+            {
+              avg_question: (
+                sum_score_stu / question[j].replies.length
+              ).toFixed(2),
+            }
           );
           sum_score_stu = 0;
         }
@@ -146,19 +150,23 @@ export default function Report_Exam_one() {
       sorter: (a, b) => a.score_stu_full - b.score_stu_full,
       render: (score_stu_full) => (
         <>
-          {exam?score_stu_full >= exam.question_sum_score / 2 ? (
-            <div className="bg-green-200 rounded-xl w-2/6 mx-auto  ">
-              <p className="text-base font-semibold my-auto text-black p-1">
-                {score_stu_full}
-              </p>
-            </div>
+          {exam ? (
+            score_stu_full >= exam.question_sum_score / 2 ? (
+              <div className="bg-green-200 rounded-xl w-2/6 mx-auto  ">
+                <p className="text-base font-semibold my-auto text-black p-1">
+                  {score_stu_full}
+                </p>
+              </div>
+            ) : (
+              <div className="bg-red-200 rounded-xl w-2/6 mx-auto  ">
+                <p className="text-base font-semibold my-auto text-black p-1">
+                  {score_stu_full}
+                </p>
+              </div>
+            )
           ) : (
-            <div className="bg-red-200 rounded-xl w-2/6 mx-auto  ">
-              <p className="text-base font-semibold my-auto text-black p-1">
-                {score_stu_full}
-              </p>
-            </div>
-          ):''}
+            ""
+          )}
         </>
       ),
     },
@@ -308,7 +316,7 @@ export default function Report_Exam_one() {
             >
               <p className="text-md">คะแนนเฉลี่ย</p>
               <p className="font-medium">
-                {students ? score_allstu / students.length : ""}
+                {students ? (score_allstu / students.length).toFixed(2) : ""}
               </p>
             </div>
           </div>
@@ -364,7 +372,6 @@ export default function Report_Exam_one() {
       ) : (
         <></>
       )}
-      {/* {verPdf? <Report_Reply ref={componentRef} exam={exam}/>:null}  */}
       <div className="hidden">
         <Report_Reply ref={componentRef} exam={exam} student={students} />
       </div>
