@@ -129,7 +129,7 @@ export default function ExamForm() {
     if (All_question === null) {
       get_Question();
     }
-    if (isTimeUp&&stuCode.length===9) {
+    if (isTimeUp && stuCode.length === 9) {
       let timerInterval;
       Swal.fire({
         title: "หมดเวลาสอบ!",
@@ -154,9 +154,9 @@ export default function ExamForm() {
           window.location.reload();
         }
       });
-    }else if(isTimeUp){
+    } else if (isTimeUp) {
       navigate("/ExamForm_Finish");
-          window.location.reload();
+      window.location.reload();
     }
   }, [isTimeUp]);
 
@@ -167,7 +167,11 @@ export default function ExamForm() {
         aws[j],
         { name: name },
         { stu_code: stuCode },
-        { exam_id: exam_id }
+        { exam_id: exam_id },
+        { ans_id: null },
+        { score_stu: 0 },
+        { persent_get: 0 },
+        { check_status: false }
       );
     }
     console.log(aws);
@@ -212,7 +216,9 @@ export default function ExamForm() {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <AssignmentIcon className="mr-2" />
-            <Typography variant="h6" className="text-white">ฟอร์มสอบ</Typography>
+            <Typography variant="h6" className="text-white">
+              ฟอร์มสอบ
+            </Typography>
           </div>
           {check_start > 0 ? (
             <div className="md:flex md:items-center ">
@@ -294,7 +300,8 @@ export default function ExamForm() {
               <Divider
                 sx={{ my: 2, borderBottomWidth: 5, backgroundColor: "#000000" }}
               />
-              {All_question &&stuCode.length === 9 &&
+              {All_question &&
+                stuCode.length === 9 &&
                 All_question.map((All_questions, index) => (
                   <div
                     key={All_questions.ques_id}
