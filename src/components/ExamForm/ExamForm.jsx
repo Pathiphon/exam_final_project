@@ -1,13 +1,12 @@
 import React, { useEffect } from "react";
 import useState from "react-usestateref";
-import { useParams, useNavigate, Route, Routes } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import Swal from "sweetalert2";
 import dayjs from "dayjs";
 import { add } from "date-fns";
 import API_URL from "../../config/api";
 import { useTicker } from "./useTicker";
-import ExamForm_Finish from "./ExamForm_Finish";
 import {
   AppBar,
   Toolbar,
@@ -30,7 +29,9 @@ export default function ExamForm() {
   const [All_question, setAll_question] = useState(null);
   const { exam_id } = useParams();
   const [exam_name, setExam_name] = useState(null);
-  const [date_pre, setDate_pre] = useState("");
+  const [date_pre, setDate_pre] = React.useState("");
+  const [date_start,setDate_start] = useState('');
+  const [time_start,setTime_start] = useState("");
   const [date_post, setDate_post] = useState("");
   const [inputField, setInputField] = React.useState([]);
   const [stuCode, setStuCode] = useState("");
@@ -45,12 +46,12 @@ export default function ExamForm() {
   const { days, hours, minutes, seconds, isTimeUp } = useTicker(futureDate);
 
   const tickerContents = isTimeUp ? (
-    <p className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500">
+    <p className="bg-gray-200 my-auto appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500">
       หมดเวลาสอบ
     </p>
   ) : (
     <>
-      <p className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500">
+      <p className="bg-gray-200 my-2 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500">
         {days !== 0 ? `${days} วัน ` : ""}
         {hours} ชั่วโมง {minutes} นาที {seconds} วินาที
       </p>
@@ -75,6 +76,8 @@ export default function ExamForm() {
         setExam_name(data.name);
         setDate_pre(dayjs(data.date_pre).format("DD/MM/BBBB HH:mm"));
         setDate_post(dayjs(data.date_post).format("DD/MM/BBBB HH:mm"));
+        setDate_start(dayjs(data.date_pre).format("DD/MM/BBBB"));
+        setTime_start(dayjs(data.date_pre).format("HH:mm"));
         const date1 = dayjs(data.date_pre);
         const date2 = dayjs();
         const date3 = dayjs(data.date_post);
@@ -125,7 +128,6 @@ export default function ExamForm() {
   };
   useEffect(() => {
     get_Exam();
-    console.log(All_question);
     if (All_question === null) {
       get_Question();
     }
@@ -221,11 +223,11 @@ export default function ExamForm() {
             </Typography>
           </div>
           {check_start > 0 ? (
-            <div className="md:flex md:items-center ">
-              <p className=" text-white font-bold md:text-right mb-1 md:mb-0 pr-4">
+            <div className="md:flex md:items-center my-auto">
+              <p className=" text-white font-bold md:text-right mb-1 md:mb-0 pr-4 my-auto">
                 เหลือเวลาอีก
               </p>
-              <div>{tickerContents}</div>
+              <div className="my-auto">{tickerContents}</div>
             </div>
           ) : (
             <></>
@@ -241,15 +243,14 @@ export default function ExamForm() {
                 {exam_name}
               </p>
               <p className="text-xl m-2">
-                เริ่มทำข้อสอบได้ในวันที่ {dayjs(date_pre).format("MM/DD/YYYY")}
+                เริ่มทำข้อสอบได้ในวันที่ {date_start?date_start:""}
               </p>
               <p className="text-xl m-2">
-                เวลา {dayjs(date_pre).format("HH:mm")}
+                เวลา {time_start?time_start:''}
               </p>
               <Divider className="text-xl m-2">ถึง</Divider>
               <p className="text-xl m-2">
-                วันที่ {dayjs(date_post).format("MM/DD/YYYY")} เวลา{" "}
-                {dayjs(date_post).format("HH:mm")}
+                วันที่ {date_post?date_post:''} 
               </p>
             </div>
           ) : check_start > 0 && check_end > 0 ? (
@@ -339,7 +340,7 @@ export default function ExamForm() {
                 </div>
               ) : (
                 <>
-                  <p className="text-2xl text-orange-700">
+                  <p className="text-2xl text-red-700">
                     ป้อนรหัสนักศึกษาก่อนทำข้อสอบ
                   </p>
                 </>

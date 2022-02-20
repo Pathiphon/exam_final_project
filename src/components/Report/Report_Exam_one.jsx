@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import useState from "react-usestateref";
-import { Table } from "antd";
+import { Table, Tag } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { CssBaseline, Toolbar, Button, Tab, Box } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
@@ -66,6 +66,7 @@ export default function Report_Exam_one() {
         const question = res.data.question;
         let sum_score = 0;
         let sum_score_stu = 0;
+        let ques_index =0;
 
         for (var j = 0; j < question.length; j++) {
           sum_score += question[j].full_score;
@@ -74,6 +75,7 @@ export default function Report_Exam_one() {
           }
           Object.assign(
             exam.question[j],
+            {ques_index:j+1},
             { sum_scoreStu: sum_score_stu },
             {
               avg_question: (
@@ -152,17 +154,19 @@ export default function Report_Exam_one() {
         <>
           {exam ? (
             score_stu_full >= exam.question_sum_score / 2 ? (
-              <div className="bg-green-200 rounded-xl w-2/6 mx-auto  ">
-                <p className="text-base font-semibold my-auto text-black p-1">
+              <Tag color="green">
+                <p className="text-base text-black font-semibold my-auto px-2">
+                  {" "}
                   {score_stu_full}
                 </p>
-              </div>
+              </Tag>
             ) : (
-              <div className="bg-red-200 rounded-xl w-2/6 mx-auto  ">
-                <p className="text-base font-semibold my-auto text-black p-1">
+              <Tag color="volcano">
+                <p className="text-base text-black font-semibold my-auto px-2">
+                  {" "}
                   {score_stu_full}
                 </p>
-              </div>
+              </Tag>
             )
           ) : (
             ""
@@ -191,12 +195,11 @@ export default function Report_Exam_one() {
   const columns_question = [
     {
       title: <div>ข้อที่</div>,
-      dataIndex: "",
-      key: "",
+      dataIndex: "ques_index",
       width: "8%",
-      render: (ques_id, record, index) => (
+      render: (ques_index) => (
         <div>
-          <p className="text-base my-auto">{index + 1}</p>
+          <p className="text-base my-auto">{ques_index}</p>
         </div>
       ),
     },
@@ -226,11 +229,12 @@ export default function Report_Exam_one() {
       align: "center",
       sorter: (a, b) => a.avg_question - b.avg_question,
       render: (avg_question) => (
-        <div className="bg-orange-200 rounded-xl w-2/6 mx-auto  ">
-          <p className="text-base font-medium my-auto text-black p-1">
+        <Tag color="geekblue">
+          <p className="text-base text-black font-semibold my-auto px-2">
+            {" "}
             {avg_question}
           </p>
-        </div>
+        </Tag>
       ),
     },
     {

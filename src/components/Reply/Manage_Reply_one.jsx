@@ -69,6 +69,7 @@ const Manage_Reply_one = () => {
         icon: "success",
         title: "บันทึกคะแนนเสร็จสิ้น",
       });
+      setAlreadySelecteRows([null])
       get_Exam();
     } catch (error) {
       Toast.fire({
@@ -80,14 +81,28 @@ const Manage_Reply_one = () => {
 
   const get_Exam = async () => {
     await API_URL.get(`api/reply/${exam_id}/question/${ques_id}`)
-      .then((res) => {
+      .then(async (res) => {
         setExam(res.data);
         const student = res.data.question[0].student;
+
         console.log(student);
         for (var j = 0; j < student.length; j++) {
-          Object.assign(student[j], student[j].reply, {
-            key: (j + 1).toString(),
-          });
+          let score = 0;
+          await API_URL.get(`api/answer/${student[j].reply.ans_id}`)
+            .then((res) => {
+              score = res.data.score;
+            })
+            .catch(() => {
+              score = 0;
+            });
+          Object.assign(
+            student[j],
+            student[j].reply,
+            { persent_score: score },
+            {
+              key: (j + 1).toString(),
+            }
+          );
           delete student[j]["reply"];
         }
         console.log(student);
@@ -107,13 +122,14 @@ const Manage_Reply_one = () => {
     {
       title: <div>ชื่อ - นามสกุล</div>,
       dataIndex: "name",
-      render: (name) => <p className="text-base truncate max-w-name">{name}</p>,
+      width:'10%',
+      render: (name) => <p className="text-base truncate">{name}</p>,
     },
     {
       title: <div>คำตอบ</div>,
       dataIndex: "answer_stu",
       render: (answer_stu, stu) => (
-        <div className="flex items-center">
+        <div className="flex items-center justify-between">
           {" "}
           <p className="truncate max-w-xs my-auto mr-3">{answer_stu}</p>
           <Button
@@ -127,14 +143,20 @@ const Manage_Reply_one = () => {
       ),
     },
     {
-      title: "เปอร์เซ็นความถูกต้อง",
+      title: "%ความถูกต้อง(คะแนน)",
       dataIndex: "persent_get",
+      width:'10%',
+      sorter: (a, b) => a.persent_get - b.persent_get,
+      render:(text, record)=>(
+        <p className="text-base truncate max-w-name">{text}% =&gt; ( {record.persent_score} )</p>
+      )
     },
     {
       title: "คะแนน",
       dataIndex: "score_stu",
       align: "center",
       sorter: (a, b) => a.score_stu - b.score_stu,
+      defaultSortOrder: "ascend",
       render: (score_stu) => (
         <Tag color="green">
           <p className="text-base text-black font-semibold my-auto">
@@ -202,7 +224,7 @@ const Manage_Reply_one = () => {
           คำถาม : {exam ? exam.question[0].question : ""}
         </p>
       </div>
-      <div className="w-4/5 mx-auto ">
+      <div className="w-11/12 mx-auto ">
         <Table
           className="-mt-14 custom"
           rowSelection={{

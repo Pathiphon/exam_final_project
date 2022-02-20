@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ExamModal from "./ExamModal";
 import dayjs from "dayjs";
 import Table_Ques from "./Table_Ques";
-
 import {
   Box,
   Card,
@@ -18,7 +17,6 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-
 import API_URL from "../config/api";
 
 export default function Create_exam() {
@@ -27,11 +25,8 @@ export default function Create_exam() {
   const [name, setName] = useState("");
   const [date_pre, setDate_pre] = useState("");
   const [date_post, setDate_post] = useState("");
-  const [date_last_updated, setDate_last_updated] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [exam, setExam] = useState(null);
   const [id, setId] = useState(null);
-  const [ques_id, setQues_id] = useState(null);
 
   const location = useLocation();
 

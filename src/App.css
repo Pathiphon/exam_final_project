@@ -1,19 +1,19 @@
 @import url('https://fonts.googleapis.com/css?family=Itim');
 
 html {
-  background-color: #fafafa;
+  background-color: #fafafa !important;
 } 
 main{
-  background-color: #fafafa;
+  background-color: #fafafa !important;
 }
-body {
-  background-color: #fafafa;
+body{
+  background-color: #fafafa !important;
 } 
 #root{
-  background-color: #fafafa;
+  background-color: #fafafa !important;
 }
 #main{
-  background-color: #fafafa;
+  background-color: #fafafa !important;
 }
 /* .ant-table-cell{
   padding: 0 !important;

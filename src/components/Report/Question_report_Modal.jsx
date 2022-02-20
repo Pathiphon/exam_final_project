@@ -64,11 +64,6 @@ export default function Question_report_Modal({
                 <p>{questions ? questions.question : ""}</p>
               </div>
             </div>
-
-            {/* <div className="bg-orange-100 rounded-lg px-5 py-1 text-center">
-              <PersonIcon />
-              <p className="m-0">มี {replys ? replys.length : ""} คน</p>
-            </div> */}
           </div>
           <div className="flex items-center  w-3/6">
             <SearchIcon className="mr-3 " />
@@ -96,7 +91,7 @@ export default function Question_report_Modal({
                 }
             }).map((reply, index) => (
                 <div
-                  className="my-2 bg-gray-50 rounded-md  p-3 flex justify-between"
+                  className="my-3 bg-gray-50 rounded-md  p-3 flex justify-between shadow-sm"
                   key={index}
                 >
                   <div className="flex">

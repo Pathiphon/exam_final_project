@@ -19,6 +19,9 @@ const Manage_Reply = () => {
   function handleClick_Back() {
     navigate("/Reply");
   }
+  const handleEdit_Exam = async (id) => {
+    navigate("/Create_exam", { state: { id: id } });
+  };
 
   const get_Exam = async () => {
     await API_URL.get(`api/reply/${exam_id}/allreply`)
@@ -191,7 +194,7 @@ const Manage_Reply = () => {
               variant="outlined"
               color="warning"
               startIcon={<EditIcon />}
-              //   onClick={() => setActiveModal(true)}
+              onClick={() => handleEdit_Exam(exam_id)}
             >
               แก้ไขข้อสอบ
             </Button>
@@ -199,21 +202,21 @@ const Manage_Reply = () => {
           <div className="md:flex  w-full md:w-3/6 justify-end">
             <div
               className="flex-col mx-2  rounded-xl p-3 text-center shadow-md"
-              style={{ backgroundColor: "#ffffb8" }}
+              style={{ backgroundColor: "#fff9c4" }}
             >
               <p className="text-md">จำนวนที่ต้องพิจารณา</p>
               <p className="font-medium">{exam ? exam.sum_status : ""}</p>
             </div>
             <div
               className="flex-col mx-2  rounded-xl px-5 py-3 text-center shadow-md"
-              style={{ backgroundColor: "#ffffb8" }}
+              style={{ backgroundColor: "#fff9c4" }}
             >
               <p className="text-md">คำถาม</p>
               <p className="font-medium">{question ? question.length : ""}</p>
             </div>
             <div
               className="flex-col mx-2  rounded-xl py-3 px-5 text-center shadow-md"
-              style={{ backgroundColor: "#ffffb8" }}
+              style={{ backgroundColor: "#fff9c4" }}
             >
               <p className="text-md">ผู้เข้าสอบ</p>
               <p className="font-medium">{students?students.length:''}</p>

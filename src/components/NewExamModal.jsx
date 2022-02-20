@@ -1,28 +1,18 @@
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import Toast from "./Toast/Toast.js";
-import {
-  TextField,
-  Card,
-  Divider,
-  Button,
-  Chip,
-} from "@mui/material";
+import { TextField, Card, Divider, Button, Chip } from "@mui/material";
 import Box from "@mui/material/Box";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
 import SubtitlesIcon from "@mui/icons-material/Subtitles";
 import ErrorMessage from "./ErrorMessage";
 import API_URL from "../config/api";
 import { getCurrentUser } from "../services/auth.service";
 
-export default function ExamModal({
-  active,
-  handleModal,
-  id,
-  setErrorMessage,
-  Id_toperent,
-}) {
+export default function NewExamModal({ active, handleModalNew, exam_id }) {
   const [name, setName] = useState("");
   const [errorMes, setErrorMes] = useState("");
+  const [All_question, setAll_question] = useState(null);
   const [date_pre, setDate_pre] = useState("");
   const [time_pre, setTime_pre] = useState("");
   const [date_post, setDate_post] = useState("");
@@ -49,9 +39,8 @@ export default function ExamModal({
         id: token.user.id,
       })
         .then((res) => {
-          Id_toperent(res.data.exam_id);
           cleanFormData();
-          handleModal();
+          handleModalNew();
           Toast.fire({
             icon: "success",
             title: "สร้างแบบทดสอบแล้ว",
@@ -68,45 +57,31 @@ export default function ExamModal({
     }
   };
 
-  const handleUpdateExam = async (e) => {
-    e.preventDefault();
-    const date_start = date_pre + " " + time_pre;
-    const date_end = date_post + " " + time_post;
-    let date_Dif = dayjs(date_end).diff(dayjs(date_start), "m", true);
-    if (date_Dif > 0 && name.length > 0) {
-      await API_URL.put(`api/exam/${id}`, {
-        name: name,
-        date_pre: date_start,
-        date_post: date_end,
-      })
-        .then((res) => {
-          handleModal();
-          Toast.fire({
-            icon: "success",
-            title: "แก้ไขแบบทดสอบแล้ว",
-          });
-        })
-        .catch((err) => {
-          setErrorMes("Something went wrong when updating Exam");
-          console.log(err);
-        });
-    } else {
-      Toast.fire({
-        icon: "error",
-        title: "ป้อนข้อมูลให้ถูกต้อง",
-      });
-    }
-  };
-
   const get_Exam = async () => {
-    await API_URL.get(`api/exam/${id}`)
+    await API_URL.get(`api/exam/${exam_id}`)
       .then((res) => {
         const data = res.data;
         setName(data.name);
-        setDate_pre(dayjs(data.date_pre).format("YYYY-MM-DD"));
-        setDate_post(dayjs(data.date_post).format("YYYY-MM-DD"));
-        setTime_pre(dayjs(data.date_pre).format("HH:mm"));
-        setTime_post(dayjs(data.date_post).format("HH:mm"));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const get_Question = async () => {
+    await API_URL.get(`api/question/${exam_id}/all`)
+      .then((res) => {
+        let sum_quesiton_score = 0;
+        const question = res.data.question;
+        for(var n in question){
+          sum_quesiton_score+= question[n].full_score;
+        }
+        Object.assign(
+          question,
+          { sum_quesiton_score: sum_quesiton_score }
+        );
+        setAll_question(question);
+        console.log(question);
       })
       .catch((err) => {
         console.log(err);
@@ -115,23 +90,24 @@ export default function ExamModal({
 
   useEffect(() => {
     cleanFormData();
-    if (id) {
+    if (exam_id) {
       get_Exam();
+      get_Question();
     }
-  }, [id]);
+  }, [exam_id]);
 
   return (
-    <div className={`modal ${active && "is-active"}`}>
-      <div className="modal-background" onClick={handleModal}></div>
-      <div className="modal-card">
+    <div  className={`modal ml-24 mt-9 ${active && "is-active"}`}>
+      <div className="modal-background" onClick={handleModalNew}></div>
+      <div className="modal-card w-4/6">
         <header className="modal-card-head has-text-white-ter">
-          <h1 className="modal-card-title has-text-centered">
-            {id ? "แก้ไขแบบทดสอบ" : "สร้างแบบทดสอบ"}
-          </h1>
+          <h4 className="modal-card-title has-text-centered my-auto">
+            <FileCopyIcon fontSize="large" /> ยืนยันการสอบใหม่
+          </h4>
           <button
             className="delete"
             aria-label="close"
-            onClick={handleModal}
+            onClick={handleModalNew}
           ></button>
         </header>
         <section className="modal-card-body">
@@ -164,12 +140,13 @@ export default function ExamModal({
                   display: "flex",
                   flexDirection: "row",
                   p: 1,
-                  m: 1,
+                  mx: 1,
                 }}
               >
                 <TextField
                   label="วันที่"
                   type="date"
+                  size="small"
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -180,6 +157,7 @@ export default function ExamModal({
                   <TextField
                     label="เวลา"
                     type="time"
+                    size="small"
                     InputLabelProps={{
                       shrink: true,
                     }}
@@ -199,12 +177,13 @@ export default function ExamModal({
                     display: "flex",
                     flexDirection: "row",
                     p: 1,
-                    m: 1,
+                    mx: 1,
                   }}
                 >
                   <TextField
                     label="วันที่"
                     type="date"
+                    size="small"
                     InputLabelProps={{
                       shrink: true,
                     }}
@@ -219,6 +198,7 @@ export default function ExamModal({
                       InputLabelProps={{
                         shrink: true,
                       }}
+                      size="small"
                       value={time_post}
                       onChange={(e) => setTime_post(e.target.value)}
                       required
@@ -233,46 +213,27 @@ export default function ExamModal({
         <footer className="modal-card-foot">
           <div>{errorMes ? <ErrorMessage message={errorMes} /> : <></>}</div>
           <div className="container mx-auto text-center">
-            {id ? (
-              <Button
-                className="mr-4"
-                color="warning"
-                variant="contained"
-                onClick={handleUpdateExam}
-                sx={{ borderRadius: "7px" }}
-                style={{
-                  fontSize: "18px",
-                  maxWidth: "100px",
-                  maxHeight: "30px",
-                  minWidth: "150px",
-                  minHeight: "40px",
-                }}
-              >
-                แก้ไข
-              </Button>
-            ) : (
-              <Button
-                onClick={handleCreateExam}
-                className="mr-4"
-                sx={{ borderRadius: "7px" }}
-                style={{
-                  fontSize: "18px",
-                  maxWidth: "100px",
-                  maxHeight: "30px",
-                  minWidth: "150px",
-                  minHeight: "40px",
-                }}
-                variant="contained"
-                color="success"
-              >
-                บันทึก
-              </Button>
-            )}
+            <Button
+              onClick={handleCreateExam}
+              className="mr-4"
+              sx={{ borderRadius: "7px" }}
+              style={{
+                fontSize: "18px",
+                maxWidth: "100px",
+                maxHeight: "30px",
+                minWidth: "150px",
+                minHeight: "40px",
+              }}
+              variant="contained"
+              color="success"
+            >
+              บันทึก
+            </Button>
             <Button
               variant="outlined"
               color="error"
               sx={{ borderRadius: "10px" }}
-              onClick={handleModal}
+              onClick={handleModalNew}
               style={{
                 fontSize: "18px",
                 maxWidth: "100px",

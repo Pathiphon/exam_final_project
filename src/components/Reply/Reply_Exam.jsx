@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 
 function Reply_Exam() {
-  const [exam, setExam, examRef] = useState([]);
   const [token] = useState(getCurrentUser());
   const [exam_data, setExam_data] = useState([]);
 

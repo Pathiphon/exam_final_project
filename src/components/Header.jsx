@@ -107,7 +107,7 @@ const Header = () => {
                 >
                   <p className="mx-auto pt-3 text-white text-2xl">ระบบตรวจข้อสอบ</p>
                   
-                  <Avatar src="/broken-image.jpg" className="mx-auto " sx={{ width: 56, height: 56 }} />
+                  <Avatar src="/broken-image.jpg" className="mx-auto" sx={{ width: 56, height: 56 }} />
                   <p className="mx-auto pt-3 text-white text-base">
                     {token && token.user.username}
                   </p>
