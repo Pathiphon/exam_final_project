@@ -18,17 +18,24 @@ function Reply_Exam() {
       .then(async(res) => {
         const data_table = res.data;
         let stu_length = 0;
+        let status_false = 0;
         for (var j = 0; j < data_table.length; j++) {
           await API_URL.get(`api/student/${data_table[j].exam_id}`)
           .then((stu)=>{
               stu_length=stu.data.length;
           })
+          for (var i in data_table[j].replies){
+            if (data_table[j].replies[i].check_status === false) {
+              status_false += 1;
+            } 
+          }
           Object.assign(
             data_table[j],
+            {status_false:status_false},
             { question_num: data_table[j].question.length },
-            { check_num: data_table[j].replies.length },
             {stu_length:stu_length}
           );
+          status_false = 0;
         }
         console.log(data_table);
         setExam_data(data_table);
@@ -73,12 +80,12 @@ function Reply_Exam() {
     },
     {
       title: "จำนวนที่ต้องพิจารณา",
-      dataIndex: "check_num",
+      dataIndex: "status_false",
       align: "center",
-      sorter: (a, b) => a.check_num - b.check_num,
-      render: (check_num) => (
-        <Tag key={check_num} color="volcano">
-          <p className="text-base font-semibold my-auto">{check_num}</p>
+      sorter: (a, b) => a.status_false - b.status_false,
+      render: (status_false) => (
+        <Tag key={status_false} color="volcano">
+          <p className="text-base font-semibold my-auto">{status_false}</p>
         </Tag>
       ),
     },

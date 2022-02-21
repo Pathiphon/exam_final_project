@@ -149,9 +149,8 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
                   bgcolor: "#fff1b8",
                   color: "text.primary",
                   borderRadius: "13px",
-                 
                   m: 1,
-                  p: 2,
+                  py: 1,px:2
                 }}
               >
                 ทั้งหมด {All_question?All_question.sum_quesiton_score:''} คะแนน

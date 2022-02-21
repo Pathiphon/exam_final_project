@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Toolbar, Divider } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LockIcon from '@mui/icons-material/Lock';
+import { getCurrentUser } from "../services/auth.service";
+import API_URL from "../config/api";
 
 export default function Profile() {
+  const [token] = useState(getCurrentUser());
+  const [username,setUsername] = useState(token.user?token.user.username:'');
+
   return (
     <div className="container w-100  ">
       <Box component="main">
@@ -21,22 +26,23 @@ export default function Profile() {
                 ชื่อ - นามสกุล
               </label>
               <input
-                className="bg-white appearance-none border-2  text-lg border-gray-300 rounded-lg w-100  py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-600"
+                className="bg-white appearance-none border-1  text-lg border-gray-300 rounded-lg w-100  py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-600"
                 placeholder="ชื่อ - นามสกุล"
-          
+                value={token.user?token.user.username:''}
               />
             </div>
           </div>
 
-          <div className="flex flex-wrap -mx-3 my-3">
+          <div className="flex flex-wrap -mx-3 my-4">
             <div className="w-full  px-3 ">
               <label className="block uppercase tracking-wide text-gray-700 text-xl mb-1 ml-2">
                 E-mail
               </label>
               <input
-                className="bg-white appearance-none border-2  text-lg border-gray-300 rounded-lg w-100  py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-600"
+                className="bg-slate-100 appearance-none border-1  text-lg border-gray-300 rounded-lg w-100  py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-600"
                 placeholder="email"
-          
+                disabled
+                value={token.user?token.user.email:''}
               />
             </div>
           </div>

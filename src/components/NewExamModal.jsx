@@ -5,18 +5,18 @@ import { TextField, Card, Divider, Button, Chip } from "@mui/material";
 import Box from "@mui/material/Box";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import SubtitlesIcon from "@mui/icons-material/Subtitles";
-import ErrorMessage from "./ErrorMessage";
+import { Table, Tag } from "antd";
 import API_URL from "../config/api";
 import { getCurrentUser } from "../services/auth.service";
 
 export default function NewExamModal({ active, handleModalNew, exam_id }) {
   const [name, setName] = useState("");
-  const [errorMes, setErrorMes] = useState("");
   const [All_question, setAll_question] = useState(null);
   const [date_pre, setDate_pre] = useState("");
   const [time_pre, setTime_pre] = useState("");
   const [date_post, setDate_post] = useState("");
   const [time_post, setTime_post] = useState("");
+  const [alreadySelecteRows, setAlreadySelecteRows] = useState([]);
   const [token] = useState(getCurrentUser());
 
   const cleanFormData = () => {
@@ -32,11 +32,12 @@ export default function NewExamModal({ active, handleModalNew, exam_id }) {
     const date_end = date_post + " " + time_post;
     let date_Dif = dayjs(date_end).diff(dayjs(date_start), "m", true);
     if (date_Dif > 0 && name.length > 0) {
-      await API_URL.post(`api/exam`, {
+      await API_URL.post(`api/exam/retest`, {
         name: name,
         date_pre: date_start,
         date_post: date_end,
         id: token.user.id,
+        list_SelectQues:alreadySelecteRows.list_SelectQues,
       })
         .then((res) => {
           cleanFormData();
@@ -71,15 +72,13 @@ export default function NewExamModal({ active, handleModalNew, exam_id }) {
   const get_Question = async () => {
     await API_URL.get(`api/question/${exam_id}/all`)
       .then((res) => {
-        let sum_quesiton_score = 0;
         const question = res.data.question;
-        for(var n in question){
-          sum_quesiton_score+= question[n].full_score;
-        }
-        Object.assign(
-          question,
-          { sum_quesiton_score: sum_quesiton_score }
-        );
+        for(var n =0;n < question.length;n++){
+          Object.assign(
+            question[n],
+             {ques_index:n+1},
+          );
+        }        
         setAll_question(question);
         console.log(question);
       })
@@ -95,11 +94,76 @@ export default function NewExamModal({ active, handleModalNew, exam_id }) {
       get_Question();
     }
   }, [exam_id]);
+  const columns_question = [
+    {
+      title: <div>ข้อที่</div>,
+      dataIndex: "ques_index",
+      width: "8%",
+      sorter: (a, b) => a.ques_index - b.ques_index,
+      render: (ques_index) => (
+        <div>
+          <p className="text-base my-auto">{ques_index}</p>
+        </div>
+      ),
+    },
+    {
+      title: <div className="header_table">คำถาม</div>,
+      dataIndex: "question",
+      width: "60%",
+      render: (question) => (
+        <p className="text-base"> {question}</p>
+      ),
+    },
+    {
+      title: <div>คะแนนเต็ม</div>,
+      dataIndex: "full_score",
+      key: "full_score",
+      sorter: (a, b) => a.full_score - b.full_score,
+      align: "center",
+      width: "10%",
+      render: (full_score) => (
+        <Tag color="geekblue">
+          <p className="text-base text-black font-semibold my-auto px-2">
+            {" "}
+            {full_score}
+          </p>
+        </Tag>
+      ),
+    },
+    {
+      title: "จำนวนเฉลย",
+      dataIndex: "answers",
+      align: "center",
+      width: "10%",
+      sorter: (a, b) => a.answer - b.answer,
+      render: (answers) => (
+        <div>
+          <p className="text-base my-auto">{answers.length}</p>
+        </div>
+        
+      ),
+    },
+    // {
+    //   title: "การจัดการ",
+    //   dataIndex: "ques_id",
+    //   key: "ques_id",
+    //   width: "20%",
+    //   render: (ques_id) => (
+    //     <Button
+    //       variant="outlined"
+    //       color="success"
+    //       size="large"
+    //     >
+    //       ดูเพิ่มเติม
+    //     </Button>
+    //   ),
+    // },
+  ];
 
   return (
-    <div  className={`modal ml-24 mt-9 ${active && "is-active"}`}>
+    <div className={`modal ml-24 mt-9 ${active && "is-active"}`}>
       <div className="modal-background" onClick={handleModalNew}></div>
-      <div className="modal-card w-4/6">
+      <div className="modal-card w-4/6 h-5/6">
         <header className="modal-card-head has-text-white-ter">
           <h4 className="modal-card-title has-text-centered my-auto">
             <FileCopyIcon fontSize="large" /> ยืนยันการสอบใหม่
@@ -124,6 +188,7 @@ export default function NewExamModal({ active, handleModalNew, exam_id }) {
                 <SubtitlesIcon sx={{ color: "action.active" }} />
               </div>
               <div className="w-full flex-auto md:w-1/2 px-3">
+                <label className="ml-2">หัวข้อสอบ</label>
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -133,7 +198,7 @@ export default function NewExamModal({ active, handleModalNew, exam_id }) {
                 />
               </div>
             </div>
-            <Card className="p-4">
+            <Card className="p-4 w-4/6 mx-auto">
               <h4>กำหนดเวลาสอบ</h4>
               <Box
                 sx={{
@@ -208,10 +273,27 @@ export default function NewExamModal({ active, handleModalNew, exam_id }) {
               </div>
             </Card>
           </Box>
+          <Divider sx={{my:2}}>
+               <p className="text-lg">คำถามทั้งหมด</p> 
+              </Divider>
+          <div className="w-11/12 mx-auto">
+            <Table
+              columns={columns_question}
+              dataSource={All_question}
+              rowKey="ques_id"
+              rowSelection={{
+                type: "checkbox",
+                selectedRows: alreadySelecteRows,
+                onChange: (keys, selectedRows) => {
+                  setAlreadySelecteRows({ list_SelectQues: selectedRows });
+                  console.log(alreadySelecteRows);
+                },
+              }}
+            />
+          </div>
         </section>
 
         <footer className="modal-card-foot">
-          <div>{errorMes ? <ErrorMessage message={errorMes} /> : <></>}</div>
           <div className="container mx-auto text-center">
             <Button
               onClick={handleCreateExam}

@@ -85,7 +85,7 @@ export default function ExamForm() {
 
         setCheck_start(start);
         setCheck_end(date3.diff(date2, "m", true));
-        console.log(check_startRef.current, check_endRef.current);
+        console.log(date1,date3);
         var day_diff = date3.diff(date2, "day", true);
         var day = Math.floor(day_diff);
         var hour = Math.floor((day_diff - day) * 24);

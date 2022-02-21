@@ -42,7 +42,6 @@ export default function Manage_exam() {
 
   const handleChange = (event) => {
     setSelectExamStatus(event.target.value);
-    console.log(event.target.value);
   };
 
   const handleModalExamForm = () => {
@@ -50,34 +49,27 @@ export default function Manage_exam() {
   };
 
   const get_Exam = async () => {
-    if (selectExamStatus === 2) {
+    var exam =[];
       await API_URL.get(`api/exam/${token && token.user.id}/all`)
         .then((res) => {
-          setExam(res.data);
-          return res.data;
+          exam = res.data;
+          if (selectExamStatus === 0) {
+            const updateExam_data = exam.filter((data)=>{
+              return data.exam_status === false;
+            });
+            exam = updateExam_data
+          } else if (selectExamStatus === 1) {
+            const updateExam_data = exam.filter((data)=>{
+              return data.exam_status === true;
+            });
+            exam = updateExam_data
+          }
+          setExam(exam);
         })
         .catch((err) => {
           console.log(err);
         });
-    } else if (selectExamStatus === 0) {
-      await API_URL.get(`api/exam/${token && token.user.id}/allfalse`)
-        .then((res) => {
-          setExam(res.data);
-          return res.data;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      await API_URL.get(`api/exam/${token && token.user.id}/alltrue`)
-        .then((res) => {
-          setExam(res.data);
-          return res.data;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+     
   };
 
   useEffect(() => {
@@ -98,6 +90,7 @@ export default function Manage_exam() {
   };
   const handleModalNew = async () => {
     setActiveModalNew(!activeModalNew);
+    get_Exam();
     setExam_id(null);
   };
 

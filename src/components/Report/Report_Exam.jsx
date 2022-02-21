@@ -14,13 +14,13 @@ export default function Report_Exam() {
   const [exam, setExam, examRef] = useState([]);
   const [token] = useState(getCurrentUser());
   const [exam_data, setExam_data] = useState([]);
+
   const get_Exam = async () => {
     await API_URL.get(`api/reply/${token && token.user.id}/all`)
       .then( async(res) => {
         setExam(res.data);
         const data_table = examRef.current;
         let stu_length = 0;
-        console.log(data_table);
         for (var j = 0; j < data_table.length; j++) {
           await API_URL.get(`api/student/${data_table[j].exam_id}`)
           .then((stu)=>{
