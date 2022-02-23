@@ -6,8 +6,8 @@ const Report_Reply = React.forwardRef((props, ref) => {
   const students = props.student ? props.student : "";
 
   return (
-    <div ref={ref} className="w-10/12 mx-auto text-center my-5">
-      <p className="text-lg">ประกาศผลสอบ</p>
+    <div ref={ref} className="w-full mx-auto text-center bg-white">
+      <p className="text-lg my-10">ประกาศผลสอบ</p>
       <p>เรื่อง {exams.name}</p>
       <p>สอบเมื่อวันที่ {dayjs(exams.date_pre).format("DD/MM/YYYY HH:mm")}</p>
       <div className="flex justify-between w-10/12 mx-auto">
@@ -15,7 +15,7 @@ const Report_Reply = React.forwardRef((props, ref) => {
         <p>คะแนนเต็ม {exams.question_sum_score}</p>
       </div>
 
-      <table className="border-1 border-black w-9/12 mx-auto p-2">
+      <table className="border-1 border-black w-3/6 mx-auto p-2">
       <thead>
         <tr>
           <th className="w-1/12 border-1 p-2">

@@ -7,7 +7,7 @@ const Report_Student = React.forwardRef((props, ref) => {
   const replys = props.reply ? props.reply : "";
 
   return (
-    <div ref={ref} className="w-10/12 mx-auto text-center my-5">
+    <div ref={ref} className="w-full mx-auto text-center my-5 bg-white">
       <p className="text-lg">ผลสอบนักศึกษา</p>
       <div className="flex mx-auto justify-center">
         <p className="mx-5">รหัสนักศึกษา {students.stu_code}</p>

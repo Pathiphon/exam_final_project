@@ -6,6 +6,8 @@ import Create_exam from './components/Create_exam';
 import Profile from './components/Profile';
 import Header from './components/Header';
 import Register from './components/Register';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 import Reply from './components/Reply/Reply_Exam';
 import Manage_Reply from './components/Reply/Manage_Reply';
 import Manage_Reply_one from './components/Reply/Manage_Reply_one';
@@ -23,11 +25,11 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 ReactDOM.render(
   <ConfigProvider locale={thTH}>
     <BrowserRouter>
-      {/* <App/> */}
       <Routes>
         <Route path="/*" element={<App />} >
           <Route path="/*" element={<Login />} ></Route>
           <Route path="/*" element={<Register />} ></Route>
+          <Route path="/*" element={<ForgotPassword />} ></Route>
         </Route>
         <Route path="/*" element={<Header />} >
           <Route path="/*" element={<Create_exam />} ></Route>
@@ -42,6 +44,8 @@ ReactDOM.render(
 
         <Route path="/ExamForm/:exam_id" element={<ExamForm />} ></Route>
         <Route path="/ExamForm_Finish" element={<ExamForm_Finish />} ></Route>
+        
+        <Route path="/ResetPassword/:token" element={<ResetPassword />} ></Route>
 
       </Routes>
     </BrowserRouter>

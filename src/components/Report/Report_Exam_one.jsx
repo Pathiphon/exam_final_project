@@ -28,6 +28,8 @@ export default function Report_Exam_one() {
   let componentRef = useRef(null);
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
+    documentTitle: exam ? exam.name : "รายงาน",
+   
   });
 
   const handleChange = (event, newValue) => {
@@ -66,7 +68,7 @@ export default function Report_Exam_one() {
         const question = res.data.question;
         let sum_score = 0;
         let sum_score_stu = 0;
-        let ques_index =0;
+        let ques_index = 0;
 
         for (var j = 0; j < question.length; j++) {
           sum_score += question[j].full_score;
@@ -75,7 +77,7 @@ export default function Report_Exam_one() {
           }
           Object.assign(
             exam.question[j],
-            {ques_index:j+1},
+            { ques_index: j + 1 },
             { sum_scoreStu: sum_score_stu },
             {
               avg_question: (
@@ -377,7 +379,11 @@ export default function Report_Exam_one() {
         <></>
       )}
       <div className="hidden">
-        <Report_Reply ref={componentRef} exam={exam} student={students} />
+        <Report_Reply
+          ref={componentRef}
+          exam={exam}
+          student={students}
+        />
       </div>
     </div>
   );

@@ -1,18 +1,44 @@
 import React, { useState } from "react";
 import { Box, Toolbar, Divider } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import LockIcon from '@mui/icons-material/Lock';
+import LockIcon from "@mui/icons-material/Lock";
+import Toast from "./Toast/Toast.js";
 import { getCurrentUser } from "../services/auth.service";
 import API_URL from "../config/api";
 
 export default function Profile() {
   const [token] = useState(getCurrentUser());
-  const [username,setUsername] = useState(token.user?token.user.username:'');
+  const [username, setUsername] = useState(
+    token.user ? token.user.username : ""
+  );
 
+  const handleUpdateUser = async (e) => {
+    e.preventDefault();
+    await API_URL.put(`api/user/${token && token.user.id}`, {
+      username: username,
+    })
+      .then((res) => {
+        Toast.fire({
+          icon: "success",
+          title: "แก้ไขชื่อผู้ใช้แล้ว",
+        });
+        localStorage.removeItem("awesomeLeadsToken");
+        window.location.reload()
+      })
+      .catch((err) => {
+        Toast.fire({
+          icon: "error",
+          title: "ป้อนข้อมูลให้ถูกต้อง",
+        });
+      });
+  };
   return (
     <div className="container w-100  ">
       <Box component="main">
-        <form className=" mx-10 px-10 py-5 bg-white rounded-lg shadow-md">
+        <form
+          className=" mx-10 px-10 py-5 bg-white rounded-lg shadow-md"
+          onSubmit={handleUpdateUser}
+        >
           <div className="flex items-center my-2">
             <AccountCircleIcon sx={{ width: 40, height: 40, mr: 3 }} />
             <p className="text-xl">บัญชี</p>
@@ -28,7 +54,8 @@ export default function Profile() {
               <input
                 className="bg-white appearance-none border-1  text-lg border-gray-300 rounded-lg w-100  py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-600"
                 placeholder="ชื่อ - นามสกุล"
-                value={token.user?token.user.username:''}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </div>
           </div>
@@ -42,19 +69,18 @@ export default function Profile() {
                 className="bg-slate-100 appearance-none border-1  text-lg border-gray-300 rounded-lg w-100  py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-600"
                 placeholder="email"
                 disabled
-                value={token.user?token.user.email:''}
+                value={token.user ? token.user.email : ""}
               />
             </div>
           </div>
-
           <div className="flex items-center justify-around mt-4">
-                  <button
-                    className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-20 rounded-lg focus:outline-none focus:shadow-outline"
-                    type="submit"
-                  >
-                    บันทึกการเปลี่ยนแปลง
-                  </button>
-                </div>
+            <button
+              className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-20 rounded-lg focus:outline-none focus:shadow-outline"
+              type="submit"
+            >
+              บันทึกการเปลี่ยนแปลง
+            </button>
+          </div>
         </form>
         {/* <form className=" mx-10 px-10 py-5 bg-white rounded-lg shadow-md">
           <div className="flex items-center my-2">

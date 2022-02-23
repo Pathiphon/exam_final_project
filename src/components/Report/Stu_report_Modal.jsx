@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import useState from "react-usestateref";
-import Toast from "../Toast/Toast.js";
-import { Checkbox, FormGroup, Divider, Button } from "@mui/material";
+import {  Divider, Button } from "@mui/material";
 import API_URL from "../../config/api";
 import logo_stu from "../../img/logo_stu.png";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -21,6 +20,9 @@ export default function Stu_report_Modal({
   let componentRef = useRef(null);
   const handlePrint_stu = useReactToPrint({
     content: () => componentRef.current,
+    documentTitle: students
+      ? students.stu_code + " " + students.name
+      : "รายงานนักศึกษา",
   });
 
   useEffect(() => {
@@ -70,6 +72,7 @@ export default function Stu_report_Modal({
             <div className="flex max-w-md items-center">
               <img src={logo_stu} className="rounded h-16" alt="" />
               <p className="text-lg truncate mx-4">
+                {students ? students.stu_code : ""}{" "}
                 {students ? students.name : ""}
               </p>
             </div>

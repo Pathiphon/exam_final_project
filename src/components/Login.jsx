@@ -1,22 +1,13 @@
-import React, { useState, useContext } from "react";
-import { FormControl, Input, InputLabel, TextField } from "@mui/material";
+import React, { useState } from "react";
 import ErrorMessage from "./ErrorMessage";
-import API from "../config/api";
 import {
-  AppBar,
-  Toolbar,
   Typography,
+  FormControl, Input, InputLabel,
   Button,
-  Container,
-  Box,
-  CssBaseline,
-  Grid,
 } from "@mui/material";
-import index_img from "../img/index.png";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signin } from "../services/auth.service";
-import Toast from "./Toast/Toast"
+import Toast from "./Toast/Toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -32,7 +23,7 @@ const Login = () => {
           icon: "success",
           title: "เข้าสู่ระบบแล้ว",
         });
-        navigate('/')
+        navigate("/");
         window.location.reload();
       })
       .catch((err) => {
@@ -90,6 +81,11 @@ const Login = () => {
             required
           />
         </FormControl>
+        <div className="mt-2 w-80 text-left underline mx-auto">
+          <Link to="./ForgotPassword">
+          ลืมรหัสผ่าน?
+          </Link>
+        </div>
         <FormControl
           sx={{ m: 1, width: "80%" }}
           className="container"

@@ -1,6 +1,8 @@
 import Register from './components/Register'
 import Header from './components/Header';
-import Login from './components/Login'
+import Login from './components/Login';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 import 'bulma/css/bulma.min.css';
 import './App.css'
 import { AppBar, Toolbar, Typography, Button, Container, Box, CssBaseline, Grid } from '@mui/material';
@@ -25,7 +27,7 @@ const App = () => {
       {!token ? (
         <>
           <Toolbar />
-          <Toolbar />
+   
           <Box sx={{ flexGrow: 1 }}>
             <CssBaseline />
             <AppBar style={{ background: 'white' }}>
@@ -38,7 +40,7 @@ const App = () => {
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 
                 </Typography>
-                <Button size="large" className="mr-4">เกี่ยวกับเรา</Button>
+                {/* <Button size="large" className="mr-4">เกี่ยวกับเรา</Button> */}
                 <Link to="./Register">
                   <Button variant="contained" size="large" endIcon={<ArrowForwardIosIcon />} style={{ fontSize: '15px' }} sx={{
                     backgroundColor: "#000000", ':hover': {
@@ -50,73 +52,57 @@ const App = () => {
                   </Button>
                 </Link>
               </Toolbar>
-
             </AppBar>
           </Box>
 
           <Container maxWidth="lg">
-            <div sx={{ width: '100%' }} style={{ backgroundColor: "#DBDEFF", borderRadius: '10px' }}>
-
-              <Grid container spacing={2} sx={{ padding: '70px' }} >
-                {pathname === "/" ? (
-                  <Grid item xs={6} md={8}>
-                    <Grid container spacing={1}>
-
-                      <Grid item xs={6} md={8}>
+            <div className='p-5'>
+              <div className='rounded-xl p-10' style={{ backgroundColor: "#DBDEFF" }}>
+                <div className='sm:flex justify-between w-full' >
+                  <div className='sm:flex-row max-w-lg my-auto'>
+                    {pathname === "/" ? (
+                      <>
                         <Typography variant="h3" component="div" style={{ color: 'black' }}>
                           ระบบสอบออนไลน์
                         </Typography>
-                      </Grid>
-
-                      <Grid item xs={6} md={8}>
                         <Typography variant="p" component="div" style={{ color: 'black' }}>
                           Find and create free gamified quizzes and interactive lessons to engage any learner.
                         </Typography>
-                      </Grid>
-
-                      <Grid item xs={6} md={8} sx={{ marginTop: '100px' }}>
-                        <Grid container spacing={2}>
-                          <Grid item xs={6}>
-                            <Link to="./Register">
-                              <Button variant="contained" endIcon={<ArrowForwardIosIcon />} sx={{
-                                backgroundColor: "#000000", ':hover': { bgcolor: '#000033' }, borderRadius: '30px'
-                              }} style={{ fontSize: '18px', maxWidth: '500px', maxHeight: '150px', minWidth: '200px', minHeight: '60px' }}>
-                                เริ่มต้นใช้งาน
-                              </Button>
-                            </Link>
-                          </Grid>
-
-                          <Grid item xs={6}>
-                            <Link to="./Login">
-                              <Button variant="outlined" color='warning' endIcon={<ExitToAppIcon />} sx={{
-                                borderRadius: '30px'
-                              }} style={{ fontSize: '18px', maxWidth: '500px', maxHeight: '100px', minWidth: '200px', minHeight: '60px' }}>
-                                เข้าสู่ระบบ
-                              </Button>
-                            </Link>
-                          </Grid>
-
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                ) : pathname === "/Login" ? (
-                  <Grid item xs={6} md={6}  >
-                    <Login />
-                  </Grid>
-                ) : (
-                  <Grid item xs={6} md={6}  >
-                    <Register />
-                  </Grid>
-                )}
-
-                <Grid item xs={6} md={4}>
-                  <img src={index_img} className="rounded w-100" alt='' />
-                </Grid>
-              </Grid>
+                        <div className='sm:flex-col mt-20'>
+                          <Link to="./Register" className='mx-4'>
+                            <Button variant="contained" endIcon={<ArrowForwardIosIcon />} sx={{
+                              backgroundColor: "#000000", ':hover': { bgcolor: '#000033' }, borderRadius: '30px'
+                            }} style={{ fontSize: '18px', maxWidth: '500px', maxHeight: '150px', minWidth: '200px', minHeight: '60px' }}>
+                              เริ่มต้นใช้งาน
+                            </Button>
+                          </Link>
+                          <Link to="./Login" className='mx-4'>
+                            <Button variant="outlined" className="shadow-md" color='warning' endIcon={<ExitToAppIcon />} sx={{
+                              borderRadius: '30px'
+                            }} style={{ fontSize: '18px', maxWidth: '500px', maxHeight: '100px', minWidth: '200px', minHeight: '60px' }}>
+                              เข้าสู่ระบบ
+                            </Button>
+                          </Link>
+                        </div>
+                      </>
+                    ) : pathname === "/Login" ? (
+                      <> <Login /></>
+                    ) :pathname === "/Register" ? (
+                      <> <Register /></>
+                    ):(
+                      <><ForgotPassword/></>
+                    )}
+                  </div>
+                  <div className='flex h-96 w-full sm:w-3/6 items-end'>
+                    <img src={index_img} className="object-scale-down h-5/6 w-5/6 mx-auto items-end" alt='' />
+                  </div>
+                </div>
+              </div>
             </div>
           </Container>
-
+          <footer className='text-center bg-gray-200 py-3 mt-5'>
+            <p className='mx-auto text-base my-auto'>Copyright © 2021 SCIT | สำนักวิชาคอมพิวเตอร์และเทคโนโลยีสารสนเทศ</p>
+          </footer>
         </>
       ) : (
         <Header />

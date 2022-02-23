@@ -22,11 +22,7 @@ body{
   justify-self: end !important;
   @apply bg-gray-100  border-2 p-2 !important;
 }
-/* .header_table{
-  @apply bg-gray-900 text-white p-3
-}
-thead[className*="ant-table-cell"] th{
-} */
+
 
 thead[class*="ant-table-thead"] th{
   background-color: #494949  !important;
