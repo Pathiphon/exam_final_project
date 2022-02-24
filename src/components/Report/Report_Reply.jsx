@@ -21,7 +21,7 @@ const Report_Reply = React.forwardRef((props, ref) => {
           <th className="w-1/12 border-1 p-2">
             <p className="font-semibold text-base my-auto">ลำดับ</p>
           </th>
-          <th className="border-1 p-2 w-3/12">
+          <th className="border-1 p-2 w-4/12">
             <p className="font-semibold text-base my-auto">รหัสนักศึกษา</p>
           </th>
           <th className="w-6/12 border-1 p-2">
@@ -39,7 +39,7 @@ const Report_Reply = React.forwardRef((props, ref) => {
           >
             <td className="border-1 p-2">{index + 1}</td>
             <td className="border-1 p-2">{student.stu_code}</td>
-            <td className="border-1 p-2"><p className="text-left">{student.name}</p></td>
+            <td className="border-1 p-2"><p className="text-left my-auto">{student.name}</p></td>
             <td className="border-1 p-2">{student.score_stu_full}</td>
           </tr>
         ))}

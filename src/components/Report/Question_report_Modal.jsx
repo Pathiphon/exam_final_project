@@ -71,7 +71,7 @@ export default function Question_report_Modal({
               className="appearance-none block w-full bg-gray-200 text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-200"
               placeholder="ค้นหาตามคะแนน"
               type="number"
-              onChange={e=>setInputSearch(e.target.value)}
+              onChange={(e) => setInputSearch(e.target.value)}
             />
           </div>
           <Divider
@@ -82,31 +82,36 @@ export default function Question_report_Modal({
             }}
           />
           <div className=" mx-auto">
-            
-            {replys ? (replys.filter(reply=>{
-                if(inputSearch===''){
-                  return reply;
-                }else if(reply.score_stu.toString().includes(inputSearch.toString())){
-                  return reply;
-                }
-            }).map((reply, index) => (
-                <div
-                  className="my-3 bg-gray-50 rounded-md  p-3 flex justify-between shadow-sm"
-                  key={index}
-                >
-                  <div className="flex">
-                    <p className="flex-1 w-40 truncate my-auto ">
-                      {reply.student.name}
-                    </p>
-                    <p className="max-w-md truncate my-auto ml-5">
-                      {reply.answer_stu}
+            {replys ? (
+              replys
+                .filter((reply) => {
+                  if (inputSearch === "") {
+                    return reply;
+                  } else if (
+                    reply.score_stu.toString().includes(inputSearch.toString())
+                  ) {
+                    return reply;
+                  }
+                })
+                .sort((a, b) => (a.score_stu > b.score_stu ? 1 : -1))
+                .map((reply, index) => (
+                  <div
+                    className="my-3 bg-gray-50 rounded-md  p-3 flex justify-between shadow-sm"
+                    key={index}
+                  >
+                    <div className="flex">
+                      <p className="flex w-32 truncate my-auto ">
+                        {reply.student.name}
+                      </p>
+                      <p className="max-w-sm truncate my-auto ml-3">
+                        {reply.answer_stu}
+                      </p>
+                    </div>
+                    <p className="max-w-sm truncate my-auto ml-1 bg-orange-100 rounded-md px-5">
+                      {reply.score_stu} คะแนน
                     </p>
                   </div>
-                  <p className="max-w-md truncate my-auto ml-1 bg-orange-100 rounded-md px-5">
-                    {reply.score_stu} คะแนน
-                  </p>
-                </div>
-              ))
+                ))
             ) : (
               <></>
             )}

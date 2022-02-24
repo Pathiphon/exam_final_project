@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import useState from "react-usestateref";
 import { Link } from "react-router-dom";
-import { Table } from "antd";
+import { Table,Tag } from "antd";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import API_URL from "../../config/api";
 import { getCurrentUser } from "../../services/auth.service";
 import SearchIcon from "@mui/icons-material/Search";
@@ -48,13 +47,14 @@ export default function Report_Exam() {
 
   const columns = [
     {
-      title: <div className="header_table max-w-xs truncate">แบบทดสอบ</div>,
+      title: "แบบทดสอบ",
       dataIndex: "name",
-      render: (name) => <p className="text-lg max-w-xs truncate">{name}</p>,
+      render: (name) => <p className="text-lg max-w-lg truncate ml-1 my-auto">{name}</p>,
     },
     {
-      title: <div className="header_table">จำนวนคำถาม</div>,
+      title: "จำนวนคำถาม",
       dataIndex: "question_num",
+      width:"15%",
       sorter: (a, b) => a.question_num - b.question_num,
       align: "center",
       render: (question_num) => (
@@ -67,11 +67,12 @@ export default function Report_Exam() {
       title: "จำนวนผู้เข้าสอบ",
       dataIndex: "stu_length",
       align: "center",
+      width:"15%",
       sorter: (a, b) => a.stu_length - b.stu_length,
       render: (stu_length) => (
-        <div>
-          <p className="text-base my-auto font-semibold">{stu_length}</p>
-        </div>
+        <Tag color="gold" className="my-auto">
+          <p className="text-base my-auto font-semibold px-3 text-black">{stu_length}</p>
+        </Tag>
       ),
     },
 
@@ -79,8 +80,10 @@ export default function Report_Exam() {
       title: "การจัดการ",
       dataIndex: "exam_id",
       key: "exam_id",
+      width:"15%",
+      align:'center',
       render: (exam_id, index) => (
-        <div>
+        <div className="mx-auto">
           <Link key={index} to={`/${exam_id}/Report_Exam_one`}>
             <Button
               variant="outlined"
@@ -90,14 +93,6 @@ export default function Report_Exam() {
               ดูเพิ่มเติม
             </Button>
           </Link>
-          <Button
-            variant="outlined"
-            color="error"
-            className="mx-2"
-            startIcon={<DeleteForeverIcon />}
-          >
-            ลบ
-          </Button>
         </div>
       ),
     },
@@ -127,6 +122,7 @@ export default function Report_Exam() {
         </div>
       </div>
       <Table
+      size="middle"
         columns={columns}
         className="rounded-lg my-3"
         dataSource={exam_data}

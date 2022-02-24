@@ -12,11 +12,11 @@ import {
 
 export default function ExamForm_Finish() {
   const [exam_name, setExam_name] = useState(null);
+
   const location = useLocation();
   let navigate = useNavigate();
   const handleClick = () => {
-    navigate(-1);
-    
+    navigate(-1);   
   };
   useEffect(() => {
     if (location.state !== null) {

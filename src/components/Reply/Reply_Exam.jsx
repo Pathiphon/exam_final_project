@@ -54,55 +54,53 @@ function Reply_Exam() {
 
   const columns = [
     {
-      title: <div className="header_table">แบบทดสอบ</div>,
+      title: <p className="my-auto">แบบทดสอบ</p>,
       dataIndex: "name",
-      render: (name) => <p className="text-lg max-w-xs truncate">{name}</p>,
+      render: (name) => <p className="text-lg max-w-lg my-auto truncate">{name}</p>,
     },
     {
-      title: <div className="header_table">จำนวนคำถาม</div>,
+      title: <p className="my-auto">จำนวนคำถาม</p>,
       dataIndex: "question_num",
       sorter: (a, b) => a.question_num - b.question_num,
       align: "center",
+      width:"10%",
       render: (question_num) => (
-        <div>
           <p className="text-base my-auto font-semibold">{question_num}</p>
-        </div>
       ),
     },
     {
-      title: "จำนวนผู้เข้าสอบ",
+      title: <p className="my-auto">จำนวนผู้เข้าสอบ</p>,
       dataIndex: "stu_length",
       align: "center",
+      width:"10%",
       sorter: (a, b) => a.stu_length - b.stu_length,
       render: (stu_length) => (
-        <div>
           <p className="text-base my-auto font-semibold">{stu_length}</p>
-        </div>
       ),
     },
     {
-      title: "จำนวนที่ต้องพิจารณา",
+      title: <p className="my-auto">จำนวนข้อที่ต้องพิจารณา</p>,
       dataIndex: "status_false",
       align: "center",
+      width:"15%",
       sorter: (a, b) => a.status_false - b.status_false,
       render: (status_false) => (
-        <Tag key={status_false} color="volcano">
-          <p className="text-base font-semibold my-auto">{status_false}</p>
+        <Tag key={status_false} color="volcano" className="my-auto">
+          <p className="text-base font-semibold my-auto px-3">{status_false}</p>
         </Tag>
       ),
     },
     {
-      title: "การจัดการ",
+      title: <p className="my-auto">การจัดการ</p>,
       dataIndex: "exam_id",
       key: "exam_id",
+      width:'10%',
       render: (exam_id, index) => (
         <Link key={index} to={`/${exam_id}/Manage_Reply`}>
           <Button
             variant="outlined"
             color="success"
-            size="large"
             startIcon={<ManageSearchIcon />}
-            //   onClick={() => handleUpdate(exams.exam_id)}
           >
             ตรวจ
           </Button>

@@ -152,7 +152,7 @@ export default function ExamForm() {
         if (stuCode.length === 9) {
           CreateReply();
         } else {
-          navigate("/ExamForm_Finish", { state: { name: exam_name } });
+          navigate("/ExamForm_Finish", { state: { name: exam_name} });
           window.location.reload();
         }
       });

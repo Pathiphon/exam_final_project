@@ -81,7 +81,7 @@ export default function Stu_Modal({
         score_stu: score,
         check_status: true,
         add_ans: add_ans,
-        answer: exam_data[0].answer_stu,
+        answer: exam_data.answer_stu,
       }
     )
       .then((res) => {
@@ -114,8 +114,13 @@ export default function Stu_Modal({
           <div className="flex mb-1 items-center">
             <p className="text-lg text-gray-500 mx-2">ชื่อ - นามสกุล</p>
             <p className="text-xl text-back mx-2">
-              {exam_data ? exam_data.name : ""}
+             {exam_data ? exam_data.name : ""}
             </p>
+            <p className="text-lg text-gray-500 ml-10">รหัสนักศึกษา</p>
+            <p className="text-xl text-back mx-2">
+             {exam_data?exam_data.stu_code:''} 
+            </p>
+          
           </div>
           <div className="flex mb-5 items-center">
             <p className="text-lg text-gray-500 mx-2 my-auto">สถานะ</p>
@@ -144,7 +149,7 @@ export default function Stu_Modal({
           </div>
           <div className="flex mb-2 ">
             <p className="text-lg text-gray-500 mx-2">คำตอบ</p>
-            <div className="w-5/6 rounded-xl bg-yellow-50 shadow-sm border-slate-300">
+            <div className="w-5/6 rounded-xl bg-white border-slate-200 border-1">
               <p className="text-xl text-back mx-2 p-4">
                 {exam_data ? exam_data.answer_stu : "-"}
               </p>
@@ -155,7 +160,7 @@ export default function Stu_Modal({
           />
           <div className="flex p-2 w-full">
             <div className="flex  m-2">
-              <div className="text-center bg-zinc-50 p-2 rounded-md shadow-md">
+              <div className="text-center bg-white p-2 rounded-md shadow-md">
                 <DataUsageIcon className="mx-auto" fontSize="large" />
                 <p className="mx-auto mt-3">เปอร์เซ็นความถูกต้อง</p>
                 <p className="text-lg text-slate-900 font-semibold">
@@ -164,7 +169,7 @@ export default function Stu_Modal({
               </div>
             </div>
             <div className="flex m-2 ">
-              <div className="text-center bg-zinc-50 py-2 px-7 rounded-md shadow-md">
+              <div className="text-center bg-white py-2 px-7 rounded-md shadow-md">
                 <NumbersIcon className="mx-auto" fontSize="large" />
                 <p className="mx-auto mt-3">คะแนน</p>
                 <p className="text-lg text-slate-900 font-semibold">
@@ -173,7 +178,7 @@ export default function Stu_Modal({
               </div>
             </div>
             <div className="flex-1 m-2 ">
-              <div className="text-left bg-yellow-50 py-2 px-7 rounded-md shadow-md w-full">
+              <div className="text-left bg-white py-2 px-7 rounded-md shadow-md w-full">
                 <FeedbackIcon fontSize="large" />
                 <p className="mt-3">เฉลย</p>
                 <p className="mt-5 w-full text-lg">
@@ -197,8 +202,10 @@ export default function Stu_Modal({
                     className="appearance-none shadow-md block w-full bg-white text-black border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-200"
                     placeholder="ป้อนคะแนน...."
                     type="number"
+                    step="any"
                     min={0}
                     max={exam ? exam.question[0].full_score : 500}
+                    // max ={2}
                   />
                 </div>
               </div>

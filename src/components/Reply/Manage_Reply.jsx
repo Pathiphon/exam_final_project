@@ -91,40 +91,37 @@ const Manage_Reply = () => {
 
   const columns = [
     {
-      title: <div>ข้อที่</div>,
+      title: "ข้อที่",
       dataIndex: "ques_index",
       width: "7%",
+      align:'center',
       render: (ques_index) => (
-        <div>
           <p className="text-base my-auto">{ques_index}</p>
-        </div>
       ),
     },
     {
-      title: <div className="header_table">คำถาม</div>,
+      title: "คำถาม",
       dataIndex: "question",
       width: "30%",
-      render: (question) => <p className="text-base max-w-sm truncate">{question}</p>,
+      render: (question) => <p className="text-base max-w-sm truncate my-auto">{question}</p>,
     },
     {
-      title: <div>คะแนนเต็ม</div>,
+      title: "คะแนนเต็ม",
       dataIndex: "full_score",
       key: "full_score",
       sorter: (a, b) => a.full_score - b.full_score,
       align: "center",
       render: (full_score) => (
-        <div>
           <p className="text-base my-auto">{full_score}</p>
-        </div>
       ),
     },
     {
-      title: <div className="header_table">จำนวนที่ตรวจแล้ว</div>,
+      title: "จำนวนที่ตรวจแล้ว",
       dataIndex: "status_true",
       sorter: (a, b) => a.status_true - b.status_true,
       align: "center",
       render: (status_true) => (
-        <Tag color="green">
+        <Tag color="green" className="my-auto">
           <p className="text-base my-auto font-semibold">{status_true}</p>
         </Tag>
       ),
@@ -135,7 +132,7 @@ const Manage_Reply = () => {
       align: "center",
       sorter: (a, b) => a.status_false - b.status_false,
       render: (status_false) => (
-        <Tag color="volcano">
+        <Tag color="volcano" className="my-auto">
           <p className="text-base my-auto font-semibold">{status_false}</p>
         </Tag>
       ),
@@ -149,8 +146,8 @@ const Manage_Reply = () => {
           <Button
             variant="outlined"
             color="success"
-            size="large"
-            startIcon={<ManageSearchIcon />}
+            sx={{fontWeight:"bold"}}
+            startIcon={<ManageSearchIcon/>}
           >
             ดูเพิ่มเติม
           </Button>
@@ -236,6 +233,7 @@ const Manage_Reply = () => {
       <div className="w-11/12 mx-auto">
         <p className="text-xl">คำถามทั้งหมด</p>
         <Table
+        size="middle"
           columns={columns}
           className="rounded-lg"
           dataSource={question}

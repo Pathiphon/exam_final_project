@@ -29,7 +29,6 @@ export default function Report_Exam_one() {
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     documentTitle: exam ? exam.name : "รายงาน",
-   
   });
 
   const handleChange = (event, newValue) => {
@@ -42,6 +41,7 @@ export default function Report_Exam_one() {
     setActiveModalReport(true);
   };
   const handleModalReport = async () => {
+    get_Students();
     setActiveModalReport(!activeModalReport);
     setStu_code(null);
     setStu_exam_id(null);
@@ -134,18 +134,17 @@ export default function Report_Exam_one() {
       dataIndex: "stu_code",
       key: "stu_code",
       width: "20%",
+      align:'center',
       sorter: (a, b) => a.stu_code - b.stu_code,
       render: (stu_code) => (
-        <div>
           <p className="text-base my-auto">{stu_code}</p>
-        </div>
       ),
     },
     {
       title: <div className="header_table">ชื่อ - นามสกุล</div>,
       dataIndex: "name",
       width: "30%",
-      render: (name) => <p className="text-base max-w-md truncate"> {name}</p>,
+      render: (name) => <p className="text-base max-w-md truncate my-auto"> {name}</p>,
     },
     {
       title: "คะแนน",
@@ -185,9 +184,11 @@ export default function Report_Exam_one() {
         <Button
           variant="outlined"
           color="success"
-          size="large"
           onClick={() => handleClickReport({ stu_code })}
           startIcon={<ManageSearchIcon />}
+          style={{
+            maxHeight: "35px",
+          }}
         >
           ดูเพิ่มเติม
         </Button>
@@ -210,7 +211,7 @@ export default function Report_Exam_one() {
       dataIndex: "question",
       width: "30%",
       render: (question) => (
-        <p className="text-base max-w-xs truncate"> {question}</p>
+        <p className="text-base max-w-xs my-auto truncate"> {question}</p>
       ),
     },
     {
@@ -220,9 +221,7 @@ export default function Report_Exam_one() {
       sorter: (a, b) => a.full_score - b.full_score,
       align: "center",
       render: (full_score) => (
-        <div>
           <p className="text-base my-auto">{full_score}</p>
-        </div>
       ),
     },
     {
@@ -231,7 +230,7 @@ export default function Report_Exam_one() {
       align: "center",
       sorter: (a, b) => a.avg_question - b.avg_question,
       render: (avg_question) => (
-        <Tag color="geekblue">
+        <Tag color="geekblue" className="my-auto">
           <p className="text-base text-black font-semibold my-auto px-2">
             {" "}
             {avg_question}
@@ -248,7 +247,10 @@ export default function Report_Exam_one() {
         <Button
           variant="outlined"
           color="success"
-          size="large"
+          size="medium"
+          style={{
+            maxHeight: "30px",
+          }}
           onClick={() => handleClickReport_ques({ ques_id })}
           startIcon={<ManageSearchIcon />}
         >
@@ -278,7 +280,7 @@ export default function Report_Exam_one() {
       <div className="w-4/5 mx-auto shadow-md   bg-white rounded-xl">
         <div className="md:flex  items-center justify-between my-3 w-100 rounded-lg px-5 py-3">
           <div className="flex-col items-center w-full md:w-3/6 justify-center text-center">
-            <p className="text-xl truncate">{exam.name} </p>
+            <p className="text-xl ">{exam.name} </p>
             <div className="flex">
               <Button
                 variant="outlined"
@@ -340,7 +342,7 @@ export default function Report_Exam_one() {
         </Box>
         <TabPanel value="1">
           <div className="w-11/12 mx-auto">
-            <Table columns={columns} dataSource={students} rowKey="stu_code" />
+            <Table size="middle" columns={columns} dataSource={students} rowKey="stu_code" />
           </div>
         </TabPanel>
         <TabPanel value="2">
@@ -379,11 +381,7 @@ export default function Report_Exam_one() {
         <></>
       )}
       <div className="hidden">
-        <Report_Reply
-          ref={componentRef}
-          exam={exam}
-          student={students}
-        />
+        <Report_Reply ref={componentRef} exam={exam} student={students} />
       </div>
     </div>
   );

@@ -143,7 +143,7 @@ export default function Table_Ans({
   return (
     <div className={`modal ${active && "is-active"}`}>
       <div className="modal-background" onClick={handleModalAns}></div>
-      <div className="modal-card">
+      <div className="modal-card w-4/6">
         <header className="modal-card-head has-text-white-ter">
           <h1 className="modal-card-title has-text-centered">แก้ไขเฉลย</h1>
           <button
@@ -206,7 +206,7 @@ export default function Table_Ans({
                       }
                       className="appearance-none block w-full bg-gray-200 text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-200"
                       placeholder="ป้อนเฉลย"
-                      rows="2"
+                      rows="3"
                       cols="10"
                       required
                     ></textarea>
@@ -221,6 +221,7 @@ export default function Table_Ans({
                       variant="contained"
                       startIcon={<AddCircleIcon />}
                       onClick={() => createOrEditAnswer()}
+                      sx={{minWidth:'150px'}}
                     >
                       เพิ่ม
                     </Button>
@@ -230,6 +231,7 @@ export default function Table_Ans({
                       variant="contained"
                       startIcon={<EditIcon />}
                       onClick={() => createOrEditAnswer()}
+                      sx={{minWidth:'150px'}}
                     >
                       แก้ไข
                     </Button>
@@ -249,11 +251,11 @@ export default function Table_Ans({
                 }}
                 aria-label="simple table"
               >
-                <TableHead>
+                <TableHead >
                   <TableRow>
                     <TableCell>เฉลย</TableCell>
-                    <TableCell align="center">คะแนน</TableCell>
-                    <TableCell align="center">การจัดการ</TableCell>
+                    <TableCell align="center" width="10%" className="text-center">คะแนน</TableCell>
+                    <TableCell align="center" width="25%" className="text-center">การจัดการ</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -270,7 +272,7 @@ export default function Table_Ans({
                             <Typography
                               sx={{
                                 textOverflow: "ellipsis",
-                                width: "15rem",
+                                width: "32rem",
                                 overflow: "hidden",
                                 whiteSpace: "nowrap",
                               }}
@@ -279,8 +281,8 @@ export default function Table_Ans({
                             </Typography>
                           </TableCell>
 
-                          <TableCell align="center">{answers.score}</TableCell>
-                          <TableCell align="center">
+                          <TableCell align="center" className="text-center">{answers.score}</TableCell>
+                          <TableCell align="center" className="text-center">
                             <Button
                               startIcon={<EditIcon />}
                               sx={{ whiteSpace: "nowrap" }}

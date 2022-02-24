@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import useState from "react-usestateref";
+import Swal from "sweetalert2";
+import Toast from "../Toast/Toast.js";
 import {  Divider, Button } from "@mui/material";
 import API_URL from "../../config/api";
 import logo_stu from "../../img/logo_stu.png";
@@ -54,6 +56,31 @@ export default function Stu_report_Modal({
         console.log(err);
       });
   };
+  const deleteStudent_Exam = async (stu_code,name) => {
+    Swal.fire({
+      title: "ยืนยันที่จะลบข้อมูลนักศึกษาสำหรับข้อสอบนี้?",
+      text:  name,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ลบ",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        API_URL.delete(`/api/reply/${exam_id}/${stu_code}`)
+          .then(() => {
+            Toast.fire({
+              icon: "warning",
+              title: "ลบข้อมูลเสร็จสิ้น",
+            });
+            handleModalReport()
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    });
+  };
 
   return (
     <div className={`modal ${active && "is-active"}`}>
@@ -97,7 +124,7 @@ export default function Stu_report_Modal({
                 color="error"
                 className="mx-2 w-36"
                 startIcon={<DeleteForeverIcon />}
-                //   onClick={() => handleUpdate(exams.exam_id)}
+                onClick={() => deleteStudent_Exam(students.stu_code,students.name)}
               >
                 ลบ
               </Button>

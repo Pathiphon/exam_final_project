@@ -28,7 +28,7 @@ const Manage_Reply_one = () => {
   const [stu_exam_id, setStu_exam_id] = useState(null);
   const [activeModalStu, setActiveModalStu] = useState(false);
   const [alreadySelecteRows, setAlreadySelecteRows] = useState([]);
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState('');
   const [add_ans, setAdd_ans] = useState(false);
   let navigate = useNavigate();
 
@@ -70,6 +70,8 @@ const Manage_Reply_one = () => {
         title: "บันทึกคะแนนเสร็จสิ้น",
       });
       setAlreadySelecteRows([null])
+      setAdd_ans(false)
+      setScore('')
       get_Exam();
     } catch (error) {
       Toast.fire({
@@ -131,7 +133,7 @@ const Manage_Reply_one = () => {
       render: (answer_stu, stu) => (
         <div className="flex items-center justify-between">
           {" "}
-          <p className="truncate max-w-xs my-auto mr-3">{answer_stu}</p>
+          <p className="max-w-lg my-auto mr-3">{answer_stu}</p>
           <Button
             variant="contained"
             size="small"
@@ -143,23 +145,27 @@ const Manage_Reply_one = () => {
       ),
     },
     {
-      title: "%ความถูกต้อง(คะแนน)",
+      title: "%ความเหมือน ( คะแนน )",
       dataIndex: "persent_get",
-      width:'10%',
+      align:"center",
+      width:'18%',
       sorter: (a, b) => a.persent_get - b.persent_get,
       render:(text, record)=>(
-        <p className="text-base truncate max-w-name">{text}% =&gt; ( {record.persent_score} )</p>
+        <div className="flex items-center justify-center my-auto">
+        <p className="text-base truncate max-w-name my-auto">{text}%  ( {record.persent_score} ) </p>
+        </div>
       )
     },
     {
       title: "คะแนน",
       dataIndex: "score_stu",
       align: "center",
+      width:"7%",
       sorter: (a, b) => a.score_stu - b.score_stu,
       defaultSortOrder: "ascend",
       render: (score_stu) => (
-        <Tag color="green">
-          <p className="text-base text-black font-semibold my-auto">
+        <Tag color="orange" className="my-auto">
+          <p className="text-base text-black font-semibold my-auto px-2">
             {" "}
             {score_stu}
           </p>
@@ -167,10 +173,11 @@ const Manage_Reply_one = () => {
       ),
     },
     {
-      title: "สถานะ",
+      title: "การตรวจ",
       dataIndex: "check_status",
       sorter: (c, d) => c.check_status - d.check_status,
       defaultSortOrder: "ascend",
+      width:"10%",
       render: (check_status) => (
         <>
           {check_status ? (
@@ -226,6 +233,7 @@ const Manage_Reply_one = () => {
       </div>
       <div className="w-11/12 mx-auto ">
         <Table
+        size="middle"
           className="-mt-14 custom"
           rowSelection={{
             type: "checkbox",
@@ -249,6 +257,7 @@ const Manage_Reply_one = () => {
                       className="appearance-none shadow-md block w-full bg-white text-black border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-200"
                       placeholder="ป้อนคะแนน...."
                       type="number"
+                      step="any"
                       min={0}
                       max={exam ? exam.question[0].full_score : 500}
                     />
