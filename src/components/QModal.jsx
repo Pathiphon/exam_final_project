@@ -1,25 +1,15 @@
 import React, { useEffect, useState } from "react";
-import AnsModal from "./AnsModal";
 import {
   Box,
   TextField,
-  Typography,
-  FormControl,
-  IconButton,
   Divider,
   Button,
 } from "@mui/material";
 import DataUsageIcon from "@mui/icons-material/DataUsage";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import ErrorMessage from "./ErrorMessage";
-import Table_Ans from "./Table_Ans";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import PercentIcon from "@mui/icons-material/Percent";
-import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import API_URL from "../config/api";
-import Swal from "sweetalert2";
 import Toast from "./Toast/Toast.js";
 
 export default function QModal({
@@ -27,7 +17,6 @@ export default function QModal({
   handleModalQ,
   exam_id,
   ques_id,
-  setErrorMessage,
 }) {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
@@ -125,7 +114,6 @@ export default function QModal({
         })
         .catch((err) => {
           console.log(err);
-          setErrorMessage("Something went wrong when updating Exam");
         });
     }
   };
@@ -160,7 +148,7 @@ export default function QModal({
               <TextField
                 label="คำถาม"
                 multiline
-                maxRows={3}
+                maxRows={7}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -225,7 +213,7 @@ export default function QModal({
                   <TextField
                     label="เฉลย"
                     multiline
-                    maxRows={3}
+                    maxRows={7}
                     InputLabelProps={{
                       shrink: true,
                     }}

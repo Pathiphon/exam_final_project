@@ -17,18 +17,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Swal from "sweetalert2";
-
 import API_URL from "../config/api";
 
 export default function Table_Ques({ exam_id, get_modal_create_exam }) {
   const [All_question, setAll_question] = useState(null);
-  const [question, setQuestion] = useState("");
   const [score, setScore] = useState("");
   const [ques_id, setQues_id] = useState(null);
   const [activeModalQ, setActiveModalQ] = useState(false);
   const [activeModalAns, setActiveModalAns] = useState(false);
-
-  const [errorMessage, setErrorMessage] = useState("");
 
   const get_Question = async () => {
     await API_URL.get(`api/question/${exam_id}/all`)
@@ -59,6 +55,11 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
       confirmButtonText: "ลบคำถาม",
     }).then((result) => {
       if (result.isConfirmed) {
+        API_URL.delete(`/api/answer/${id}/byQues`)
+          .then(() => {})
+          .catch((err) => {
+            console.log(err);
+          });
         API_URL.delete(`/api/question/${id}`)
           .then(() => {
             Toast.fire({
@@ -70,11 +71,7 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
           .catch((err) => {
             console.log(err);
           });
-        API_URL.delete(`/api/answer/${id}/byQues`)
-          .then(() => {})
-          .catch((err) => {
-            console.log(err);
-          });
+        
       }
     });
   };
@@ -128,7 +125,6 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
         handleModalQ={handleModalQ}
         ques_id={ques_id}
         exam_id={exam_id}
-        setErrorMessage={setErrorMessage}
       />
       {All_question ? (
         <div>

@@ -30,14 +30,14 @@ export default function ExamForm() {
   const { exam_id } = useParams();
   const [exam_name, setExam_name] = useState(null);
   const [date_pre, setDate_pre] = React.useState("");
-  const [date_start,setDate_start] = useState('');
-  const [time_start,setTime_start] = useState("");
+  const [date_start, setDate_start] = useState("");
+  const [time_start, setTime_start] = useState("");
   const [date_post, setDate_post] = useState("");
   const [inputField, setInputField] = React.useState([]);
   const [stuCode, setStuCode] = useState("");
   const [name, setName] = useState("");
-  var [check_start, setCheck_start, check_startRef] = useState(null);
-  var [check_end, setCheck_end, check_endRef] = useState(null);
+  var [check_start, setCheck_start] = useState(null);
+  var [check_end, setCheck_end] = useState(null);
   let navigate = useNavigate();
 
   var buddhistEra = require("dayjs/plugin/buddhistEra");
@@ -85,7 +85,7 @@ export default function ExamForm() {
 
         setCheck_start(start);
         setCheck_end(date3.diff(date2, "m", true));
-        console.log(date1,date3);
+        console.log(date1, date3);
         var day_diff = date3.diff(date2, "day", true);
         var day = Math.floor(day_diff);
         var hour = Math.floor((day_diff - day) * 24);
@@ -126,8 +126,30 @@ export default function ExamForm() {
         console.log(err);
       });
   };
+
+  const get_Student = async () => {
+    setName("");
+    try {
+      await API_URL.get(`api/student/${stuCode}/checkdup/stu`).then((res) => {
+        setName(res.data.name);
+      });
+      await API_URL.get(`api/student/${exam_id}/${stuCode}/checkdup/exam`).then(
+        (res) => {
+          if (res.data.count > 0) {
+            alert("คุณเคยสอบข้อสอบนี้แล้ว");
+            window.location.reload();
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     get_Exam();
+    if (stuCode.length === 9) {
+      get_Student();
+    }
     if (All_question === null) {
       get_Question();
     }
@@ -152,7 +174,7 @@ export default function ExamForm() {
         if (stuCode.length === 9) {
           CreateReply();
         } else {
-          navigate("/ExamForm_Finish", { state: { name: exam_name} });
+          navigate("/ExamForm_Finish", { state: { name: exam_name } });
           window.location.reload();
         }
       });
@@ -160,7 +182,7 @@ export default function ExamForm() {
       navigate("/ExamForm_Finish");
       window.location.reload();
     }
-  }, [isTimeUp]);
+  }, [isTimeUp, stuCode.length === 9]);
 
   const CreateReply = async () => {
     const aws = inputField;
@@ -243,15 +265,11 @@ export default function ExamForm() {
                 {exam_name}
               </p>
               <p className="text-xl m-2">
-                เริ่มทำข้อสอบได้ในวันที่ {date_start?date_start:""}
+                เริ่มทำข้อสอบได้ในวันที่ {date_start ? date_start : ""}
               </p>
-              <p className="text-xl m-2">
-                เวลา {time_start?time_start:''}
-              </p>
+              <p className="text-xl m-2">เวลา {time_start ? time_start : ""}</p>
               <Divider className="text-xl m-2">ถึง</Divider>
-              <p className="text-xl m-2">
-                วันที่ {date_post?date_post:''} 
-              </p>
+              <p className="text-xl m-2">วันที่ {date_post ? date_post : ""}</p>
             </div>
           ) : check_start > 0 && check_end > 0 ? (
             <form className="w-full sm:mt-10" onSubmit={handleSubmit}>

@@ -21,13 +21,16 @@ import {
 } from "@mui/material";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import SearchIcon from "@mui/icons-material/Search";
 import ShareIcon from "@mui/icons-material/Share";
 import API_URL from "../config/api";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import Brightness1Icon from '@mui/icons-material/Brightness1';
+import Brightness1Icon from "@mui/icons-material/Brightness1";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import { getCurrentUser } from "../services/auth.service";
+import Swal from "sweetalert2";
+import Toast from "./Toast/Toast.js";
 
 export default function Manage_exam() {
   const [exam, setExam] = useState([]);
@@ -49,27 +52,26 @@ export default function Manage_exam() {
   };
 
   const get_Exam = async () => {
-    var exam =[];
-      await API_URL.get(`api/exam/${token && token.user.id}/all`)
-        .then((res) => {
-          exam = res.data;
-          if (selectExamStatus === 0) {
-            const updateExam_data = exam.filter((data)=>{
-              return data.exam_status === false;
-            });
-            exam = updateExam_data
-          } else if (selectExamStatus === 1) {
-            const updateExam_data = exam.filter((data)=>{
-              return data.exam_status === true;
-            });
-            exam = updateExam_data
-          }
-          setExam(exam);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-     
+    var exam = [];
+    await API_URL.get(`api/exam/${token && token.user.id}/all`)
+      .then((res) => {
+        exam = res.data;
+        if (selectExamStatus === 0) {
+          const updateExam_data = exam.filter((data) => {
+            return data.exam_status === false;
+          });
+          exam = updateExam_data;
+        } else if (selectExamStatus === 1) {
+          const updateExam_data = exam.filter((data) => {
+            return data.exam_status === true;
+          });
+          exam = updateExam_data;
+        }
+        setExam(exam);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {
@@ -92,6 +94,32 @@ export default function Manage_exam() {
     setActiveModalNew(!activeModalNew);
     get_Exam();
     setExam_id(null);
+  };
+
+  const delete_Exam = (id, name) => {
+    Swal.fire({
+      title: "ยืนยันที่จะลบแบบทดสอบ?",
+      text: name,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ลบแบบทดสอบ",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        API_URL.delete(`/api/exam/${id}`)
+          .then(() => {
+            Toast.fire({
+              icon: "warning",
+              title: "ลบแบบทดสอบเสร็จสิ้น",
+            });
+            get_Exam();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    });
   };
 
   return (
@@ -195,10 +223,9 @@ export default function Manage_exam() {
                   >
                     <CardContent sx={{ flex: "1 0 auto" }}>
                       <Typography
-                        component="div"
                         sx={{ display: "flex" }}
                         variant="h6"
-                        className="mb-3"
+                        className="mb-3 max-w-sm truncate max-h-6"
                       >
                         หัวข้อสอบ : {exams.name}
                       </Typography>
@@ -237,7 +264,7 @@ export default function Manage_exam() {
                         variant="outlined"
                         className="shadow-sm"
                         color="warning"
-                        sx={{ mb: 2 }}
+                        sx={{ mb: 1 }}
                         startIcon={<EditIcon />}
                         onClick={() => handleUpdate(exams.exam_id)}
                       >
@@ -246,9 +273,19 @@ export default function Manage_exam() {
                       <Button
                         variant="contained"
                         startIcon={<ShareIcon />}
+                        sx={{ mb: 1 }}
                         onClick={() => handleModalShare(exams.exam_id)}
                       >
                         ส่งลิงค์ข้อสอบ
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        className="shadow-md"
+                        startIcon={<DeleteForeverIcon />}
+                        onClick={() => delete_Exam(exams.exam_id, exams.name)}
+                      >
+                        ลบ
                       </Button>
                     </Box>
                   ) : (
@@ -263,11 +300,20 @@ export default function Manage_exam() {
                         variant="outlined"
                         className="shadow-sm"
                         color="success"
-                        sx={{ mb: 2 }}
+                        sx={{ mb: 1 }}
                         startIcon={<FileCopyIcon />}
-                        onClick={()=>handleClickNew(exams.exam_id)}
+                        onClick={() => handleClickNew(exams.exam_id)}
                       >
                         <p className="text-base my-auto">ทำการสอบใหม่</p>
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        className="shadow-md"
+                        startIcon={<DeleteForeverIcon />}
+                        onClick={() => delete_Exam(exams.exam_id, exams.name)}
+                      >
+                        ลบ
                       </Button>
                     </Box>
                   )}
