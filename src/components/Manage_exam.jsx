@@ -138,9 +138,7 @@ export default function Manage_exam() {
       ) : (
         <></>
       )}
-      {exam.length !== 0 ? (
-        <>
-          <div className="p-3 bg-white rounded-lg">
+       <div className="p-3 bg-white rounded-lg">
             <div className="flex  justify-center items-center">
               <div className="flex-auto w-70 ">
                 <div className="flex items-center  w-6/6">
@@ -189,7 +187,8 @@ export default function Manage_exam() {
               </FormControl>
             </div>
           </div>
-
+      {exam.length !== 0 ? (
+        <>
           <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
             {exam
               .filter((exams) => {
@@ -324,15 +323,15 @@ export default function Manage_exam() {
       ) : (
         <div className="text-center m-52">
           <Divider className="w-100">
-            <p className="text-black mb-4 text-2xl">ยังไม่ได้สร้างข้อสอบ</p>
-            <Link to="/Create_exam">
+            <p className="text-black  text-2xl">ยังไม่ได้สร้างข้อสอบ</p>
+            {/* <Link to="/Create_exam">
               <button className=" text-white bg-zinc-800 hover:bg-slate-800 p-5 font-bold py-2 px-4 rounded-xl shadow-lg">
                 <div className="flex">
                   <CreateNewFolderIcon className="icon_nav mr-4" />
                   <ListItemText primary="สร้างข้อสอบ" />
                 </div>
               </button>
-            </Link>
+            </Link> */}
           </Divider>
         </div>
       )}

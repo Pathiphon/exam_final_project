@@ -125,7 +125,7 @@ export default function Report_Exam() {
       size="middle"
         columns={columns}
         className="rounded-lg my-3"
-        dataSource={exam_data}
+        dataSource={dataSource}
         rowKey="exam_id"
       />
     </div>

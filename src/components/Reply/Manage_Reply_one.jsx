@@ -220,10 +220,17 @@ const Manage_Reply_one = () => {
             </Button>
           </Toolbar>
         </div>
+        <div className="flex">
+        <div className="items-center text-center bg-gray-100 text-white p-2 mx-2 rounded-md my-auto">
+          <p className="text-base my-auto text-black">
+            ตรวจอัตโนมัติที่ {exam ? exam.question[0].persent_checking : ""} %{" "}
+          </p>
+        </div>
         <div className="items-center text-center bg-gray-500 text-white p-3 mx-2 rounded-md">
           <p className="text-lg my-auto">
             คะแนนเต็ม {exam ? exam.question[0].full_score : ""} คะแนน{" "}
           </p>
+        </div>
         </div>
       </div>
       <div className="bg-gray-600 px-20 py-16">

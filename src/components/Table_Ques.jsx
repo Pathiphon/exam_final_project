@@ -55,12 +55,12 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
       confirmButtonText: "ลบคำถาม",
     }).then((result) => {
       if (result.isConfirmed) {
-        API_URL.delete(`/api/answer/${id}/byQues`)
-          .then(() => {})
-          .catch((err) => {
-            console.log(err);
-          });
-        API_URL.delete(`/api/question/${id}`)
+        // API_URL.delete(`/api/answer/${id}/byQues`)
+        //   .then(() => {})
+        //   .catch((err) => {
+        //     console.log(err);
+        //   });
+        API_URL.delete(`/api/question/${exam_id}/${id}`)
           .then(() => {
             Toast.fire({
               icon: "warning",

@@ -36,16 +36,13 @@ export default function Create_exam() {
     setActiveModal(!activeModal);
     get_Exam();
   };
-  const handleModalQ = () => {
-    setActiveModalQ(!activeModalQ);
-  };
 
   const Id_toperent = (id) => {
     setId(id);
   };
 
   function handleClick() {
-    navigate("/");
+    navigate(-1);
   }
   useEffect(() => {
     if (id) {
