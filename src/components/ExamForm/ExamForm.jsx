@@ -65,9 +65,7 @@ export default function ExamForm() {
       }
       return i;
     });
-
     setInputField(newInputFields);
-    console.log(inputField);
   };
   const get_Exam = async () => {
     await API_URL.get(`api/exam/${exam_id}`)
@@ -85,7 +83,6 @@ export default function ExamForm() {
 
         setCheck_start(start);
         setCheck_end(date3.diff(date2, "m", true));
-        console.log(date1, date3);
         var day_diff = date3.diff(date2, "day", true);
         var day = Math.floor(day_diff);
         var hour = Math.floor((day_diff - day) * 24);
@@ -185,23 +182,29 @@ export default function ExamForm() {
   }, [isTimeUp, stuCode.length === 9]);
 
   const CreateReply = async () => {
-    const aws = inputField;
-    for (var j = 0; j < aws.length; j++) {
-      Object.assign(
-        aws[j],
-        { name: name },
-        { stu_code: stuCode },
-        { exam_id: exam_id },
-        { ans_id: null },
-        { score_stu: 0 },
-        { persent_get: 0 },
-        { check_status: false }
-      );
+    let aws = inputField;
+    let answerLength = 0;
+    for ( var j = 0; j < aws.length; j++) {
+      answerLength = aws[j].answer_stu?aws[j].answer_stu.length:0;
+      if(answerLength===0){
+        aws.splice(j,1)
+        j--;
+      }else{
+        Object.assign(
+          aws[j],
+          { name: name },
+          { stu_code: stuCode },
+          { exam_id: exam_id },
+          { ans_id: null },
+          { score_stu: 0 },
+          { persent_get: 0 },
+          { check_status: false }
+        );
+      }
+        answerLength = 0;
     }
-    console.log(aws);
     await API_URL.post(`api/reply`, aws)
       .then((res) => {
-        console.log(res.data);
         setAll_question(null);
         setInputField("");
         setName("");
@@ -213,6 +216,7 @@ export default function ExamForm() {
         console.log(err);
       });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     Swal.fire({
