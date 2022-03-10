@@ -125,7 +125,7 @@ export default function ExamModal({
       <div className="modal-background" onClick={handleModal}></div>
       <div className="modal-card">
         <header className="modal-card-head has-text-white-ter">
-          <h1 className="modal-card-title has-text-centered">
+          <h1 className="modal-card-title has-text-centered my-auto">
             {id ? "แก้ไขแบบทดสอบ" : "สร้างแบบทดสอบ"}
           </h1>
           <button

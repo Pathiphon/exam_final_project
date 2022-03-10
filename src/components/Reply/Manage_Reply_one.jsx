@@ -3,6 +3,8 @@ import React, { useEffect } from "react";
 import useState from "react-usestateref";
 import { Table, Tag } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
+import EditRoadIcon from '@mui/icons-material/EditRoad';
+import Table_Ans from "../Table_Ans";
 import {
   CssBaseline,
   Toolbar,
@@ -27,6 +29,7 @@ const Manage_Reply_one = () => {
   const [stu_ques_id, setStu_ques_id] = useState(null);
   const [stu_exam_id, setStu_exam_id] = useState(null);
   const [activeModalStu, setActiveModalStu] = useState(false);
+  const [activeModalAns, setActiveModalAns] = useState(false);
   const [alreadySelecteRows, setAlreadySelecteRows] = useState([]);
   const [score, setScore] = useState('');
   const [add_ans, setAdd_ans] = useState(false);
@@ -49,6 +52,14 @@ const Manage_Reply_one = () => {
     setStu_exam_id(null);
     setStu_ques_id(null);
   };
+
+  const handleModalAns = async () => {
+    setActiveModalAns(!activeModalAns);
+  };
+  const handleClickAns =  () => {
+    setActiveModalAns(true);
+  };
+  
   const handleUpdateReply = async (e) => {
     e.preventDefault();
     const list_select = alreadySelecteRows.list_Selectstu;
@@ -201,6 +212,18 @@ const Manage_Reply_one = () => {
 
   return (
     <div>
+      {ques_id ? (
+        <div>
+          <Table_Ans
+            active={activeModalAns}
+            handleModalAns={handleModalAns}
+            ques_id={ques_id}
+            full_score={exam ? exam.question[0].full_score : ""}
+          />
+        </div>
+      ) : (
+        <></>
+      )}
       <CssBaseline />
       <div
         className="shadow-zinc-500 flex justify-between items-center"
@@ -252,8 +275,21 @@ const Manage_Reply_one = () => {
           columns={columns}
           dataSource={exam_data}
           title={() => (
-            <form className="w-6/6 justify-end" onSubmit={handleUpdateReply}>
-              <div className="flex  items-center justify-end">
+            <form className="w-6/6 flex justify-between" onSubmit={handleUpdateReply}>
+              <div className="justify-start">
+              <Button
+                      sx={{ whiteSpace: "nowrap", ml: 1 }}
+                      variant="contained"
+                      color="secondary"
+                      className="shadow-md"
+                      size="large"
+                      startIcon={<EditRoadIcon fontSize="large"/>}
+                      onClick={handleClickAns}
+                    >
+                       จัดการเฉลย
+                    </Button>
+              </div>
+              <div className="flex  items-center justify-end w-10/12">
                 <div className="flex flex-wrap items-center w-2/6">
                   <DriveFileRenameOutlineIcon fontSize="large" />
                   <div className="w-full flex-auto md:w-1/2 px-3">

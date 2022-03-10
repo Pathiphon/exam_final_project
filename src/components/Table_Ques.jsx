@@ -55,11 +55,6 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
       confirmButtonText: "ลบคำถาม",
     }).then((result) => {
       if (result.isConfirmed) {
-        // API_URL.delete(`/api/answer/${id}/byQues`)
-        //   .then(() => {})
-        //   .catch((err) => {
-        //     console.log(err);
-        //   });
         API_URL.delete(`/api/question/${exam_id}/${id}`)
           .then(() => {
             Toast.fire({
@@ -102,13 +97,12 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
   const handleClickAns = async (id,score) => {
     setQues_id(id);
     setScore(score);
-    console.log(score);
     setActiveModalAns(true);
   };
 
   return (
     <div>
-      {ques_id ? (
+      {activeModalAns===true ? (
         <div>
           <Table_Ans
             active={activeModalAns}
@@ -180,7 +174,8 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
                       </Typography>
                       <Divider sx={{ my: 1, borderBottomWidth: 1, backgroundColor: "#000000" }} />
                       <Typography variant="subtitle1" component="div">
-                        จำนวนเฉลย( {All_questions.answers.length} ) <Button
+                        จำนวนเฉลย( {All_questions.answers.length} ) 
+                      <Button
                       sx={{ whiteSpace: "nowrap", ml: 1 }}
                       variant="outlined"
                       color="secondary"

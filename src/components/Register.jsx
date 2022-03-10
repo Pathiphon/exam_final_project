@@ -42,7 +42,7 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password === confirmationPassword && password.length > 5) {
+    if (password === confirmationPassword && password.length > 8) {
       submitRegistration();
     } else {
       setErrorMessage("รหัสผ่านไม่ถูกต้องหรือต้องมากกว่า 8 ตัวอักษร");

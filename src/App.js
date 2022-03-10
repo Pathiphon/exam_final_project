@@ -2,7 +2,7 @@ import Register from './components/Register'
 import Header from './components/Header';
 import Login from './components/Login';
 import ForgotPassword from './components/ForgotPassword';
-import ResetPassword from './components/ResetPassword';
+import scit_logo from './img/scit_logo.png'
 import 'bulma/css/bulma.min.css';
 import './App.css'
 import { AppBar, Toolbar, Typography, Button, Container, Box, CssBaseline, Grid } from '@mui/material';
@@ -41,7 +41,7 @@ const App = () => {
 
                 </Typography>
                 {/* <Button size="large" className="mr-4">เกี่ยวกับเรา</Button> */}
-                <Link to="./Register">
+                {/* <Link to="./Register">
                   <Button variant="contained" size="large" endIcon={<ArrowForwardIosIcon />} style={{ fontSize: '15px' }} sx={{
                     backgroundColor: "#000000", ':hover': {
                       bgcolor: '#000033'
@@ -50,7 +50,8 @@ const App = () => {
                   }}>
                     ลงทะเบียน
                   </Button>
-                </Link>
+                </Link> */}
+                <img src={scit_logo} className="object-scale-down h-16  mx-auto items-end" alt='' />
               </Toolbar>
             </AppBar>
           </Box>

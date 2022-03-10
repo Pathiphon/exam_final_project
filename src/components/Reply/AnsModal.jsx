@@ -22,7 +22,7 @@ import DataUsageIcon from "@mui/icons-material/DataUsage";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import API_URL from "../config/api";
 
-export default function Table_Ans({
+export default function AnsModal({
   active,
   ques_id,
   handleModalAns,
@@ -33,13 +33,16 @@ export default function Table_Ans({
 
   useEffect(() => {
     setAnswer({ id: 0, answer: "", score: "" });
-    get_Answers();
-  }, [ques_id,handleModalAns]);
+    if (ques_id) {
+      get_Answers();
+    }
+  }, [ques_id]);
 
   const get_Answers = async () => {
     await API_URL.get(`api/answer/${ques_id}/all`)
       .then((res) => {
         const data = res.data;
+        console.log(data);
         setAll_Answer(data);
       })
       .catch((err) => {
@@ -85,6 +88,7 @@ export default function Table_Ans({
           })
           .catch((err) => {
             console.log(err);
+            
           });
       } else {
         await API_URL.post(`api/answer`, {
@@ -129,6 +133,7 @@ export default function Table_Ans({
           })
           .catch((err) => {
             console.log(err);
+        
           });
       }
     });
@@ -139,7 +144,7 @@ export default function Table_Ans({
       <div className="modal-background" onClick={handleModalAns}></div>
       <div className="modal-card w-4/6">
         <header className="modal-card-head has-text-white-ter">
-          <h1 className="modal-card-title has-text-centered my-auto">จัดการเฉลย</h1>
+          <h1 className="modal-card-title has-text-centered">แก้ไขเฉลย</h1>
           <button
             className="delete"
             aria-label="close"
@@ -155,6 +160,16 @@ export default function Table_Ans({
             noValidate
             autoComplete="off"
           >
+            {/* <div className="flex my-auto">
+              <div className="my-auto">
+                <label class="block text-gray-500 font-bold  mb-1 md:mb-0 pr-4">
+                  คะแนน
+                </label>
+              </div>
+              <div class="md:w-1/3">
+                <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" />
+              </div>
+            </div> */}
             <Grid
               container
               direction="row"

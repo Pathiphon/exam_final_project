@@ -4,12 +4,13 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import Toast from './Toast/Toast.js'
 
 export default function ShareExam_Modal({active, handleModalExamForm, exam_id}) {
+  let location_index = window.location.href
   const copytoClipboard=()=>{
     Toast.fire({
       icon: "info",
       title: "คัดลอกลิงค์ข้อสอบแล้ว",
     });
-    navigator.clipboard.writeText(`http://localhost:3000/ExamForm/${exam_id}`)
+    navigator.clipboard.writeText(`${location_index}ExamForm/${exam_id}`)
   }
   return (
     <div className={`modal ml-24 ${active && "is-active"}`}>
@@ -29,7 +30,7 @@ export default function ShareExam_Modal({active, handleModalExamForm, exam_id}) 
               <input
                 className=" appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
                 type="url"
-                value={`http://localhost:3000/ExamForm/${exam_id}`}
+                value={`${location_index}ExamForm/${exam_id}`}
                 disabled
                 placeholder="LINK"
                 aria-label="LINK"

@@ -27,6 +27,7 @@ body{
   /* padding: 10px !important; */
 }
 thead[class*="ant-table-thead"] th{
+  
   background-color: #494949  !important;
   padding-top: 15px !important;
   padding-bottom: 15px !important;

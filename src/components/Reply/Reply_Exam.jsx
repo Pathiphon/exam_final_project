@@ -56,7 +56,7 @@ function Reply_Exam() {
     {
       title: <p className="my-auto">แบบทดสอบ</p>,
       dataIndex: "name",
-      render: (name) => <p className="text-lg max-w-lg my-auto truncate">{name}</p>,
+      render: (name) => <p className="text-lg max-w-lg my-auto truncate ">{name}</p>,
     },
     {
       title: <p className="my-auto">จำนวนคำถาม</p>,

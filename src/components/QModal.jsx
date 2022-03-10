@@ -123,7 +123,7 @@ export default function QModal({
       <div className="modal-background" onClick={handleModalQ}></div>
       <div className="modal-card">
         <header className="modal-card-head has-text-white-ter">
-          <h1 className="modal-card-title has-text-centered">
+          <h1 className="modal-card-title has-text-centered my-auto">
             {ques_id ? "แก้ไขคำถาม" : "เพิ่มคำถาม"}
           </h1>
           <button
@@ -149,9 +149,9 @@ export default function QModal({
                 label="คำถาม"
                 multiline
                 maxRows={7}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+                // InputLabelProps={{
+                //   shrink: true,
+                // }}
                 size="medium"
                 value={question || ""}
                 onChange={(e) => setQuestion(e.target.value)}
@@ -159,7 +159,7 @@ export default function QModal({
               />
             </Box>
             <Divider
-              sx={{ m: 1, borderBottomWidth: 3, backgroundColor: "black" }}
+              sx={{ m: 1, borderBottomWidth: 2, backgroundColor: "black" }}
             />
 
             <Box
@@ -172,28 +172,22 @@ export default function QModal({
             >
               <DataUsageIcon color="warning" />
               <TextField
-                color="warning"
-                focused
+                color="warning"                
                 label="คะแนน"
                 InputProps={{ inputProps: { min: 0, max: 500 } }}
                 type="number"
-                InputLabelProps={{
-                  shrink: true,
-                }}
                 size="small"
                 value={score || ''}
                 onChange={(e) => setScore(e.target.value)}
                 required
               />
+              <div className="mx-10"></div>
               <TextField
                 className="mr-1"
                 autoComplete="off"
-                label="เปอร์เซ็นต์การตรวจ"
+                label="เปอร์เซ็นต์การตรวจอัตโนมัติ"
                 InputProps={{ inputProps: { min: 0, max: 100 } }}
                 type="number"
-                InputLabelProps={{
-                  shrink: true,
-                }}
                 sx={{ width: "25%" }}
                 size="small"
                 value={persent_checking || ''}
@@ -207,16 +201,14 @@ export default function QModal({
             ) : (
               <>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <AssignmentTurnedInIcon
-                    sx={{ flexGrow: 0, color: "action.active" }}
+                  <AssignmentTurnedInIcon color="secondary"
+                    sx={{ flexGrow: 0 }}
                   />
                   <TextField
+                  color="secondary"
                     label="เฉลย"
                     multiline
                     maxRows={7}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
                     sx={{ flexGrow: 1 }}
                     size="medium"
                     value={answer || ""}

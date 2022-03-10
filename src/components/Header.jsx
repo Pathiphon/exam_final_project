@@ -1,27 +1,26 @@
-import React, {  useState, useEffect } from "react";
-import {
-  Routes,
-  Route,
-  Link,
-  useLocation,
-} from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Routes, Route, Link, useLocation } from "react-router-dom";
 import Manage_exam from "./Manage_exam";
 import Create_exam from "./Create_exam";
-import Profile from './Profile'
-import Reply_Exam from './Reply/Reply_Exam'
+import Profile from "./Profile";
+import Reply_Exam from "./Reply/Reply_Exam";
 import Report_Exam from "./Report/Report_Exam";
 
-import { Box, Container,Avatar } from "@mui/material";
-import Drawer from "@mui/material/Drawer";
-import CssBaseline from "@mui/material/CssBaseline";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
+import {
+  Box,
+  Container,
+  Avatar,
+  Drawer,
+  CssBaseline,
+  AppBar,
+  List,
+  Toolbar,
+  Typography,
+  Divider,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
 import DescriptionIcon from "@mui/icons-material/Description";
 import FindInPageIcon from "@mui/icons-material/FindInPage";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
@@ -34,17 +33,22 @@ const drawerWidth = 220;
 
 const Header = () => {
   const [token] = useState(getCurrentUser());
-
   const [barname, setBarname] = useState("");
   const { pathname } = useLocation();
+  const [selectedIndex, setSelectedIndex] = React.useState(1);
+
+  const buttonProps = (value) => ({
+    selected: selectedIndex === value,
+    onClick: () => setSelectedIndex(value),
+  });
 
   const handleLogout = () => {
     window.location.reload();
     logout();
-  }
+  };
 
   useEffect(() => {
-    pathname_appbar()
+    pathname_appbar();
   }, [pathname]);
 
   const pathname_appbar = () => {
@@ -58,7 +62,7 @@ const Header = () => {
       case "/Report":
         setBarname("รายงานผลสอบ");
         break;
-        case "/Profile":
+      case "/Profile":
         setBarname("จัดการโปรไฟล์");
         break;
     }
@@ -66,7 +70,7 @@ const Header = () => {
 
   return (
     <>
-      <div >
+      <div>
         {token && (
           <Box sx={{ display: "flex" }}>
             {pathname !== "/Create_exam" ? (
@@ -105,16 +109,31 @@ const Header = () => {
                   variant="permanent"
                   anchor="left"
                 >
-                  <p className="mx-auto pt-3 text-white text-2xl">ระบบตรวจข้อสอบ</p>
-                  
-                  <Avatar src="/broken-image.jpg" className="mx-auto" sx={{ width: 56, height: 56 }} />
+                  <p className="mx-auto pt-3 text-white text-2xl">
+                    ระบบตรวจข้อสอบ
+                  </p>
+
+                  <Avatar
+                    src="/broken-image.jpg"
+                    className="mx-auto"
+                    sx={{ width: 56, height: 56 }}
+                  />
                   <p className="mx-auto pt-3 text-white text-base">
                     {token && token.user.username}
                   </p>
                   <Divider className="mt-3" />
-                  <List>
+                  <List
+                    sx={{
+                      "&& .Mui-selected, && .Mui-selected:hover": {
+                        bgcolor: "darkslateblue",
+                        "&, & .MuiListItemIcon-root": {
+                          color: "white",
+                        },
+                      },
+                    }}
+                  >
                     <Link className="textDec" to="/">
-                      <ListItem button>
+                      <ListItem button {...buttonProps(0)}>
                         <ListItemIcon>
                           <DescriptionIcon className="icon_nav" />
                         </ListItemIcon>
@@ -122,7 +141,7 @@ const Header = () => {
                       </ListItem>
                     </Link>
                     <Link className="textDec" to="/Reply">
-                      <ListItem button>
+                      <ListItem button {...buttonProps(1)}>
                         <ListItemIcon>
                           <FindInPageIcon className="icon_nav" />
                         </ListItemIcon>
@@ -130,7 +149,7 @@ const Header = () => {
                       </ListItem>
                     </Link>
                     <Link className="textDec" to="/Report">
-                      <ListItem button>
+                      <ListItem button {...buttonProps(2)}>
                         <ListItemIcon>
                           <AnalyticsIcon className="icon_nav" />
                         </ListItemIcon>
@@ -139,9 +158,16 @@ const Header = () => {
                     </Link>
                   </List>
                   <Divider />
-                  <List>
+                  <List sx={{
+                      "&& .Mui-selected, && .Mui-selected:hover": {
+                        bgcolor: "darkslateblue",
+                        "&, & .MuiListItemIcon-root": {
+                          color: "white",
+                        },
+                      },
+                    }}>
                     <Link className="textDec" to="/Profile">
-                      <ListItem button>
+                      <ListItem button {...buttonProps(3)}>
                         <ListItemIcon>
                           <AccountCircleIcon className="icon_nav" />
                         </ListItemIcon>
@@ -161,7 +187,7 @@ const Header = () => {
                 <Toolbar />
                 <Container>
                   <Box component="main" sx={{ p: 4 }}>
-                  <Toolbar />
+                    <Toolbar />
                     <Routes>
                       <Route path="/" element={<Manage_exam />} />
                       <Route path="/Profile" element={<Profile />} />
@@ -173,7 +199,7 @@ const Header = () => {
               </>
             ) : (
               <div className="w-100">
-                <Create_exam/>
+                <Create_exam />
               </div>
             )}
           </Box>
