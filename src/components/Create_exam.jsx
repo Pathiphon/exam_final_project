@@ -85,6 +85,7 @@ export default function Create_exam() {
           <Toolbar>
             <Button
               variant="outlined"
+              className="shadow-md"
               size="large"
               startIcon={<ArrowBackIosIcon />}
               style={{ fontSize: "18px" }}

@@ -168,6 +168,7 @@ const Manage_Reply = () => {
             <Button
               variant="outlined"
               size="large"
+              className="shadow-md"
               startIcon={<ArrowBackIosIcon />}
               style={{ fontSize: "18px" }}
               onClick={handleClick_Back}
@@ -190,6 +191,7 @@ const Manage_Reply = () => {
             <Button
               variant="outlined"
               color="warning"
+              className="shadow-md"
               startIcon={<EditIcon />}
               onClick={() => handleEdit_Exam(exam_id)}
             >

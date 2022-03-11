@@ -234,6 +234,7 @@ const Manage_Reply_one = () => {
             <Button
               variant="outlined"
               size="large"
+              className="shadow-md"
               startIcon={<ArrowBackIosIcon />}
               style={{ fontSize: "18px" }}
               onClick={handleClick_Back}

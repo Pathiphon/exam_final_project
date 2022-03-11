@@ -35,12 +35,8 @@ const Header = () => {
   const [token] = useState(getCurrentUser());
   const [barname, setBarname] = useState("");
   const { pathname } = useLocation();
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const buttonProps = (value) => ({
-    selected: selectedIndex === value,
-    onClick: () => setSelectedIndex(value),
-  });
 
   const handleLogout = () => {
     window.location.reload();
@@ -55,15 +51,19 @@ const Header = () => {
     switch (pathname) {
       case "/":
         setBarname("จัดการข้อสอบ");
+        setSelectedIndex(0);
         break;
       case "/Reply":
         setBarname("ตรวจข้อสอบ");
+        setSelectedIndex(1);
         break;
       case "/Report":
         setBarname("รายงานผลสอบ");
+        setSelectedIndex(2);
         break;
       case "/Profile":
         setBarname("จัดการโปรไฟล์");
+        setSelectedIndex(3);
         break;
     }
   };
@@ -125,7 +125,7 @@ const Header = () => {
                   <List
                     sx={{
                       "&& .Mui-selected, && .Mui-selected:hover": {
-                        bgcolor: "darkslateblue",
+                        bgcolor: "dimgray",
                         "&, & .MuiListItemIcon-root": {
                           color: "white",
                         },
@@ -133,7 +133,11 @@ const Header = () => {
                     }}
                   >
                     <Link className="textDec" to="/">
-                      <ListItem button {...buttonProps(0)}>
+                      <ListItem
+                        button
+                        selected={selectedIndex === 0}
+                        
+                      >
                         <ListItemIcon>
                           <DescriptionIcon className="icon_nav" />
                         </ListItemIcon>
@@ -141,7 +145,11 @@ const Header = () => {
                       </ListItem>
                     </Link>
                     <Link className="textDec" to="/Reply">
-                      <ListItem button {...buttonProps(1)}>
+                      <ListItem
+                        button
+                        selected={selectedIndex === 1}
+                        
+                      >
                         <ListItemIcon>
                           <FindInPageIcon className="icon_nav" />
                         </ListItemIcon>
@@ -149,7 +157,11 @@ const Header = () => {
                       </ListItem>
                     </Link>
                     <Link className="textDec" to="/Report">
-                      <ListItem button {...buttonProps(2)}>
+                      <ListItem
+                        button
+                        selected={selectedIndex === 2}
+                        
+                      >
                         <ListItemIcon>
                           <AnalyticsIcon className="icon_nav" />
                         </ListItemIcon>
@@ -158,16 +170,22 @@ const Header = () => {
                     </Link>
                   </List>
                   <Divider />
-                  <List sx={{
+                  <List
+                    sx={{
                       "&& .Mui-selected, && .Mui-selected:hover": {
-                        bgcolor: "darkslateblue",
+                        bgcolor: "dimgray",
                         "&, & .MuiListItemIcon-root": {
                           color: "white",
                         },
                       },
-                    }}>
+                    }}
+                  >
                     <Link className="textDec" to="/Profile">
-                      <ListItem button {...buttonProps(3)}>
+                      <ListItem
+                        button
+                        selected={selectedIndex === 3}
+                        
+                      >
                         <ListItemIcon>
                           <AccountCircleIcon className="icon_nav" />
                         </ListItemIcon>

@@ -35,6 +35,7 @@ export default function ExamForm() {
   const [date_post, setDate_post] = useState("");
   const [inputField, setInputField] = React.useState([]);
   const [stuCode, setStuCode] = useState("");
+  const [stuCodeDelay, setStuCodeDelay] = useState("");
   const [name, setName] = useState("");
   var [check_start, setCheck_start] = useState(null);
   var [check_end, setCheck_end] = useState(null);
@@ -143,6 +144,9 @@ export default function ExamForm() {
     }
   };
   useEffect(() => {
+    const delayInput = setTimeout(()=>{
+      setStuCode(stuCodeDelay)
+    },1000)
     get_Exam();
     if (stuCode.length === 9) {
       get_Student();
@@ -179,7 +183,8 @@ export default function ExamForm() {
       navigate("/ExamForm_Finish");
       window.location.reload();
     }
-  }, [isTimeUp, stuCode.length === 9]);
+    return () => clearTimeout(delayInput)
+  }, [isTimeUp,stuCodeDelay,stuCode]);
 
   const CreateReply = async () => {
     let aws = inputField;
@@ -297,8 +302,8 @@ export default function ExamForm() {
                       max="999999999"
                       type="number"
                       placeholder="รหัสนักศึกษา"
-                      value={stuCode}
-                      onChange={(e) => setStuCode(e.target.value)}
+                      value={stuCodeDelay}
+                      onChange={(e) => setStuCodeDelay(e.target.value)}
                       required
                     />
                   </div>
@@ -328,7 +333,7 @@ export default function ExamForm() {
                 All_question.map((All_questions, index) => (
                   <div
                     key={All_questions.ques_id}
-                    className="bg-gray-200 px-8 py-3 rounded-xl mt-4 mb-4"
+                    className="bg-gray-200 px-4 py-3 rounded-xl mt-4 mb-4"
                   >
                     <div className="flex flex-wrap -mx-3 mb-3">
                       <div className="w-full px-3">

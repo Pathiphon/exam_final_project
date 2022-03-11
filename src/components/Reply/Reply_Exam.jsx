@@ -79,7 +79,7 @@ function Reply_Exam() {
       ),
     },
     {
-      title: <p className="my-auto">จำนวนข้อที่ต้องพิจารณา</p>,
+      title: <p className="my-auto">รูปแบบที่ต้องพิจารณา</p>,
       dataIndex: "status_false",
       align: "center",
       width:"15%",
