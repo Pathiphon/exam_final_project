@@ -11,6 +11,8 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  LinearProgress,
+  Stack,
   TableHead,
   TableRow,
   Input,
@@ -30,11 +32,12 @@ export default function Table_Ans({
 }) {
   const [all_Answer, setAll_Answer] = useState([]);
   const [answer, setAnswer] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setAnswer({ id: 0, answer: "", score: "" });
     get_Answers();
-  }, [ques_id,handleModalAns]);
+  }, [ques_id, handleModalAns]);
 
   const get_Answers = async () => {
     await API_URL.get(`api/answer/${ques_id}/all`)
@@ -45,6 +48,7 @@ export default function Table_Ans({
       .catch((err) => {
         console.log(err);
       });
+    setLoading(false);
   };
 
   const get_Answer = async (ans_id) => {
@@ -139,7 +143,9 @@ export default function Table_Ans({
       <div className="modal-background" onClick={handleModalAns}></div>
       <div className="modal-card w-4/6">
         <header className="modal-card-head has-text-white-ter">
-          <h1 className="modal-card-title has-text-centered my-auto">จัดการเฉลย</h1>
+          <h1 className="modal-card-title has-text-centered my-auto">
+            จัดการเฉลย
+          </h1>
           <button
             className="delete"
             aria-label="close"
@@ -161,7 +167,6 @@ export default function Table_Ans({
               justifyContent="flex-start"
               alignItems="center"
             >
-              
               <Grid item className="flex px-3">
                 <TextField
                   label="คะแนน"
@@ -182,7 +187,7 @@ export default function Table_Ans({
                 <DataUsageIcon
                   color="warning"
                   fontSize="medium"
-                  sx={{ color: "warning", mr: 1, my: 'auto' }}
+                  sx={{ color: "warning", mr: 1, my: "auto" }}
                 />
                 <p className="w-52 my-auto text-sm">
                   ***เต็ม {full_score ? full_score : ""} คะแนน
@@ -212,12 +217,12 @@ export default function Table_Ans({
               <div className="flex-auto w-1/6">
                 {answer ? (
                   !answer.ans_id ? (
-                    <Button  
+                    <Button
                       color="success"
                       variant="contained"
                       startIcon={<AddCircleIcon />}
                       onClick={() => createOrEditAnswer()}
-                      sx={{ minWidth: "130px",minHeight:'40px' }}
+                      sx={{ minWidth: "130px", minHeight: "40px" }}
                     >
                       เพิ่ม
                     </Button>
@@ -227,7 +232,7 @@ export default function Table_Ans({
                       variant="contained"
                       startIcon={<EditIcon />}
                       onClick={() => createOrEditAnswer()}
-                      sx={{ minWidth: "130px",minHeight:'40px' }}
+                      sx={{ minWidth: "130px", minHeight: "40px" }}
                     >
                       แก้ไข
                     </Button>
@@ -238,36 +243,36 @@ export default function Table_Ans({
               </div>
             </div>
             <Divider sx={{ m: 2 }} />
-            <TableContainer>
-              <Table
-                sx={{
-                  minWidth: 600,
-                  backgroundColor: "#F5F5F5",
-                  borderRadius: "5px",
-                }}
-                aria-label="simple table"
-              >
-                <TableHead>
-                  <TableRow>
-                    <TableCell>เฉลย</TableCell>
-                    <TableCell
-                      align="center"
-                      width="10%"
-                      className="text-center"
-                    >
-                      คะแนน
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      width="25%"
-                      className="text-center"
-                    >
-                      การจัดการ
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {all_Answer ? (
+            {loading === false && all_Answer ? (
+              <TableContainer>
+                <Table
+                  sx={{
+                    minWidth: 600,
+                    backgroundColor: "#F5F5F5",
+                    borderRadius: "5px",
+                  }}
+                  aria-label="simple table"
+                >
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>เฉลย</TableCell>
+                      <TableCell
+                        align="center"
+                        width="10%"
+                        className="text-center"
+                      >
+                        คะแนน
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        width="25%"
+                        className="text-center"
+                      >
+                        การจัดการ
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
                     <>
                       {all_Answer.map((answers) => (
                         <TableRow
@@ -319,12 +324,20 @@ export default function Table_Ans({
                         </TableRow>
                       ))}
                     </>
-                  ) : (
-                    <></>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ) : loading === true ? (
+              <div className="text-center m-32">
+                <Stack sx={{ width: "100%", color: "grey.500" }} spacing={2}>
+                  <LinearProgress color="inherit" />
+                </Stack>
+              </div>
+            ) : (
+              <div>
+                <Divider sx={{ my: 10 }}>ทำการสร้างเฉลย</Divider>
+              </div>
+            )}
           </Box>
         </section>
       </div>

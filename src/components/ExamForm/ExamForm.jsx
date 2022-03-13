@@ -359,7 +359,7 @@ export default function ExamForm() {
               {stuCode.length === 9 ? (
                 <div className="flex items-center justify-around mt-6">
                   <button
-                    className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-20 rounded-lg focus:outline-none focus:shadow-outline"
+                    className="mb-6 bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-20 rounded-lg focus:outline-none focus:shadow-outline"
                     type="submit"
                   >
                     ส่งคำตอบ

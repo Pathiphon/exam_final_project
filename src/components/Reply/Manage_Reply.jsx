@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import useState from "react-usestateref";
-import { Table, Tag } from "antd";
+import { Table, Tag,Spin } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { CssBaseline, Toolbar, Button, Divider } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -10,9 +10,10 @@ import API_URL from "../../config/api";
 
 const Manage_Reply = () => {
   const { exam_id } = useParams();
-  const [exam, setExam, examRef] = useState([]);
+  const [exam, setExam] = useState([]);
   const [students, setStudents] = useState(null);
   const [question, setQuestion] = useState([]);
+  const [loading,setLoading] = useState(true);
 
   let navigate = useNavigate();
 
@@ -63,15 +64,14 @@ const Manage_Reply = () => {
           { sum_status: sum_status }
         );
         setExam(exam);
-        console.log(question);
         setQuestion(question);
-        console.log(exam);
 
         return res.data;
       })
       .catch((err) => {
         console.log(err);
       });
+      setLoading(false);
   };
   const get_Students = async () => {
     await API_URL.get(`api/student/${exam_id}`)
@@ -240,6 +240,7 @@ const Manage_Reply = () => {
           className="rounded-lg"
           dataSource={question}
           rowKey="ques_id"
+          loading={{ indicator: <div><Spin size="large" /></div>, spinning:loading}}
         />
       </div>
     </div>

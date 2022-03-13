@@ -29,11 +29,8 @@ export default function Question_report_Modal({
           { sum_scoreStu: sum_score_stu },
           { avg_question: sum_score_stu / question.replies.length }
         );
-
         setQuestions(question);
         setReplys(reply);
-        console.log(question);
-
         return res.data;
       })
       .catch((err) => {
@@ -58,7 +55,7 @@ export default function Question_report_Modal({
           ></button>
         </header>
         <section className="modal-card-body">
-          <div className="shadow-md border-2 bg-white rounded-md p-4 mb-3">
+          <div className="shadow-sm bg-white rounded-md p-4 mb-3">
             <div className="flex my-auto items-center justify-between">
               <div className="flex my-auto items-center">
                 <p>{questions ? questions.question : ""}</p>
@@ -103,12 +100,17 @@ export default function Question_report_Modal({
                       <p className="flex w-32 truncate my-auto ">
                         {reply.student.name}
                       </p>
-                      <p className="max-w-sm truncate my-auto ml-3">
-                        {reply.answer_stu}
-                      </p>
+                      <div className="max-w-sm">
+                        <p className="max-w-sm truncate my-auto ml-3">
+                          {reply.answer_stu}
+                        </p>
+                      </div>
                     </div>
-                    <p className="max-w-sm truncate my-auto ml-1 bg-orange-100 rounded-md px-5">
-                      {reply.score_stu} คะแนน
+                    <p
+                      className="truncate my-auto ml-1 bg-orange-100 rounded-md px-5"
+                      style={{ maxWidth: "100px" }}
+                    >
+                      {reply.score_stu}
                     </p>
                   </div>
                 ))

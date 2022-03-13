@@ -46,8 +46,6 @@ export default function Stu_report_Modal({
           { score_stu_full: sum_score },
           { score_full_ques: full_score }
         );
-
-        console.log(student);
         setStudents(student);
         setReplies(student.replies);
         return res.data;
@@ -165,7 +163,7 @@ export default function Stu_report_Modal({
                     />
                     <div className="flex items-center mt-4">
                       <p className="text-base w-1/12 text-gray-500 mx-2 my-auto">
-                        คำตอบ :
+                        คำตอบ
                       </p>
                       <p className="w-11/12 text-lg text-back my-auto">
                         {reply.answer_stu}

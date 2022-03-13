@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import useState from "react-usestateref";
 import { Link } from "react-router-dom";
-import { Table, Tag } from "antd";
+import { Table, Tag,Spin    } from "antd";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import API_URL from "../../config/api";
 import { getCurrentUser } from "../../services/auth.service";
@@ -13,9 +13,12 @@ function Reply_Exam() {
   const [token] = useState(getCurrentUser());
   const [exam_data, setExam_data] = useState([]);
   const [dataSource, setDataSource] = useState(exam_data);
+  const [loading,setLoading] = useState(true);
 
   const get_Exam = async () => {
-    await API_URL.get(`api/reply/${token && token.user.id}/all`)
+    try {
+      await API_URL.get(`api/exam/${token && token.user.id}/all`)
+      await API_URL.get(`api/reply/${token && token.user.id}/all`)
       .then(async (res) => {
         const data_table = res.data;
         let stu_length = 0;
@@ -26,6 +29,11 @@ function Reply_Exam() {
               stu_length = stu.data.length;
             }
           );
+          if(stu_length===0){
+            data_table.splice(j,1)
+            j--;
+            continue;
+          }
           for (var i in data_table[j].replies) {
             if (data_table[j].replies[i].check_status === false) {
               status_false += 1;
@@ -37,15 +45,17 @@ function Reply_Exam() {
             { question_num: data_table[j].question.length },
             { stu_length: stu_length }
           );
+          
           status_false = 0;
         }
         setDataSource(data_table);
         setExam_data(data_table);
         return res.data;
       })
-      .catch((err) => {
-        console.log(err);
-      });
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -138,6 +148,7 @@ function Reply_Exam() {
         className="rounded-lg my-3"
         dataSource={dataSource}
         rowKey="exam_id"
+        loading={{ indicator: <div><Spin size="large" /></div>, spinning:loading}}
       />
     </div>
   );

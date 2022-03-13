@@ -9,6 +9,8 @@ import {
   Button,
   ListItemText,
   Divider,
+  LinearProgress,
+  Stack,
   Box,
   Typography,
   CardContent,
@@ -40,6 +42,7 @@ export default function Manage_exam() {
   const [activeModalExamForm, setActiveModalExamForm] = useState(false);
   const [selectExamStatus, setSelectExamStatus] = useState(2);
   const [token] = useState(getCurrentUser());
+  const [loading, setLoading] = useState(true);
 
   let navigate = useNavigate();
 
@@ -72,6 +75,7 @@ export default function Manage_exam() {
       .catch((err) => {
         console.log(err);
       });
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -138,56 +142,53 @@ export default function Manage_exam() {
       ) : (
         <></>
       )}
-       <div className="p-3 bg-white rounded-lg">
-            <div className="flex  justify-center items-center">
-              <div className="flex-auto w-70 ">
-                <div className="flex items-center  w-6/6">
-                  <SearchIcon className="mr-3 " />
-                  <input
-                    className="appearance-none block w-full bg-gray-200 text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-200"
-                    placeholder="ค้นหาหัวข้อสอบ"
-                    onChange={(e) => setInputSearch(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="flex-auto">
-                <Link to="/Create_exam">
-                  <button className=" text-white bg-zinc-800 hover:bg-slate-800 py-3 px-6 ml-2 font-bold rounded-xl shadow-md">
-                    <div className="flex">
-                      <CreateNewFolderIcon className="icon_nav mr-4" />
-                      <ListItemText primary="สร้างข้อสอบ" />
-                    </div>
-                  </button>
-                </Link>
-              </div>
-              <FormControl sx={{ width: "20%" }}>
-                <InputLabel
-                  id="demo-simple-select-label"
-                  className="font-semibold"
-                >
-                  แสดงการสอบ
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={selectExamStatus}
-                  label="สถานะการสอบ"
-                  onChange={handleChange}
-                >
-                  <MenuItem value={0}>
-                    <Brightness1Icon className="mr-3 text-red-600" />
-                    ยังไม่ได้สอบ
-                  </MenuItem>
-                  <MenuItem value={1}>
-                    <CheckCircleIcon className="mr-3 text-green-600" />
-                    สอบแล้ว
-                  </MenuItem>
-                  <MenuItem value={2}>ทั้งหมด</MenuItem>
-                </Select>
-              </FormControl>
+      <div className="p-3 bg-white rounded-lg">
+        <div className="flex  justify-center items-center">
+          <div className="flex-auto w-70 ">
+            <div className="flex items-center  w-6/6">
+              <SearchIcon className="mr-3 " />
+              <input
+                className="appearance-none block w-full bg-gray-200 text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-200"
+                placeholder="ค้นหาหัวข้อสอบ"
+                onChange={(e) => setInputSearch(e.target.value)}
+              />
             </div>
           </div>
-      {exam.length !== 0 ? (
+          <div className="flex-auto">
+            <Link to="/Create_exam">
+              <button className=" text-white bg-zinc-800 hover:bg-slate-800 py-3 px-6 ml-2 font-bold rounded-xl shadow-md">
+                <div className="flex">
+                  <CreateNewFolderIcon className="icon_nav mr-4" />
+                  <ListItemText primary="สร้างข้อสอบ" />
+                </div>
+              </button>
+            </Link>
+          </div>
+          <FormControl sx={{ width: "20%" }}>
+            <InputLabel id="demo-simple-select-label" className="font-semibold">
+              แสดงการสอบ
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={selectExamStatus}
+              label="สถานะการสอบ"
+              onChange={handleChange}
+            >
+              <MenuItem value={0}>
+                <Brightness1Icon className="mr-3 text-red-600" />
+                ยังไม่ได้สอบ
+              </MenuItem>
+              <MenuItem value={1}>
+                <CheckCircleIcon className="mr-3 text-green-600" />
+                สอบแล้ว
+              </MenuItem>
+              <MenuItem value={2}>ทั้งหมด</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
+      </div>
+      {exam.length !== 0 && loading === false ? (
         <>
           <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
             {exam
@@ -320,18 +321,16 @@ export default function Manage_exam() {
               ))}
           </Box>
         </>
+      ) : loading === true ? (
+        <div className="text-center m-32">
+          <Stack sx={{ width: "100%", color: "grey.500" }} spacing={2}>
+            <LinearProgress color="inherit" />
+          </Stack>
+        </div>
       ) : (
         <div className="text-center m-52">
           <Divider className="w-100">
             <p className="text-black  text-2xl">ยังไม่ได้สร้างข้อสอบ</p>
-            {/* <Link to="/Create_exam">
-              <button className=" text-white bg-zinc-800 hover:bg-slate-800 p-5 font-bold py-2 px-4 rounded-xl shadow-lg">
-                <div className="flex">
-                  <CreateNewFolderIcon className="icon_nav mr-4" />
-                  <ListItemText primary="สร้างข้อสอบ" />
-                </div>
-              </button>
-            </Link> */}
           </Divider>
         </div>
       )}

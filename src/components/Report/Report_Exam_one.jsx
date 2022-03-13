@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import useState from "react-usestateref";
-import { Table, Tag } from "antd";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { Table, Tag, Spin } from "antd";
+import { useParams, useNavigate } from "react-router-dom";
 import { CssBaseline, Toolbar, Button, Tab, Box } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -15,6 +15,8 @@ import { useReactToPrint } from "react-to-print";
 
 export default function Report_Exam_one() {
   const { exam_id } = useParams();
+  const [loading_stu,setLoading_stu] = useState(true);
+  const [loading_ques,setLoading_ques] = useState(true);
   const [exam, setExam, examRef] = useState([]);
   const [students, setStudents] = useState([]);
   const [stu_code, setStu_code] = useState(null);
@@ -68,7 +70,6 @@ export default function Report_Exam_one() {
         const question = res.data.question;
         let sum_score = 0;
         let sum_score_stu = 0;
-        let ques_index = 0;
 
         for (var j = 0; j < question.length; j++) {
           sum_score += question[j].full_score;
@@ -89,15 +90,13 @@ export default function Report_Exam_one() {
         }
         Object.assign(exam, { question_sum_score: sum_score });
         setExam(exam);
-        console.log(question);
         setQuestion(question);
-        console.log(examRef.current);
-
         return res.data;
       })
       .catch((err) => {
         console.log(err);
       });
+      setLoading_ques(false);
   };
   const get_Students = async () => {
     await API_URL.get(`api/student/${exam_id}`)
@@ -113,7 +112,6 @@ export default function Report_Exam_one() {
           Object.assign(student[j], { score_stu_full: sum_score });
           sum_score = 0;
         }
-        console.log(student);
         setScore_allstu(sum_score_allStu);
         setStudents(student);
         return res.data;
@@ -121,6 +119,7 @@ export default function Report_Exam_one() {
       .catch((err) => {
         console.log(err);
       });
+      setLoading_stu(false);
   };
 
   useEffect(() => {
@@ -134,17 +133,17 @@ export default function Report_Exam_one() {
       dataIndex: "stu_code",
       key: "stu_code",
       width: "20%",
-      align:'center',
+      align: "center",
       sorter: (a, b) => a.stu_code - b.stu_code,
-      render: (stu_code) => (
-          <p className="text-base my-auto">{stu_code}</p>
-      ),
+      render: (stu_code) => <p className="text-base my-auto">{stu_code}</p>,
     },
     {
       title: <div className="header_table">ชื่อ - นามสกุล</div>,
       dataIndex: "name",
       width: "30%",
-      render: (name) => <p className="text-base max-w-md truncate my-auto"> {name}</p>,
+      render: (name) => (
+        <p className="text-base max-w-md truncate my-auto"> {name}</p>
+      ),
     },
     {
       title: "คะแนน",
@@ -220,9 +219,7 @@ export default function Report_Exam_one() {
       key: "full_score",
       sorter: (a, b) => a.full_score - b.full_score,
       align: "center",
-      render: (full_score) => (
-          <p className="text-base my-auto">{full_score}</p>
-      ),
+      render: (full_score) => <p className="text-base my-auto">{full_score}</p>,
     },
     {
       title: "คะแนนเฉลี่ย",
@@ -343,7 +340,13 @@ export default function Report_Exam_one() {
         </Box>
         <TabPanel value="1">
           <div className="w-11/12 mx-auto">
-            <Table size="middle" columns={columns} dataSource={students} rowKey="stu_code" />
+            <Table
+              size="middle"
+              columns={columns}
+              dataSource={students}
+              rowKey="stu_code"
+              loading={{ indicator: <div><Spin size="large" /></div>, spinning:loading_stu}}
+            />
           </div>
         </TabPanel>
         <TabPanel value="2">
@@ -352,6 +355,14 @@ export default function Report_Exam_one() {
               columns={columns_question}
               dataSource={question}
               rowKey="ques_id"
+              loading={{
+                indicator: (
+                  <div>
+                    <Spin size="large" />
+                  </div>
+                ),
+                spinning: loading_ques,
+              }}
             />
           </div>
         </TabPanel>

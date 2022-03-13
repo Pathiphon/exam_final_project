@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import useState from "react-usestateref";
 import { Link } from "react-router-dom";
-import { Table,Tag } from "antd";
+import { Table,Tag,Spin } from "antd";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import API_URL from "../../config/api";
 import { getCurrentUser } from "../../services/auth.service";
@@ -13,6 +13,7 @@ export default function Report_Exam() {
   const [token] = useState(getCurrentUser());
   const [exam_data, setExam_data] = useState([]);
   const [dataSource, setDataSource] = useState(exam_data);
+  const [loading,setLoading] = useState(true);
 
   const get_Exam = async () => {
     await API_URL.get(`api/reply/${token && token.user.id}/all`)
@@ -25,6 +26,11 @@ export default function Report_Exam() {
               stu_length = stu.data.length;
             }
           );
+          if(stu_length===0){
+            data_table.splice(j,1)
+            j--;
+            continue;
+          }
           Object.assign(
             data_table[j],
             { question_num: data_table[j].question.length },
@@ -39,6 +45,7 @@ export default function Report_Exam() {
       .catch((err) => {
         console.log(err);
       });
+      setLoading(false)
   };
 
   useEffect(() => {
@@ -127,6 +134,7 @@ export default function Report_Exam() {
         className="rounded-lg my-3"
         dataSource={dataSource}
         rowKey="exam_id"
+        loading={{ indicator: <div><Spin size="large" /></div>, spinning:loading}}
       />
     </div>
   );

@@ -1,9 +1,9 @@
 /* eslint-disable react/jsx-pascal-case */
 import React, { useEffect } from "react";
 import useState from "react-usestateref";
-import { Table, Tag } from "antd";
+import { Table, Tag, Spin } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
-import EditRoadIcon from '@mui/icons-material/EditRoad';
+import EditRoadIcon from "@mui/icons-material/EditRoad";
 import Table_Ans from "../Table_Ans";
 import {
   CssBaseline,
@@ -31,7 +31,8 @@ const Manage_Reply_one = () => {
   const [activeModalStu, setActiveModalStu] = useState(false);
   const [activeModalAns, setActiveModalAns] = useState(false);
   const [alreadySelecteRows, setAlreadySelecteRows] = useState([]);
-  const [score, setScore] = useState('');
+  const [score, setScore] = useState("");
+  const [loading, setLoading] = useState(true);
   const [add_ans, setAdd_ans] = useState(false);
   let navigate = useNavigate();
 
@@ -56,14 +57,13 @@ const Manage_Reply_one = () => {
   const handleModalAns = async () => {
     setActiveModalAns(!activeModalAns);
   };
-  const handleClickAns =  () => {
+  const handleClickAns = () => {
     setActiveModalAns(true);
   };
-  
+
   const handleUpdateReply = async (e) => {
     e.preventDefault();
     const list_select = alreadySelecteRows.list_Selectstu;
-    console.log(list_select);
     try {
       for (var j in list_select) {
         await API_URL.put(
@@ -80,9 +80,9 @@ const Manage_Reply_one = () => {
         icon: "success",
         title: "บันทึกคะแนนเสร็จสิ้น",
       });
-      setAlreadySelecteRows([null])
-      setAdd_ans(false)
-      setScore('')
+      setAlreadySelecteRows([null]);
+      setAdd_ans(false);
+      setScore("");
       get_Exam();
     } catch (error) {
       Toast.fire({
@@ -97,8 +97,6 @@ const Manage_Reply_one = () => {
       .then(async (res) => {
         setExam(res.data);
         const student = res.data.question[0].student;
-
-        console.log(student);
         for (var j = 0; j < student.length; j++) {
           let score = 0;
           await API_URL.get(`api/answer/${student[j].reply.ans_id}`)
@@ -118,7 +116,6 @@ const Manage_Reply_one = () => {
           );
           delete student[j]["reply"];
         }
-        console.log(student);
         setExam_data(student);
 
         return res.data;
@@ -126,7 +123,9 @@ const Manage_Reply_one = () => {
       .catch((err) => {
         console.log(err);
       });
+    setLoading(false);
   };
+
   useEffect(() => {
     get_Exam();
   }, []);
@@ -135,7 +134,7 @@ const Manage_Reply_one = () => {
     {
       title: <div>ชื่อ - นามสกุล</div>,
       dataIndex: "name",
-      width:'10%',
+      width: "10%",
       render: (name) => <p className="text-base truncate">{name}</p>,
     },
     {
@@ -158,20 +157,22 @@ const Manage_Reply_one = () => {
     {
       title: "%ความเหมือน ( คะแนน )",
       dataIndex: "persent_get",
-      align:"center",
-      width:'18%',
+      align: "center",
+      width: "18%",
       sorter: (a, b) => a.persent_get - b.persent_get,
-      render:(text, record)=>(
+      render: (text, record) => (
         <div className="flex items-center justify-center my-auto">
-        <p className="text-base truncate max-w-name my-auto">{text}%  ( {record.persent_score} ) </p>
+          <p className="text-base truncate max-w-name my-auto">
+            {text}% ( {record.persent_score} ){" "}
+          </p>
         </div>
-      )
+      ),
     },
     {
       title: "คะแนน",
       dataIndex: "score_stu",
       align: "center",
-      width:"7%",
+      width: "7%",
       sorter: (a, b) => a.score_stu - b.score_stu,
       defaultSortOrder: "ascend",
       render: (score_stu) => (
@@ -188,7 +189,7 @@ const Manage_Reply_one = () => {
       dataIndex: "check_status",
       sorter: (c, d) => c.check_status - d.check_status,
       defaultSortOrder: "ascend",
-      width:"10%",
+      width: "10%",
       render: (check_status) => (
         <>
           {check_status ? (
@@ -245,16 +246,16 @@ const Manage_Reply_one = () => {
           </Toolbar>
         </div>
         <div className="flex">
-        <div className="items-center text-center bg-gray-100 text-white p-2 mx-2 rounded-md my-auto">
-          <p className="text-base my-auto text-black">
-            ตรวจอัตโนมัติที่ {exam ? exam.question[0].persent_checking : ""} %{" "}
-          </p>
-        </div>
-        <div className="items-center text-center bg-gray-500 text-white p-3 mx-2 rounded-md">
-          <p className="text-lg my-auto">
-            คะแนนเต็ม {exam ? exam.question[0].full_score : ""} คะแนน{" "}
-          </p>
-        </div>
+          <div className="items-center text-center bg-gray-100 text-white p-2 mx-2 rounded-md my-auto">
+            <p className="text-base my-auto text-black">
+              ตรวจอัตโนมัติที่ {exam ? exam.question[0].persent_checking : ""} %{" "}
+            </p>
+          </div>
+          <div className="items-center text-center bg-gray-500 text-white p-3 mx-2 rounded-md">
+            <p className="text-lg my-auto">
+              คะแนนเต็ม {exam ? exam.question[0].full_score : ""} คะแนน{" "}
+            </p>
+          </div>
         </div>
       </div>
       <div className="bg-gray-600 px-20 py-16">
@@ -264,7 +265,7 @@ const Manage_Reply_one = () => {
       </div>
       <div className="w-11/12 mx-auto ">
         <Table
-        size="middle"
+          size="middle"
           className="-mt-14 custom"
           rowSelection={{
             type: "checkbox",
@@ -275,20 +276,31 @@ const Manage_Reply_one = () => {
           }}
           columns={columns}
           dataSource={exam_data}
+          loading={{
+            indicator: (
+              <div>
+                <Spin size="large" />
+              </div>
+            ),
+            spinning: loading,
+          }}
           title={() => (
-            <form className="w-6/6 flex justify-between" onSubmit={handleUpdateReply}>
+            <form
+              className="w-6/6 flex justify-between"
+              onSubmit={handleUpdateReply}
+            >
               <div className="justify-start">
-              <Button
-                      sx={{ whiteSpace: "nowrap", ml: 1 }}
-                      variant="contained"
-                      color="secondary"
-                      className="shadow-md"
-                      size="large"
-                      startIcon={<EditRoadIcon fontSize="large"/>}
-                      onClick={handleClickAns}
-                    >
-                       จัดการเฉลย
-                    </Button>
+                <Button
+                  sx={{ whiteSpace: "nowrap", ml: 1 }}
+                  variant="contained"
+                  color="secondary"
+                  className="shadow-md"
+                  size="large"
+                  startIcon={<EditRoadIcon fontSize="large" />}
+                  onClick={handleClickAns}
+                >
+                  จัดการเฉลย
+                </Button>
               </div>
               <div className="flex  items-center justify-end w-10/12">
                 <div className="flex flex-wrap items-center w-2/6">
