@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import { add } from "date-fns";
 import API_URL from "../../config/api";
 import { useTicker } from "./useTicker";
+import CsvReader from './CSVReader'
 import {
   AppBar,
   Toolbar,
@@ -39,6 +40,7 @@ export default function ExamForm() {
   const [name, setName] = useState("");
   var [check_start, setCheck_start] = useState(null);
   var [check_end, setCheck_end] = useState(null);
+
   let navigate = useNavigate();
 
   var buddhistEra = require("dayjs/plugin/buddhistEra");
@@ -67,6 +69,7 @@ export default function ExamForm() {
       return i;
     });
     setInputField(newInputFields);
+    
   };
   const get_Exam = async () => {
     await API_URL.get(`api/exam/${exam_id}`)
@@ -267,6 +270,7 @@ export default function ExamForm() {
       </AppBar>
       <Toolbar />
       <Container maxWidth="md" className="mt-10 sx:mt-0">
+        <CsvReader exam_id={exam_id}/>
         <Box sx={{ my: 2 }}>
           {check_start <= 0 ? (
             <div className="bg-gray-200 px-8 py-3 text-center rounded-xl mt-4">

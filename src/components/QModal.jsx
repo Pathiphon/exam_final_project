@@ -190,7 +190,7 @@ export default function QModal({
                 type="number"
                 sx={{ width: "25%" }}
                 size="small"
-                value={persent_checking || ''}
+                value={persent_checking || setPersent_checking(80)}
                 onChange={(e) => setPersent_checking(e.target.value)}
                 required
               />

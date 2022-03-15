@@ -35,29 +35,28 @@ export default function Stu_Modal({
     )
       .then(async (res) => {
         setExam(res.data);
-        const student = res.data.question[0].student[0];
+        const student = res.data.question[0].students[0];
         if (student != null) {
-          let score = 0;
-          var answer = "";
-          await API_URL.get(`api/answer/${student.reply.ans_id}`)
-            .then((res) => {
-              score = res.data.score;
-              answer = res.data.answer;
-            })
-            .catch(() => {
-              score = 0;
-              answer = "";
-            });
+          // await API_URL.get(`api/answer/${student.replies.ans_id}`)
+          //   .then((res) => {
+          //     score = res.data.score;
+          //     answer = res.data.answer;
+          //   })
+          //   .catch(() => {
+          //     score = 0;
+          //     answer = "";
+          //   });
           Object.assign(
             student,
-            student.reply,
-            { persent_score: score },
-            { answer: answer }
+            student.replies[0],
+            student.replies[0].answer,
+            // student.answer,
+            // { persent_score: score },
+            // { answer: answer }
           );
-          delete student["reply"];
+          delete student["replies"];
+          // delete student["answer"];
           setExam_data(student);
-          console.log(student);
-
           setScore(student.score_stu);
         }
 
@@ -173,7 +172,7 @@ export default function Stu_Modal({
                 <NumbersIcon className="mx-auto" fontSize="large" />
                 <p className="mx-auto mt-3">คะแนน</p>
                 <p className="text-lg text-slate-900 font-semibold">
-                  {exam_data ? exam_data.persent_score : ""}
+                  {exam_data ? exam_data.score : ""}
                 </p>
               </div>
             </div>

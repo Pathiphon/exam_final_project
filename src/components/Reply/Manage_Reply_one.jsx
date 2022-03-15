@@ -16,6 +16,7 @@ import {
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import API_URL from "../../config/api";
 import Stu_Modal from "./Stu_Modal";
+import FilterListIcon from '@mui/icons-material/FilterList';
 import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Toast from "../Toast/Toast.js";
@@ -80,7 +81,7 @@ const Manage_Reply_one = () => {
         icon: "success",
         title: "บันทึกคะแนนเสร็จสิ้น",
       });
-      setAlreadySelecteRows([null]);
+      setAlreadySelecteRows({ list_Selectstu: 0 });
       setAdd_ans(false);
       setScore("");
       get_Exam();
@@ -96,10 +97,10 @@ const Manage_Reply_one = () => {
     await API_URL.get(`api/reply/${exam_id}/question/${ques_id}`)
       .then(async (res) => {
         setExam(res.data);
-        const student = res.data.question[0].student;
+        const student = res.data.question[0].students;
         for (var j = 0; j < student.length; j++) {
           let score = 0;
-          await API_URL.get(`api/answer/${student[j].reply.ans_id}`)
+          await API_URL.get(`api/answer/${student[j].replies[0].ans_id}`)
             .then((res) => {
               score = res.data.score;
             })
@@ -108,13 +109,13 @@ const Manage_Reply_one = () => {
             });
           Object.assign(
             student[j],
-            student[j].reply,
+            student[j].replies[0],
             { persent_score: score },
             {
               key: (j + 1).toString(),
             }
           );
-          delete student[j]["reply"];
+          delete student[j]["replies"];
         }
         setExam_data(student);
 
@@ -141,9 +142,9 @@ const Manage_Reply_one = () => {
       title: <div>คำตอบ</div>,
       dataIndex: "answer_stu",
       render: (answer_stu, stu) => (
-        <div className="flex items-center justify-between">
+        <div className="flex items-start justify-between">
           {" "}
-          <p className="max-w-lg my-auto mr-3">{answer_stu}</p>
+          <p className="max-w-lg mr-3">{answer_stu}</p>
           <Button
             variant="contained"
             size="small"
@@ -187,8 +188,8 @@ const Manage_Reply_one = () => {
     {
       title: "การตรวจ",
       dataIndex: "check_status",
-      sorter: (c, d) => c.check_status - d.check_status,
-      defaultSortOrder: "ascend",
+      // sorter: (c, d) => c.check_status - d.check_status,
+      // defaultSortOrder: "ascend",
       width: "10%",
       render: (check_status) => (
         <>
@@ -208,6 +209,13 @@ const Manage_Reply_one = () => {
           )}
         </>
       ),
+      filters:[
+        {text:'ตรวจแล้ว',value:true},
+        {text:'ยังไม่ได้ตรวจ',value:false},
+      ],
+      onFilter:(value, record)=>{
+        return record.check_status ===value
+      }
     },
   ];
 
@@ -272,6 +280,7 @@ const Manage_Reply_one = () => {
             selectedRows: alreadySelecteRows,
             onChange: (keys, selectedRows) => {
               setAlreadySelecteRows({ list_Selectstu: selectedRows });
+              console.log(alreadySelecteRows);
             },
           }}
           columns={columns}

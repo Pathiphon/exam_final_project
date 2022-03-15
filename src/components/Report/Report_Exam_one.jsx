@@ -393,7 +393,7 @@ export default function Report_Exam_one() {
         <></>
       )}
       <div className="hidden">
-        <Report_Reply ref={componentRef} exam={exam} student={students} />
+        <Report_Reply ref={componentRef} exam={exam} student={students} avg_score={(score_allstu / students.length).toFixed(2)} />
       </div>
     </div>
   );
