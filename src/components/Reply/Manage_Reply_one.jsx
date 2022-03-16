@@ -16,7 +16,6 @@ import {
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import API_URL from "../../config/api";
 import Stu_Modal from "./Stu_Modal";
-import FilterListIcon from '@mui/icons-material/FilterList';
 import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Toast from "../Toast/Toast.js";
@@ -188,8 +187,6 @@ const Manage_Reply_one = () => {
     {
       title: "การตรวจ",
       dataIndex: "check_status",
-      // sorter: (c, d) => c.check_status - d.check_status,
-      // defaultSortOrder: "ascend",
       width: "10%",
       render: (check_status) => (
         <>

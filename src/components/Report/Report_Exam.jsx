@@ -133,7 +133,6 @@ export default function Report_Exam() {
         columns={columns}
         className="rounded-lg my-3"
         dataSource={dataSource}
-        rowKey="exam_id"
         loading={{ indicator: <div><Spin size="large" /></div>, spinning:loading}}
       />
     </div>

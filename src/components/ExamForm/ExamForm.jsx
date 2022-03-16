@@ -87,14 +87,14 @@ export default function ExamForm() {
 
         setCheck_start(start);
         setCheck_end(date3.diff(date2, "m", true));
-        var day_diff = date3.diff(date2, "day", true);
-        var day = Math.floor(day_diff);
-        var hour = Math.floor((day_diff - day) * 24);
-        var hour2 = date3.diff(date2, "h", true);
-        var minute = Math.floor((hour2 - hour) * 60);
-        var min = date3.diff(date2, "m", true);
-        var int_part = Math.trunc(min);
-        var float_part = Number((min - int_part).toFixed(2) * 60);
+        const day_diff = date3.diff(date2, "day", true);
+        const day = Math.floor(day_diff);
+        const hour = Math.floor((day_diff - day) * 24);
+        const hour2 = date3.diff(date2, "h", true);
+        const minute = Math.floor((hour2 - hour) * 60);
+        const min = date3.diff(date2, "m", true);
+        const int_part = Math.trunc(min);
+        const float_part = Number((min - int_part).toFixed(2) * 60);
         futureDate = add(new Date(), {
           days: day,
           hours: hour,

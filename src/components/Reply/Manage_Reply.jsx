@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import useState from "react-usestateref";
+import dayjs from "dayjs";
 import { Table, Tag,Spin } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { CssBaseline, Toolbar, Button, Divider } from "@mui/material";
@@ -187,7 +188,8 @@ const Manage_Reply = () => {
       <div className="w-4/5 mx-auto shadow-md   bg-white rounded-xl">
         <div className="md:flex  items-center justify-between my-3 w-100 rounded-lg px-5 py-3">
           <div className="flex-col items-center w-full md:w-3/6 justify-center text-center">
-            <p className="w-full text-xl">{exam.name} </p>
+            <p className="w-full text-lg">{exam.name} </p>
+            <p className="w-full text-xs">เวลาสอบ {dayjs(exam.date_pre).format("DD/MM/YYYY HH:mm")} ถึง {dayjs(exam.date_post).format("DD/MM/YYYY HH:mm")}</p>
             <Button
               variant="outlined"
               color="warning"

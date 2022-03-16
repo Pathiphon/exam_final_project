@@ -19,7 +19,7 @@ body{
   background-color: #FFC900 !important;
 }
 .ant-table-content{
-  @apply border-2 rounded-b-2xl !important;
+  @apply border-4 rounded-b-2xl !important;
 }
 .ant-table-title{
   justify-self: end !important;

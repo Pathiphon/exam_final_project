@@ -47,28 +47,83 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
       });
     setLoading(false);
   };
-  const delete_Question = (id, question) => {
+
+  const deleteAll_Question = () => {
     Swal.fire({
-      title: "ยืนยันที่จะลบคำถาม?",
-      text: question,
-      icon: "warning",
+      title: "ยืนยันที่จะลบเฉลยของคำถามทั้งหมด?",
+      text: "เฉลยทั้งหมดของคำถามจะถูกลบ",
+      icon: "info",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "ลบคำถาม",
+      confirmButtonText: "ยืนยัน",
     }).then((result) => {
       if (result.isConfirmed) {
-        API_URL.delete(`/api/question/${exam_id}/${id}`)
-          .then(() => {
+        Swal.fire({
+          title: "ยืนยันที่จะลบคำถามทั้งหมด?",
+          html: `<p>ลบคำถามทั้งหมด <b>${All_question.length}</b> ข้อ</p>`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "ลบคำถามทั้งหมด",
+        }).then(async(result) => {
+          if (result.isConfirmed) {
+            for (let i in All_question) {
+              await API_URL.delete(
+                `/api/question/${exam_id}/${All_question[i].ques_id}`
+              ).catch((err) => {
+                Toast.fire({
+                  icon: "error",
+                  title: "มีข้อผิดพลาด",
+                });
+                });
+            }
             Toast.fire({
               icon: "warning",
               title: "ลบคำถามเสร็จสิ้น",
             });
             get_Question();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+          }
+        });
+      }
+    });
+  };
+
+  const delete_Question = (id, question, ans_lenght) => {
+    Swal.fire({
+      title: "ยืนยันที่จะลบเฉลยของคำถาม?",
+      html: `<p>ลบเฉลยทั้งหมด <b>${ans_lenght}</b> รูปแบบ</p>`,
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ยืนยัน",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "ยืนยันที่จะลบคำถาม?",
+          text: question,
+          icon: "info",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "ลบคำถาม",
+        }).then(async(result) => {
+          if (result.isConfirmed) {
+            await API_URL.delete(`/api/question/${exam_id}/${id}`)
+              .then(() => {
+                Toast.fire({
+                  icon: "warning",
+                  title: "ลบคำถามเสร็จสิ้น",
+                });
+                get_Question();
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
+        });
       }
     });
   };
@@ -122,13 +177,8 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
       />
       {loading === false && exam_id ? (
         <div>
-          <Box sx={{ flexGrow: 1, display: "flex", p: 1 }}>
-            <Grid
-              container
-              direction="row"
-              justifyContent="flex-start"
-              alignItems="center"
-            >
+          <Box sx={{ display: "flex", p: 1 }} className="justify-between">
+            <Grid container direction="row" alignItems="center">
               <ArticleIcon sx={{ m: 1 }} />
               <p className="text-lg m-1">จำนวนข้อ : {All_question.length}</p>
               <Typography
@@ -154,6 +204,19 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
               >
                 เพิ่มคำถาม <AddCircleIcon sx={{ ml: 3 }} />
               </button>
+            </Grid>
+            <Grid className="w-3/6 flex justify-end my-auto">
+              {All_question.length!==0&&
+              <Button
+                variant="outlined"
+                color="error"
+                className="shadow-md py-3 px-4"
+                onClick={() => deleteAll_Question()}
+                startIcon={<DeleteForeverIcon fontSize="large" />}
+              >
+                ลบคำถามทั้งหมด
+              </Button>
+              }
             </Grid>
           </Box>
 
@@ -228,7 +291,8 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
                         onClick={() =>
                           delete_Question(
                             All_questions.ques_id,
-                            All_questions.question
+                            All_questions.question,
+                            All_questions.answers.length
                           )
                         }
                         startIcon={<DeleteForeverIcon />}

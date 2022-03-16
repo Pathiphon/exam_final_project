@@ -5,6 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { CssBaseline, Toolbar, Button, Tab, Box } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import API_URL from "../../config/api";
 import Stu_report_Modal from "./Stu_report_Modal";
@@ -12,12 +13,15 @@ import ArticleIcon from "@mui/icons-material/Article";
 import Question_report_Modal from "./Question_report_Modal";
 import Report_Reply from "./Report_Reply";
 import { useReactToPrint } from "react-to-print";
+import dayjs from "dayjs";
+import Swal from "sweetalert2";
+import Toast from "../Toast/Toast.js";
 
 export default function Report_Exam_one() {
   const { exam_id } = useParams();
-  const [loading_stu,setLoading_stu] = useState(true);
-  const [loading_ques,setLoading_ques] = useState(true);
-  const [exam, setExam, examRef] = useState([]);
+  const [loading_stu, setLoading_stu] = useState(true);
+  const [loading_ques, setLoading_ques] = useState(true);
+  const [exam, setExam] = useState([]);
   const [students, setStudents] = useState([]);
   const [stu_code, setStu_code] = useState(null);
   const [score_allstu, setScore_allstu] = useState(null);
@@ -96,7 +100,7 @@ export default function Report_Exam_one() {
       .catch((err) => {
         console.log(err);
       });
-      setLoading_ques(false);
+    setLoading_ques(false);
   };
   const get_Students = async () => {
     await API_URL.get(`api/student/${exam_id}`)
@@ -119,7 +123,34 @@ export default function Report_Exam_one() {
       .catch((err) => {
         console.log(err);
       });
-      setLoading_stu(false);
+    setLoading_stu(false);
+  };
+
+  const delete_Reply = (name) => {
+    Swal.fire({
+      title: "ยืนยันที่จะลบคำตอบทั้งหมด?",
+      text: name,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ลบคำตอบทั้งหมด",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        API_URL.delete(`/api/reply/${exam_id}/del/Exam`)
+          .then(() => {
+            Toast.fire({
+              icon: "warning",
+              title: "ลบคำตอบเสร็จสิ้น",
+            });
+            get_Exam();
+            get_Students();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    });
   };
 
   useEffect(() => {
@@ -278,58 +309,74 @@ export default function Report_Exam_one() {
       <div className="w-4/5 mx-auto shadow-md   bg-white rounded-xl">
         <div className="md:flex  items-center justify-between my-3 w-100 rounded-lg px-5 py-3">
           <div className="flex-col items-center w-full md:w-3/6 justify-center text-center">
-            <p className="text-xl ">{exam.name} </p>
-            <div className="flex">
+            <p className="text-lg">{exam.name} </p>
+            <p className="w-full text-xs">
+              เวลาสอบ {dayjs(exam.date_pre).format("DD/MM/YYYY HH:mm")} ถึง{" "}
+              {dayjs(exam.date_post).format("DD/MM/YYYY HH:mm")}
+            </p>
+            
+          </div>
+          <div className="w-full md:w-3/6 justify-end">
+            <div className="md:flex justify-end">
+              <div
+                className="flex-col mx-2  rounded-xl px-3 py-2 text-center shadow-md"
+                style={{ backgroundColor: "#DBD8AE" }}
+              >
+                <p className="text-md">คะแนนเต็ม</p>
+                <p className="font-medium">
+                  {exam ? exam.question_sum_score : ""}
+                </p>
+              </div>
+              <div
+                className="flex-col mx-2 bg-gray-50 rounded-xl px-5 py-2 text-center shadow-md"
+                style={{ backgroundColor: "#DBD8AE" }}
+              >
+                <p className="text-md">คำถาม</p>
+                <p className="font-medium">
+                  {exam.question ? exam.question.length : ""}
+                </p>
+              </div>
+              <div
+                className="flex-col mx-2 bg-gray-50 rounded-xl py-2 px-5 text-center shadow-md"
+                style={{ backgroundColor: "#DBD8AE" }}
+              >
+                <p className="text-md">ผู้เข้าสอบ</p>
+                <p className="font-medium">{students ? students.length : ""}</p>
+              </div>
+              <div
+                className="flex-col mx-2 bg-gray-50 rounded-xl py-2 px-5 text-center shadow-md"
+                style={{ backgroundColor: "#DBD8AE" }}
+              >
+                <p className="text-md">คะแนนเฉลี่ย</p>
+                <p className="font-medium">
+                  {students ? (score_allstu / students.length).toFixed(2) : 0}
+                </p>
+              </div>
+            </div>
+            {/* <div className="flex mt-3 justify-end">
               <Button
                 variant="outlined"
                 startIcon={<ArticleIcon />}
-                className="w-48 border-2 shadow-md"
+                className="w-48 border-2 shadow-md mx-2"
                 onClick={handlePrint}
               >
                 ดาวน์โหลดรายงาน
               </Button>
-            </div>
-          </div>
-          <div className="md:flex  w-full md:w-3/6 justify-end">
-            <div
-              className="flex-col mx-2  rounded-xl p-3 text-center shadow-md"
-              style={{ backgroundColor: "#DBD8AE" }}
-            >
-              <p className="text-md">คะแนนเต็ม</p>
-              <p className="font-medium">
-                {exam ? exam.question_sum_score : ""}
-              </p>
-            </div>
-            <div
-              className="flex-col mx-2 bg-gray-50 rounded-xl px-5 py-3 text-center shadow-md"
-              style={{ backgroundColor: "#DBD8AE" }}
-            >
-              <p className="text-md">คำถาม</p>
-              <p className="font-medium">
-                {exam.question ? exam.question.length : ""}
-              </p>
-            </div>
-            <div
-              className="flex-col mx-2 bg-gray-50 rounded-xl py-3 px-5 text-center shadow-md"
-              style={{ backgroundColor: "#DBD8AE" }}
-            >
-              <p className="text-md">ผู้เข้าสอบ</p>
-              <p className="font-medium">{students ? students.length : ""}</p>
-            </div>
-            <div
-              className="flex-col mx-2 bg-gray-50 rounded-xl py-3 px-5 text-center shadow-md"
-              style={{ backgroundColor: "#DBD8AE" }}
-            >
-              <p className="text-md">คะแนนเฉลี่ย</p>
-              <p className="font-medium">
-                {students ? (score_allstu / students.length).toFixed(2) : ""}
-              </p>
-            </div>
+              <Button
+                variant="outlined"
+                color="error"
+                startIcon={<DeleteForeverIcon />}
+                className="w-48 border-2 shadow-md mx-2"
+                onClick={()=>delete_Reply(exam.name)}
+              >
+                ลบคำตอบทั้งหมด
+              </Button>
+            </div> */}
           </div>
         </div>
       </div>
       <TabContext value={value} className="w-4/5 mx-auto">
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }} className="flex mx-28">
           <TabList
             onChange={handleChange}
             className="w-4/5 mx-auto justify-between"
@@ -337,6 +384,25 @@ export default function Report_Exam_one() {
             <Tab label="ผู้เข้าสอบ" value="1" />
             <Tab label="คำถาม" value="2" />
           </TabList>
+          <div className="flex my-auto justify-end">
+              <Button
+                variant="outlined"
+                startIcon={<ArticleIcon />}
+                className="w-48 border-2 shadow-md mx-2"
+                onClick={handlePrint}
+              >
+                ดาวน์โหลดรายงาน
+              </Button>
+              <Button
+                variant="outlined"
+                color="error"
+                startIcon={<DeleteForeverIcon />}
+                className="w-48 border-2 shadow-md mx-2"
+                onClick={()=>delete_Reply(exam.name)}
+              >
+                ลบคำตอบทั้งหมด
+              </Button>
+            </div>
         </Box>
         <TabPanel value="1">
           <div className="w-11/12 mx-auto">
@@ -345,7 +411,14 @@ export default function Report_Exam_one() {
               columns={columns}
               dataSource={students}
               rowKey="stu_code"
-              loading={{ indicator: <div><Spin size="large" /></div>, spinning:loading_stu}}
+              loading={{
+                indicator: (
+                  <div>
+                    <Spin size="large" />
+                  </div>
+                ),
+                spinning: loading_stu,
+              }}
             />
           </div>
         </TabPanel>
@@ -366,6 +439,7 @@ export default function Report_Exam_one() {
             />
           </div>
         </TabPanel>
+        
       </TabContext>
       {activeModalReport === true ? (
         <>
@@ -393,7 +467,12 @@ export default function Report_Exam_one() {
         <></>
       )}
       <div className="hidden">
-        <Report_Reply ref={componentRef} exam={exam} student={students} avg_score={(score_allstu / students.length).toFixed(2)} />
+        <Report_Reply
+          ref={componentRef}
+          exam={exam}
+          student={students}
+          avg_score={(score_allstu / students.length).toFixed(2)}
+        />
       </div>
     </div>
   );

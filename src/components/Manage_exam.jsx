@@ -102,26 +102,50 @@ export default function Manage_exam() {
 
   const delete_Exam = (id, name) => {
     Swal.fire({
-      title: "ยืนยันที่จะลบแบบทดสอบ?",
-      text: name,
-      icon: "warning",
+      title: "ยืนยันที่จะลบคำตอบของแบบทดสอบ?",
+      html: `<p>คำตอบของ <strong>${name}</strong> ทั้งหมดจะถูกลบ</p>`,
+      icon: "info",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "ลบแบบทดสอบ",
+      confirmButtonText: "ยืนยัน",
     }).then((result) => {
       if (result.isConfirmed) {
-        API_URL.delete(`/api/exam/${id}`)
-          .then(() => {
-            Toast.fire({
+        Swal.fire({
+          title: "ยืนยันที่จะลบคำถามและเฉลยของแบบทดสอบ?",
+          html: `<p>คำถามและเฉลยทั้งหมดของ <strong>${name}</strong> จะถูกลบ</p>`,
+          icon: "info",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "ยืนยัน",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Swal.fire({
+              title: "ยืนยันที่จะลบแบบทดสอบนี้?",
+              html: `<p><b>ลบ</b> ${name}</p>`,
               icon: "warning",
-              title: "ลบแบบทดสอบเสร็จสิ้น",
+              showCancelButton: true,
+              confirmButtonColor: "#3085d6",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "ลบแบบทดสอบ",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                API_URL.delete(`/api/exam/${id}`)
+                  .then(() => {
+                    Toast.fire({
+                      icon: "warning",
+                      title: "ลบแบบทดสอบเสร็จสิ้น",
+                    });
+                    get_Exam();
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              }
             });
-            get_Exam();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+          }
+        });
       }
     });
   };
@@ -227,7 +251,7 @@ export default function Manage_exam() {
                         variant="h6"
                         className="mb-3 max-w-sm truncate max-h-6"
                       >
-                        หัวข้อสอบ : {exams.name}
+                       หัวข้อสอบ : {exams.name}
                       </Typography>
                       <Box className="mb-2" sx={{ display: "flex" }}>
                         <Typography
@@ -330,7 +354,7 @@ export default function Manage_exam() {
       ) : (
         <div className="text-center m-52">
           <Divider className="w-100">
-            <p className="text-black  text-2xl">ยังไม่ได้สร้างข้อสอบ</p>
+            <p className="text-black  text-2xl">ไม่มีข้อสอบ</p>
           </Divider>
         </div>
       )}
