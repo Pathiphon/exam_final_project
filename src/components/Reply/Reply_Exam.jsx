@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import useState from "react-usestateref";
 import { Link } from "react-router-dom";
-import { Table, Tag,Spin    } from "antd";
+import { Table, Tag, Spin } from "antd";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import API_URL from "../../config/api";
 import { getCurrentUser } from "../../services/auth.service";
@@ -13,45 +13,46 @@ function Reply_Exam() {
   const [token] = useState(getCurrentUser());
   const [exam_data, setExam_data] = useState([]);
   const [dataSource, setDataSource] = useState(exam_data);
-  const [loading,setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const get_Exam = async () => {
     try {
-      await API_URL.get(`api/exam/${token && token.user.id}/all`)
-      await API_URL.get(`api/reply/${token && token.user.id}/all`)
-      .then(async (res) => {
-        const data_table = res.data;
-        let stu_length = 0;
-        let status_false = 0;
-        for (var j = 0; j < data_table.length; j++) {
-          await API_URL.get(`api/student/${data_table[j].exam_id}`).then(
-            (stu) => {
-              stu_length = stu.data.length;
+      await API_URL.get(`api/exam/${token && token.user.id}/all`);
+      await API_URL.get(`api/reply/${token && token.user.id}/all`).then(
+        async (res) => {
+          const data_table = res.data;
+          let stu_length = 0;
+          let status_false = 0;
+          for (var j = 0; j < data_table.length; j++) {
+            await API_URL.get(`api/student/${data_table[j].exam_id}`).then(
+              (stu) => {
+                stu_length = stu.data.length;
+              }
+            );
+            if (stu_length === 0) {
+              data_table.splice(j, 1);
+              j--;
+              continue;
             }
-          );
-          if(stu_length===0){
-            data_table.splice(j,1)
-            j--;
-            continue;
-          }
-          for (var i in data_table[j].replies) {
-            if (data_table[j].replies[i].check_status === false) {
-              status_false += 1;
+            for (var i in data_table[j].replies) {
+              if (data_table[j].replies[i].check_status === false) {
+                status_false += 1;
+              }
             }
+            Object.assign(
+              data_table[j],
+              { status_false: status_false },
+              { question_num: data_table[j].question.length },
+              { stu_length: stu_length }
+            );
+
+            status_false = 0;
           }
-          Object.assign(
-            data_table[j],
-            { status_false: status_false },
-            { question_num: data_table[j].question.length },
-            { stu_length: stu_length }
-          );
-          
-          status_false = 0;
+          setDataSource(data_table);
+          setExam_data(data_table);
+          return res.data;
         }
-        setDataSource(data_table);
-        setExam_data(data_table);
-        return res.data;
-      })
+      );
     } catch (error) {
       console.log(error);
     }
@@ -66,45 +67,49 @@ function Reply_Exam() {
     {
       title: <p className="my-auto">แบบทดสอบ</p>,
       dataIndex: "name",
-      render: (name) => <p className="text-lg max-w-lg my-auto truncate ">{name}</p>,
+      render: (name) => (
+        <p className="text-lg max-w-lg my-auto truncate ">{name}</p>
+      ),
     },
     {
       title: <p className="my-auto">จำนวนคำถาม</p>,
       dataIndex: "question_num",
       sorter: (a, b) => a.question_num - b.question_num,
       align: "center",
-      width:"10%",
+      width: "15%",
       render: (question_num) => (
-          <p className="text-base my-auto font-semibold">{question_num}</p>
+        <p className="text-base my-auto font-semibold">{question_num}</p>
       ),
     },
     {
       title: <p className="my-auto">จำนวนผู้เข้าสอบ</p>,
       dataIndex: "stu_length",
       align: "center",
-      width:"10%",
+      width: "20%",
       sorter: (a, b) => a.stu_length - b.stu_length,
       render: (stu_length) => (
-          <p className="text-base my-auto font-semibold">{stu_length}</p>
-      ),
-    },
-    {
-      title: <p className="my-auto">รูปแบบที่ต้องพิจารณา</p>,
-      dataIndex: "status_false",
-      align: "center",
-      width:"15%",
-      sorter: (a, b) => a.status_false - b.status_false,
-      render: (status_false) => (
-        <Tag key={status_false} color="volcano" className="my-auto">
-          <p className="text-base font-semibold my-auto px-3">{status_false}</p>
+        <Tag color="gold" className="my-auto">
+          <p className="text-base my-auto font-semibold px-3 text-black">{stu_length}</p>
         </Tag>
       ),
     },
+    // {
+    //   title: <p className="my-auto">รูปแบบที่ต้องพิจารณา</p>,
+    //   dataIndex: "status_false",
+    //   align: "center",
+    //   width:"15%",
+    //   sorter: (a, b) => a.status_false - b.status_false,
+    //   render: (status_false) => (
+    //     <Tag key={status_false} color="volcano" className="my-auto">
+    //       <p className="text-base font-semibold my-auto px-3">{status_false}</p>
+    //     </Tag>
+    //   ),
+    // },
     {
       title: <p className="my-auto">การจัดการ</p>,
       dataIndex: "exam_id",
       key: "exam_id",
-      width:'10%',
+      width: "10%",
       render: (exam_id, index) => (
         <Link key={index} to={`/${exam_id}/Manage_Reply`}>
           <Button
@@ -148,7 +153,14 @@ function Reply_Exam() {
         className="rounded-lg my-3"
         dataSource={dataSource}
         rowKey="exam_id"
-        loading={{ indicator: <div><Spin size="large" /></div>, spinning:loading}}
+        loading={{
+          indicator: (
+            <div>
+              <Spin size="large" />
+            </div>
+          ),
+          spinning: loading,
+        }}
       />
     </div>
   );

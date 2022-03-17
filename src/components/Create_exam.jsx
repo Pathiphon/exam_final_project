@@ -20,15 +20,14 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import API_URL from "../config/api";
 
 export default function Create_exam() {
-  const [activeModal, setActiveModal] = useState(false);
   const [activeModalQ, setActiveModalQ] = useState(false);
   const [name, setName] = useState("");
   const [date_pre, setDate_pre] = useState("");
   const [date_post, setDate_post] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [id, setId] = useState(null);
-
   const location = useLocation();
+  const [activeModal, setActiveModal] = useState(location.state?false:true);
 
   let navigate = useNavigate();
 
@@ -45,13 +44,11 @@ export default function Create_exam() {
     navigate(-1);
   }
   useEffect(() => {
-    if (id) {
-      get_Exam();
-    }
+    get_Exam();
     if (location.state !== null) {
       setId(location.state.id);
     }
-  }, [id, handleModal]);
+  }, [id,handleModal]);
 
   const get_Exam = async () => {
     await API_URL.get(`api/exam/${id}`)

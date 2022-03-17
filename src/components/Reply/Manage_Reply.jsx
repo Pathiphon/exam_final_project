@@ -103,8 +103,8 @@ const Manage_Reply = () => {
     {
       title: "คำถาม",
       dataIndex: "question",
-      width: "30%",
-      render: (question) => <p className="text-base max-w-sm truncate my-auto">{question}</p>,
+      width: "40%",
+      render: (question) => <p className="text-base  my-auto">{question}</p>,
     },
     {
       title: "คะแนนเต็ม",

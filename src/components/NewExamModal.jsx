@@ -215,7 +215,7 @@ export default function NewExamModal({ active, handleModalNew, exam_id }) {
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  value={date_pre}
+                  value={date_pre||setDate_pre(dayjs().format("YYYY-MM-DD"))}
                   onChange={(e) => setDate_pre(e.target.value)}
                 />
                 <Box sx={{ width: 1 / 4 }}>
@@ -226,7 +226,7 @@ export default function NewExamModal({ active, handleModalNew, exam_id }) {
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    value={time_pre}
+                    value={time_pre||setTime_pre(dayjs().format("HH:mm"))}
                     onChange={(e) => setTime_pre(e.target.value)}
                     required
                   />

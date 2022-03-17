@@ -13,7 +13,7 @@ const Report_Reply = React.forwardRef((props, ref) => {
       <p>สอบเมื่อวันที่ {dayjs(exams.date_pre).format("DD/MM/YYYY HH:mm")}</p>
       <div className="flex justify-between w-10/12 mx-auto">
         <p>จำนวนผู้เข้าสอบทั้งหมด {students.length} คน</p>
-        <p>คะแนนเฉลี่ย {avg} คน</p>
+        <p>คะแนนเฉลี่ย {avg} </p>
         <p>คะแนนเต็ม {exams.question_sum_score}</p>
       </div>
 

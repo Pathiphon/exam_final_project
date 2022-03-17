@@ -37,9 +37,11 @@ export default function ExamModal({
     setTime_post("");
   };
   const handleCreateExam = async (e) => {
+    
     e.preventDefault();
     const date_start = date_pre + " " + time_pre;
     const date_end = date_post + " " + time_post;
+    console.log(date_start,date_end);
     let date_Dif = dayjs(date_end).diff(dayjs(date_start), "m", true);
     if (date_Dif > 0 && name.length > 0) {
       await API_URL.post(`api/exam`, {
@@ -173,7 +175,7 @@ export default function ExamModal({
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  value={date_pre}
+                  value={date_pre||setDate_pre(dayjs().format("YYYY-MM-DD"))}
                   onChange={(e) => setDate_pre(e.target.value)}
                 />
                 <Box sx={{ width: 1 / 4 }}>
@@ -183,7 +185,7 @@ export default function ExamModal({
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    value={time_pre}
+                    value={time_pre||setTime_pre(dayjs().format("HH:mm"))}
                     onChange={(e) => setTime_pre(e.target.value)}
                     required
                   />

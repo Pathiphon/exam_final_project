@@ -130,6 +130,7 @@ export default function Report_Exam() {
       </div>
       <Table
       size="middle"
+      rowKey="exam_id"
         columns={columns}
         className="rounded-lg my-3"
         dataSource={dataSource}

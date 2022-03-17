@@ -56,13 +56,14 @@ export default function Stu_report_Modal({
   };
   const deleteStudent_Exam = async (stu_code,name) => {
     Swal.fire({
-      title: "ยืนยันที่จะลบข้อมูลนักศึกษาสำหรับข้อสอบนี้?",
-      text:  name,
+      title: "ยืนยันการลบข้อมูลนักศึกษาสำหรับข้อสอบนี้?",
+      html: `<p>ชื่อ-นามสกุล  <strong class="text-red-600 ">${name}</strong></p>`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "ลบ",
+      confirmButtonText: "ยืนยันการลบคำตอบ",
+      cancelButtonText:"ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
         API_URL.delete(`/api/reply/${exam_id}/${stu_code}`)

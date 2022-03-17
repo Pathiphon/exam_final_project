@@ -106,7 +106,8 @@ export default function Table_Ans({
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "ลบเฉลย",
+      confirmButtonText: "ยืนยันการลบเฉลยที่เลือก",
+      cancelButtonText:"ยกเลิก"
     }).then(async (result) => {
       if (result.isConfirmed) {
         for (let i in list_select) {
@@ -133,7 +134,8 @@ export default function Table_Ans({
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "ลบเฉลย",
+      confirmButtonText: "ยืนยันการลบเฉลย",
+      cancelButtonText:"ยกเลิก"
     }).then((result) => {
       if (result.isConfirmed) {
         API_URL.delete(`/api/answer/${ans_id}`)

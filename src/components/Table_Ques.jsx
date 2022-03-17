@@ -50,66 +50,49 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
 
   const deleteAll_Question = () => {
     Swal.fire({
-      title: "ยืนยันที่จะลบเฉลยของคำถามทั้งหมด?",
-      text: "เฉลยทั้งหมดของคำถามจะถูกลบ",
-      icon: "info",
+      title: "ยืนยันการลบคำถามทั้งหมด?",
+      html: `<p>ลบคำถามทั้งหมด <strong class="text-red-600">${All_question.length}</strong> ข้อ</p>`,
+      icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "ยืนยัน",
-    }).then((result) => {
+      confirmButtonText: "ยืนยันการลบคำถามทั้งหมด",
+      cancelButtonText: "ยกเลิก",
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        Swal.fire({
-          title: "ยืนยันที่จะลบคำถามทั้งหมด?",
-          html: `<p>ลบคำถามทั้งหมด <b>${All_question.length}</b> ข้อ</p>`,
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "ลบคำถามทั้งหมด",
-        }).then(async(result) => {
-          if (result.isConfirmed) {
-            for (let i in All_question) {
-              await API_URL.delete(
-                `/api/question/${exam_id}/${All_question[i].ques_id}`
-              ).catch((err) => {
-                Toast.fire({
-                  icon: "error",
-                  title: "มีข้อผิดพลาด",
-                });
-                });
-            }
-            Toast.fire({
-              icon: "warning",
-              title: "ลบคำถามเสร็จสิ้น",
-            });
-            get_Question();
+        try {
+          for (let i in All_question) {
+            await API_URL.delete(
+              `/api/question/${exam_id}/${All_question[i].ques_id}`
+            )
           }
-        });
+          Toast.fire({
+            icon: "warning",
+            title: "ลบคำถามเสร็จสิ้น",
+          });
+          get_Question();
+        } catch (error) {
+          Toast.fire({
+            icon: "error",
+            title: "ไม่สามารถลบได้เนื่องจากมีเฉลยหรือคำตอบสัมพันธ์กันอยู่",
+          });
+        }
+        
       }
     });
   };
 
   const delete_Question = (id, question, ans_lenght) => {
-    Swal.fire({
-      title: "ยืนยันที่จะลบเฉลยของคำถาม?",
-      html: `<p>ลบเฉลยทั้งหมด <b>${ans_lenght}</b> รูปแบบ</p>`,
-      icon: "info",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "ยืนยัน",
-    }).then((result) => {
-      if (result.isConfirmed) {
         Swal.fire({
-          title: "ยืนยันที่จะลบคำถาม?",
-          text: question,
-          icon: "info",
+          title: "ยืนยันการลบคำถาม?",
+          html: `<p>พร้อมทั้งลบเฉลย <strong class="text-red-600">${ans_lenght}</strong> รูปแบบ<br>ของคำถาม<strong class="text-red-600">${question}</strong></p>`,
+          icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
           cancelButtonColor: "#d33",
           confirmButtonText: "ลบคำถาม",
-        }).then(async(result) => {
+          cancelButtonText: "ยกเลิก",
+        }).then(async (result) => {
           if (result.isConfirmed) {
             await API_URL.delete(`/api/question/${exam_id}/${id}`)
               .then(() => {
@@ -120,12 +103,14 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
                 get_Question();
               })
               .catch((err) => {
-                console.log(err);
+                Toast.fire({
+                  icon: "error",
+                  title: "มีคำตอบของคำถามนี้อยู่",
+                });
               });
           }
         });
-      }
-    });
+      
   };
 
   useEffect(() => {
@@ -206,17 +191,17 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
               </button>
             </Grid>
             <Grid className="w-3/6 flex justify-end my-auto">
-              {All_question.length!==0&&
-              <Button
-                variant="outlined"
-                color="error"
-                className="shadow-md py-3 px-4"
-                onClick={() => deleteAll_Question()}
-                startIcon={<DeleteForeverIcon fontSize="large" />}
-              >
-                ลบคำถามทั้งหมด
-              </Button>
-              }
+              {All_question.length !== 0 && (
+                <Button
+                  variant="outlined"
+                  color="error"
+                  className="shadow-md py-3 px-4"
+                  onClick={() => deleteAll_Question()}
+                  startIcon={<DeleteForeverIcon fontSize="large" />}
+                >
+                  ลบคำถามทั้งหมด
+                </Button>
+              )}
             </Grid>
           </Box>
 
@@ -243,7 +228,7 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
                         }}
                       />
                       <Typography variant="subtitle1" component="div">
-                        จำนวนเฉลย( {All_questions.answers.length} )
+                        จำนวนเฉลย ( {All_questions.answers.length} )
                         <Button
                           sx={{ whiteSpace: "nowrap", ml: 1 }}
                           variant="outlined"

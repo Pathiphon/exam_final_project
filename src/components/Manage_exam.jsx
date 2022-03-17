@@ -100,52 +100,40 @@ export default function Manage_exam() {
     setExam_id(null);
   };
 
-  const delete_Exam = (id, name) => {
+  const delete_Exam = async (id, name, ques_len) => {
+    let stu_len = 0;
+    await API_URL.get(`api/student/${id}`)
+      .then((res) => {
+        stu_len = res.data.length;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     Swal.fire({
-      title: "ยืนยันที่จะลบคำตอบของแบบทดสอบ?",
-      html: `<p>คำตอบของ <strong>${name}</strong> ทั้งหมดจะถูกลบ</p>`,
-      icon: "info",
+      title: "ยืนยันที่จะลบแบบทดสอบ?",
+      html: `<p>แบบทดสอบ <strong class="text-red-600">${name}</strong> นี้<br> มีคำถาม<strong class="text-red-600"> ${ques_len} </strong>ข้อ <br>มีคำตอบของนักศึกษา<strong class="text-red-600"> ${stu_len} </strong>คน</p>`,
+      icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "ยืนยัน",
+      confirmButtonText: "ยืนยันการลบแบบทดสอบ",
+      cancelButtonText: "ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire({
-          title: "ยืนยันที่จะลบคำถามและเฉลยของแบบทดสอบ?",
-          html: `<p>คำถามและเฉลยทั้งหมดของ <strong>${name}</strong> จะถูกลบ</p>`,
-          icon: "info",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "ยืนยัน",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            Swal.fire({
-              title: "ยืนยันที่จะลบแบบทดสอบนี้?",
-              html: `<p><b>ลบ</b> ${name}</p>`,
+        API_URL.delete(`/api/exam/${id}`)
+          .then(() => {
+            Toast.fire({
               icon: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#3085d6",
-              cancelButtonColor: "#d33",
-              confirmButtonText: "ลบแบบทดสอบ",
-            }).then((result) => {
-              if (result.isConfirmed) {
-                API_URL.delete(`/api/exam/${id}`)
-                  .then(() => {
-                    Toast.fire({
-                      icon: "warning",
-                      title: "ลบแบบทดสอบเสร็จสิ้น",
-                    });
-                    get_Exam();
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
-              }
+              title: "ลบแบบทดสอบเสร็จสิ้น",
             });
-          }
-        });
+            get_Exam();
+          })
+          .catch((err) => {
+            Toast.fire({
+              icon: "error",
+              title: "ไม่สามารถลบได้เนื่องจากมีคำตอบหรือคำถามอยู่",
+            });
+          });
       }
     });
   };
@@ -251,7 +239,7 @@ export default function Manage_exam() {
                         variant="h6"
                         className="mb-3 max-w-sm truncate max-h-6"
                       >
-                       หัวข้อสอบ : {exams.name}
+                        หัวข้อสอบ : {exams.name}
                       </Typography>
                       <Box className="mb-2" sx={{ display: "flex" }}>
                         <Typography
@@ -307,7 +295,13 @@ export default function Manage_exam() {
                         color="error"
                         className="shadow-md"
                         startIcon={<DeleteForeverIcon />}
-                        onClick={() => delete_Exam(exams.exam_id, exams.name)}
+                        onClick={() =>
+                          delete_Exam(
+                            exams.exam_id,
+                            exams.name,
+                            exams.question.length
+                          )
+                        }
                       >
                         ลบ
                       </Button>
@@ -335,7 +329,13 @@ export default function Manage_exam() {
                         color="error"
                         className="shadow-md"
                         startIcon={<DeleteForeverIcon />}
-                        onClick={() => delete_Exam(exams.exam_id, exams.name)}
+                        onClick={() =>
+                          delete_Exam(
+                            exams.exam_id,
+                            exams.name,
+                            exams.question.length
+                          )
+                        }
                       >
                         ลบ
                       </Button>

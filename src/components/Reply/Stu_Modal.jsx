@@ -172,7 +172,7 @@ export default function Stu_Modal({
                 <NumbersIcon className="mx-auto" fontSize="large" />
                 <p className="mx-auto mt-3">คะแนน</p>
                 <p className="text-lg text-slate-900 font-semibold">
-                  {exam_data ? exam_data.score : ""}
+                  {exam_data ? exam_data.score : "-"}
                 </p>
               </div>
             </div>
@@ -181,7 +181,7 @@ export default function Stu_Modal({
                 <FeedbackIcon fontSize="large" />
                 <p className="mt-3">เฉลย</p>
                 <p className="mt-5 w-full text-lg">
-                  {exam_data ? exam_data.answer : ""}
+                  {exam_data ? exam_data.answer : "-"}
                 </p>
               </div>
             </div>

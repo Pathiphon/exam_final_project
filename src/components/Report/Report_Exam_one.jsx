@@ -128,13 +128,14 @@ export default function Report_Exam_one() {
 
   const delete_Reply = (name) => {
     Swal.fire({
-      title: "ยืนยันที่จะลบคำตอบทั้งหมด?",
-      text: name,
+      title: "ยืนยันการลบคำตอบทั้งหมด?",
+      html: `<p>คำตอบของนักศึกษา <strong class="text-red-600 ">${students.length}</strong> คน<br>จะถูกลบออกจาก <strong class="text-red-600">${name}</strong></p>`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "ลบคำตอบทั้งหมด",
+      confirmButtonText: "ยืนยันการลบคำตอบทั้งหมด",
+      cancelButtonText:"ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
         API_URL.delete(`/api/reply/${exam_id}/del/Exam`)
@@ -171,7 +172,7 @@ export default function Report_Exam_one() {
     {
       title: <div className="header_table">ชื่อ - นามสกุล</div>,
       dataIndex: "name",
-      width: "30%",
+      width: "40%",
       render: (name) => (
         <p className="text-base max-w-md truncate my-auto"> {name}</p>
       ),
@@ -180,6 +181,7 @@ export default function Report_Exam_one() {
       title: "คะแนน",
       dataIndex: "score_stu_full",
       align: "center",
+      width:'15%',
       sorter: (a, b) => a.score_stu_full - b.score_stu_full,
       render: (score_stu_full) => (
         <>
@@ -209,7 +211,8 @@ export default function Report_Exam_one() {
       title: "การจัดการ",
       dataIndex: "stu_code",
       key: "stu_code",
-      width: "20%",
+      align:'center',
+      width: "15%",
       render: (stu_code) => (
         <Button
           variant="outlined"
@@ -239,15 +242,16 @@ export default function Report_Exam_one() {
     {
       title: <div className="header_table">คำถาม</div>,
       dataIndex: "question",
-      width: "30%",
+      
       render: (question) => (
-        <p className="text-base max-w-xs my-auto truncate"> {question}</p>
+        <p className="text-base max-w-xl my-auto truncate"> {question}</p>
       ),
     },
     {
       title: <div>คะแนนเต็ม</div>,
       dataIndex: "full_score",
       key: "full_score",
+      width: "20%",
       sorter: (a, b) => a.full_score - b.full_score,
       align: "center",
       render: (full_score) => <p className="text-base my-auto">{full_score}</p>,
@@ -255,6 +259,7 @@ export default function Report_Exam_one() {
     {
       title: "คะแนนเฉลี่ย",
       dataIndex: "avg_question",
+      width: "20%",
       align: "center",
       sorter: (a, b) => a.avg_question - b.avg_question,
       render: (avg_question) => (
@@ -270,7 +275,7 @@ export default function Report_Exam_one() {
       title: "การจัดการ",
       dataIndex: "ques_id",
       key: "ques_id",
-      width: "20%",
+      width: "15%",
       render: (ques_id) => (
         <Button
           variant="outlined"
