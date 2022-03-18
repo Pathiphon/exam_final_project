@@ -38,17 +38,17 @@ export default function ExamForm() {
   const [inputField, setInputField] = React.useState([]);
   const [stuCode, setStuCode] = useState("");
   const [stuCodeDelay, setStuCodeDelay] = useState("");
-  const [answer_log, setAnswer_log] = useState("");
   const [name, setName] = useState("");
-  var [check_start, setCheck_start] = useState(null);
-  var [check_end, setCheck_end] = useState(null);
+  const [warning_time,setWarning_time] = useState(1);
+  const [check_start, setCheck_start] = useState(null);
+  const [check_end, setCheck_end] = useState(null);
 
   let navigate = useNavigate();
 
   var buddhistEra = require("dayjs/plugin/buddhistEra");
   dayjs.extend(buddhistEra);
 
-  const { days, hours, minutes, seconds, isTimeUp } = useTicker(futureDate);
+  const { days, hours, minutes, seconds, isTimeUp } = useTicker(futureDate,warning_time);
 
   const tickerContents = isTimeUp ? (
     <p className="bg-gray-200 my-auto appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500">
@@ -72,13 +72,15 @@ export default function ExamForm() {
     });
     setInputField(newInputFields);
     localStorage.setItem(`answer${exam_id}_log`, JSON.stringify(newInputFields));
-    console.log(newInputFields);
+    localStorage.setItem(`stu${exam_id}_log`, JSON.stringify({"name":name,"stuCode":parseInt(stuCode)}));
+    // console.log(newInputFields);
   };
   const get_Exam = async () => {
     await API_URL.get(`api/exam/${exam_id}`)
       .then((res) => {
         const data = res.data;
         setExam_name(data.name);
+        setWarning_time(data.warning_time);
         setDate_pre(dayjs(data.date_pre).format("DD/MM/BBBB HH:mm"));
         setDate_post(dayjs(data.date_post).format("DD/MM/BBBB HH:mm"));
         setDate_start(dayjs(data.date_pre).format("DD/MM/BBBB"));
@@ -115,13 +117,16 @@ export default function ExamForm() {
       .then((res) => {
         if (res.data) {
           let answer_log = null;
+          let stu_log = null;
           try {
             answer_log = JSON.parse(localStorage.getItem(`answer${exam_id}_log`)) || null;
+            stu_log = JSON.parse(localStorage.getItem(`stu${exam_id}_log`)) || null;
           } catch (error) {
             console.log(error);
           }
           const data = res.data;
           if (answer_log) {
+            setInputField([])
             for (let index in data.question) {
               setInputField((prevState) => [
                 ...prevState,
@@ -131,6 +136,9 @@ export default function ExamForm() {
                 },
               ]);
             }
+            setName(stu_log.name||"")
+            setStuCode(stu_log.stuCode||"")
+            setStuCodeDelay(stu_log.stuCode||"")
           } else {
             for (let item of data.question) {
               setInputField((prevState) => [
@@ -140,13 +148,16 @@ export default function ExamForm() {
                 },
               ]);
             }
+            setName('')
+            setStuCode('')
+            setStuCodeDelay('')
           }
 
           if (answer_log) {
             const log = data.question.map((value, index) => {
               if (
                 answer_log[index].ques_id === value.ques_id &&
-                answer_log[index].answer_stu
+                answer_log[index].answer_stu 
               ) {
                 return { ...value, answer_stu: answer_log[index].answer_stu };
               } else {
@@ -155,10 +166,15 @@ export default function ExamForm() {
             });
             log.sort(() => Math.random() - 0.5);
             setAll_question(log);
-            console.log(log);
+            setName(stu_log.name||"")
+            setStuCode(stu_log.stuCode||"")
+            setStuCodeDelay(stu_log.stuCode||"")
           } else {
             data.question.sort(() => Math.random() - 0.5);
             setAll_question(data.question);
+            setName('')
+            setStuCode('')
+            setStuCodeDelay('')
           }
         }
       })
@@ -190,6 +206,7 @@ export default function ExamForm() {
     const delayInput = setTimeout(() => {
       setStuCode(stuCodeDelay);
     }, 1000);
+    
     get_Exam();
     if (stuCode.length === 9) {
       get_Student();
@@ -202,8 +219,9 @@ export default function ExamForm() {
       Swal.fire({
         title: "หมดเวลาสอบ!",
         html: "กำลังส่งคำตอบของคุณ.",
-        timer: 3000,
+        timer: 5000,
         timerProgressBar: true,
+        allowOutsideClick:false,
         didOpen: () => {
           Swal.showLoading();
           const b = Swal.getHtmlContainer().querySelector("b");
@@ -232,6 +250,7 @@ export default function ExamForm() {
   const CreateReply = async () => {
     try {
       localStorage.removeItem(`answer${exam_id}_log`);
+      localStorage.removeItem(`stu${exam_id}_log`);
       const res = await axios.get("https://geolocation-db.com/json/");
       let aws = inputField;
       let answerLength = 0;
@@ -244,7 +263,7 @@ export default function ExamForm() {
           Object.assign(
             aws[j],
             { name: name },
-            { ipaddress: res.data.IPv4 },
+            { ipaddress: res.data.IPv4},
             { stu_code: stuCode },
             { exam_id: exam_id },
             { ans_id: null },
