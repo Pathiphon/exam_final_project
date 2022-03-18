@@ -4,10 +4,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import Swal from "sweetalert2";
 import dayjs from "dayjs";
+import axios from "axios";
 import { add } from "date-fns";
 import API_URL from "../../config/api";
 import { useTicker } from "./useTicker";
-import CsvReader from './CSVReader'
+import CsvReader from "./CSVReader";
 import {
   AppBar,
   Toolbar,
@@ -37,6 +38,7 @@ export default function ExamForm() {
   const [inputField, setInputField] = React.useState([]);
   const [stuCode, setStuCode] = useState("");
   const [stuCodeDelay, setStuCodeDelay] = useState("");
+  const [answer_log, setAnswer_log] = useState("");
   const [name, setName] = useState("");
   var [check_start, setCheck_start] = useState(null);
   var [check_end, setCheck_end] = useState(null);
@@ -69,7 +71,8 @@ export default function ExamForm() {
       return i;
     });
     setInputField(newInputFields);
-    
+    localStorage.setItem(`answer${exam_id}_log`, JSON.stringify(newInputFields));
+    console.log(newInputFields);
   };
   const get_Exam = async () => {
     await API_URL.get(`api/exam/${exam_id}`)
@@ -111,15 +114,51 @@ export default function ExamForm() {
     await API_URL.get(`api/question/${exam_id}/all`)
       .then((res) => {
         if (res.data) {
+          let answer_log = null;
+          try {
+            answer_log = JSON.parse(localStorage.getItem(`answer${exam_id}_log`)) || null;
+          } catch (error) {
+            console.log(error);
+          }
           const data = res.data;
-          setAll_question(data.question);
-          for (let item of data.question) {
-            setInputField((prevState) => [
-              ...prevState,
-              {
-                ques_id: item.ques_id,
-              },
-            ]);
+          if (answer_log) {
+            for (let index in data.question) {
+              setInputField((prevState) => [
+                ...prevState,
+                {
+                  ques_id: answer_log[index].ques_id,
+                  answer_stu: answer_log[index].answer_stu,
+                },
+              ]);
+            }
+          } else {
+            for (let item of data.question) {
+              setInputField((prevState) => [
+                ...prevState,
+                {
+                  ques_id: item.ques_id,
+                },
+              ]);
+            }
+          }
+
+          if (answer_log) {
+            const log = data.question.map((value, index) => {
+              if (
+                answer_log[index].ques_id === value.ques_id &&
+                answer_log[index].answer_stu
+              ) {
+                return { ...value, answer_stu: answer_log[index].answer_stu };
+              } else {
+                return { ...value };
+              }
+            });
+            log.sort(() => Math.random() - 0.5);
+            setAll_question(log);
+            console.log(log);
+          } else {
+            data.question.sort(() => Math.random() - 0.5);
+            setAll_question(data.question);
           }
         }
       })
@@ -146,10 +185,11 @@ export default function ExamForm() {
       console.log(error);
     }
   };
+
   useEffect(() => {
-    const delayInput = setTimeout(()=>{
-      setStuCode(stuCodeDelay)
-    },1000)
+    const delayInput = setTimeout(() => {
+      setStuCode(stuCodeDelay);
+    }, 1000);
     get_Exam();
     if (stuCode.length === 9) {
       get_Student();
@@ -186,43 +226,46 @@ export default function ExamForm() {
       navigate("/ExamForm_Finish");
       window.location.reload();
     }
-    return () => clearTimeout(delayInput)
-  }, [isTimeUp,stuCodeDelay,stuCode]);
+    return () => clearTimeout(delayInput);
+  }, [isTimeUp, stuCodeDelay, stuCode]);
 
   const CreateReply = async () => {
-    let aws = inputField;
-    let answerLength = 0;
-    for ( var j = 0; j < aws.length; j++) {
-      answerLength = aws[j].answer_stu?aws[j].answer_stu.length:0;
-      if(answerLength===0){
-        aws.splice(j,1)
-        j--;
-      }else{
-        Object.assign(
-          aws[j],
-          { name: name },
-          { stu_code: stuCode },
-          { exam_id: exam_id },
-          { ans_id: null },
-          { score_stu: 0 },
-          { persent_get: 0 },
-          { check_status: false }
-        );
-      }
+    try {
+      localStorage.removeItem(`answer${exam_id}_log`);
+      const res = await axios.get("https://geolocation-db.com/json/");
+      let aws = inputField;
+      let answerLength = 0;
+      for (var j = 0; j < aws.length; j++) {
+        answerLength = aws[j].answer_stu ? aws[j].answer_stu.length : 0;
+        if (answerLength === 0) {
+          aws.splice(j, 1);
+          j--;
+        } else {
+          Object.assign(
+            aws[j],
+            { name: name },
+            { ipaddress: res.data.IPv4 },
+            { stu_code: stuCode },
+            { exam_id: exam_id },
+            { ans_id: null },
+            { score_stu: 0 },
+            { persent_get: 0 },
+            { check_status: false }
+          );
+        }
         answerLength = 0;
-    }
-    await API_URL.post(`api/reply`, aws)
-      .then((res) => {
+      }
+      await API_URL.post(`api/reply`, aws).then((res) => {
         setAll_question(null);
         setInputField("");
         setName("");
         setStuCode("");
         navigate("/ExamForm_Finish", { state: { name: exam_name } });
         window.location.reload();
-      })
-      .catch((err) => {
-        console.log(err);
       });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -270,7 +313,7 @@ export default function ExamForm() {
       </AppBar>
       <Toolbar />
       <Container maxWidth="md" className="mt-10 sx:mt-0">
-        <CsvReader exam_id={exam_id}/>
+        {/* <CsvReader exam_id={exam_id}/> */}
         <Box sx={{ my: 2 }}>
           {check_start <= 0 ? (
             <div className="bg-gray-200 px-8 py-3 text-center rounded-xl mt-4">
@@ -350,6 +393,7 @@ export default function ExamForm() {
                         <TextareaAutosize
                           id={`${All_questions.ques_id}`}
                           name="answer_stu"
+                          defaultValue={All_questions.answer_stu}
                           // value={inputField[All_questions.ques_id]}
                           onChange={(e) => {
                             handleChangeInput(All_questions.ques_id, e);

@@ -12,6 +12,7 @@ import Box from "@mui/material/Box";
 import SubtitlesIcon from "@mui/icons-material/Subtitles";
 import ErrorMessage from "./ErrorMessage";
 import API_URL from "../config/api";
+import TimerIcon from '@mui/icons-material/Timer';
 import { getCurrentUser } from "../services/auth.service";
 
 export default function ExamModal({
@@ -27,6 +28,7 @@ export default function ExamModal({
   const [time_pre, setTime_pre] = useState("");
   const [date_post, setDate_post] = useState("");
   const [time_post, setTime_post] = useState("");
+  const [warning_time,setWarning_time] = useState(5);
   const [token] = useState(getCurrentUser());
 
   const cleanFormData = () => {
@@ -35,6 +37,7 @@ export default function ExamModal({
     setTime_pre("");
     setDate_post("");
     setTime_post("");
+    setWarning_time(5);
   };
   const handleCreateExam = async (e) => {
     
@@ -48,6 +51,7 @@ export default function ExamModal({
         name: name,
         date_pre: date_start,
         date_post: date_end,
+        warning_time:warning_time,
         id: token.user.id,
       })
         .then((res) => {
@@ -79,6 +83,7 @@ export default function ExamModal({
       await API_URL.put(`api/exam/${id}`, {
         name: name,
         date_pre: date_start,
+        warning_time:warning_time,
         date_post: date_end,
       })
         .then((res) => {
@@ -105,6 +110,7 @@ export default function ExamModal({
       .then((res) => {
         const data = res.data;
         setName(data.name);
+        setWarning_time(data.warning_time);
         setDate_pre(dayjs(data.date_pre).format("YYYY-MM-DD"));
         setDate_post(dayjs(data.date_post).format("YYYY-MM-DD"));
         setTime_pre(dayjs(data.date_pre).format("HH:mm"));
@@ -159,7 +165,24 @@ export default function ExamModal({
                 />
               </div>
             </div>
-            <Card className="p-4">
+            <div className="flex flex-wrap items-center w-full mb-3 ">
+              <div className="flex my-auto ">
+                <TimerIcon sx={{ color: "action.active" }} className="my-auto"/>
+                <p className="mx-3 my-auto">แจ้งเตือนผู้สอบเมื่อเวลาเหลือ</p>
+              </div>
+              <div className="w-full flex md:w-1/2 px-3 my-auto">
+                <input
+                  value={warning_time}
+                  type="number"
+                  onChange={(e) => setWarning_time(e.target.value)}
+                  required
+                  className="my-auto appearance-none block w-3/6 bg-gray-200 text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-200"
+                  placeholder="นาที"
+                />
+                <p className="my-auto mx-3">นาที</p>
+              </div>
+            </div>
+            <Card className="p-4 ">
               <h4>กำหนดเวลาสอบ</h4>
               <Box
                 sx={{

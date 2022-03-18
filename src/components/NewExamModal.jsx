@@ -7,6 +7,7 @@ import FileCopyIcon from "@mui/icons-material/FileCopy";
 import SubtitlesIcon from "@mui/icons-material/Subtitles";
 import { Table, Tag } from "antd";
 import API_URL from "../config/api";
+import TimerIcon from '@mui/icons-material/Timer';
 import { getCurrentUser } from "../services/auth.service";
 
 export default function NewExamModal({ active, handleModalNew, exam_id }) {
@@ -16,6 +17,7 @@ export default function NewExamModal({ active, handleModalNew, exam_id }) {
   const [time_pre, setTime_pre] = useState("");
   const [date_post, setDate_post] = useState("");
   const [time_post, setTime_post] = useState("");
+  const [warning_time,setWarning_time] = useState(5);
   const [alreadySelecteRows, setAlreadySelecteRows] = useState([]);
   const [token] = useState(getCurrentUser());
 
@@ -36,6 +38,7 @@ export default function NewExamModal({ active, handleModalNew, exam_id }) {
         name: name,
         date_pre: date_start,
         date_post: date_end,
+        warning_time:warning_time,
         id: token.user.id,
         list_SelectQues:alreadySelecteRows.list_SelectQues,
       })
@@ -63,6 +66,7 @@ export default function NewExamModal({ active, handleModalNew, exam_id }) {
       .then((res) => {
         const data = res.data;
         setName(data.name);
+        setWarning_time(data.warning_time);
       })
       .catch((err) => {
         console.log(err);
@@ -196,6 +200,23 @@ export default function NewExamModal({ active, handleModalNew, exam_id }) {
                   className="appearance-none block w-full bg-gray-200 text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-200"
                   placeholder="หัวข้อสอบ"
                 />
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center w-full mb-3 ">
+              <div className="flex my-auto ">
+                <TimerIcon sx={{ color: "action.active" }} className="my-auto"/>
+                <p className="mx-3 my-auto">แจ้งเตือนผู้สอบเมื่อเวลาเหลือ</p>
+              </div>
+              <div className="w-full flex md:w-1/2 px-3 my-auto">
+                <input
+                  value={warning_time}
+                  type="number"
+                  onChange={(e) => setWarning_time(e.target.value)}
+                  required
+                  className="my-auto appearance-none block w-3/6 bg-gray-200 text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-200"
+                  placeholder="นาที"
+                />
+                <p className="my-auto mx-3">นาที</p>
               </div>
             </div>
             <Card className="p-4 w-4/6 mx-auto">

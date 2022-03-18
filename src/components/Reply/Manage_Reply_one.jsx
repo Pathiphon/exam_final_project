@@ -174,7 +174,7 @@ const Manage_Reply_one = () => {
       align: "center",
       width: "7%",
       sorter: (a, b) => a.score_stu - b.score_stu,
-      defaultSortOrder: "ascend",
+      // defaultSortOrder: "ascend",
       render: (score_stu) => (
         <Tag color="orange" className="my-auto">
           <p className="text-base text-black font-semibold my-auto px-2">

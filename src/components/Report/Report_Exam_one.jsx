@@ -67,6 +67,10 @@ export default function Report_Exam_one() {
     navigate("/Report");
   }
 
+  const iptoNum =(ip)=>{
+    return ip.split(".").reduce((sum,x,i) => sum + (x << 8*(3-i)), 0)
+  }
+
   const get_Exam = async () => {
     await API_URL.get(`api/reply/${exam_id}/allreply`)
       .then((res) => {
@@ -106,14 +110,19 @@ export default function Report_Exam_one() {
     await API_URL.get(`api/student/${exam_id}`)
       .then((res) => {
         const student = res.data;
+        console.log(student);
         let sum_score = 0;
         let sum_score_allStu = 0;
+        let ipAddress = "";
+        let ipResult = 0;
         for (var j = 0; j < student.length; j++) {
           for (var i = 0; i < student[j].replies.length; i++) {
             sum_score += student[j].replies[i].score_stu;
+            ipAddress = student[j].replies[i].ipaddress;
+            ipResult = iptoNum(student[j].replies[i].ipaddress)
             sum_score_allStu += student[j].replies[i].score_stu;
           }
-          Object.assign(student[j], { score_stu_full: sum_score });
+          Object.assign(student[j], { score_stu_full: sum_score },{ipaddress:ipAddress},{ipresult:ipResult});
           sum_score = 0;
         }
         setScore_allstu(sum_score_allStu);
@@ -178,10 +187,18 @@ export default function Report_Exam_one() {
       ),
     },
     {
+      title: "IP_Address",
+      dataIndex: "ipaddress",
+      sorter: (a, b) => a.ipresult - b.ipresult,
+      render: (ipaddress) => (
+        <p className="text-base my-auto"> {ipaddress}</p>
+      ),
+    },
+    {
       title: "คะแนน",
       dataIndex: "score_stu_full",
       align: "center",
-      width:'15%',
+      width:'10%',
       sorter: (a, b) => a.score_stu_full - b.score_stu_full,
       render: (score_stu_full) => (
         <>
