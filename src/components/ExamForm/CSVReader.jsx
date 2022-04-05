@@ -32,6 +32,7 @@ export default function CSVReader({exam_id}) {
           { answer_stu: results[i][0] },
           { name: `0000000${i}`},
           {ques_id:number},
+          {ipaddress:"192.168.11.15"},
           { stu_code: 611463000+(parseInt(i)+1) },
           { exam_id: exam_id },
           { ans_id: null },

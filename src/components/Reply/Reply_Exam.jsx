@@ -65,7 +65,7 @@ function Reply_Exam() {
 
   const columns = [
     {
-      title: <p className="my-auto">แบบทดสอบ</p>,
+      title: <p className="my-auto">ข้อสอบ</p>,
       dataIndex: "name",
       render: (name) => (
         <p className="text-lg max-w-lg my-auto truncate ">{name}</p>

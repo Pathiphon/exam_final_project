@@ -54,7 +54,7 @@ export default function Report_Exam() {
 
   const columns = [
     {
-      title: "แบบทดสอบ",
+      title: "ข้อสอบ",
       dataIndex: "name",
       render: (name) => <p className="text-lg max-w-lg truncate ml-1 my-auto">{name}</p>,
     },

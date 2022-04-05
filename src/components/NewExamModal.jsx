@@ -47,7 +47,7 @@ export default function NewExamModal({ active, handleModalNew, exam_id }) {
           handleModalNew();
           Toast.fire({
             icon: "success",
-            title: "สร้างแบบทดสอบแล้ว",
+            title: "สร้างข้อสอบแล้ว",
           });
         })
         .catch((err) => {

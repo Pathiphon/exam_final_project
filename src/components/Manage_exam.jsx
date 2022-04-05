@@ -110,13 +110,13 @@ export default function Manage_exam() {
         console.log(err);
       });
     Swal.fire({
-      title: "ยืนยันที่จะลบแบบทดสอบ?",
-      html: `<p>แบบทดสอบ <strong class="text-red-600">${name}</strong> นี้<br> มีคำถาม<strong class="text-red-600"> ${ques_len} </strong>ข้อ <br>มีคำตอบของนักศึกษา<strong class="text-red-600"> ${stu_len} </strong>คน</p>`,
+      title: "ยืนยันที่จะลบข้อสอบ?",
+      html: `<p>ข้อสอบ <strong class="text-red-600">${name}</strong> นี้<br> มีคำถาม<strong class="text-red-600"> ${ques_len} </strong>ข้อ <br>มีคำตอบของนักศึกษา<strong class="text-red-600"> ${stu_len} </strong>คน</p>`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "ยืนยันการลบแบบทดสอบ",
+      confirmButtonText: "ยืนยันการลบข้อสอบ",
       cancelButtonText: "ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
@@ -124,7 +124,7 @@ export default function Manage_exam() {
           .then(() => {
             Toast.fire({
               icon: "warning",
-              title: "ลบแบบทดสอบเสร็จสิ้น",
+              title: "ลบข้อสอบเสร็จสิ้น",
             });
             get_Exam();
           })
@@ -237,7 +237,7 @@ export default function Manage_exam() {
                       <Typography
                         sx={{ display: "flex" }}
                         variant="h6"
-                        className="mb-3 max-w-sm truncate max-h-6"
+                        className="mb-3 max-w-md truncate max-h-8"
                       >
                         หัวข้อสอบ : {exams.name}
                       </Typography>

@@ -60,7 +60,7 @@ export default function ExamModal({
           handleModal();
           Toast.fire({
             icon: "success",
-            title: "สร้างแบบทดสอบแล้ว",
+            title: "สร้างข้อสอบแล้ว",
           });
         })
         .catch((err) => {
@@ -90,7 +90,7 @@ export default function ExamModal({
           handleModal();
           Toast.fire({
             icon: "success",
-            title: "แก้ไขแบบทดสอบแล้ว",
+            title: "แก้ไขข้อสอบแล้ว",
           });
         })
         .catch((err) => {
@@ -134,7 +134,7 @@ export default function ExamModal({
       <div className="modal-card">
         <header className="modal-card-head has-text-white-ter">
           <h1 className="modal-card-title has-text-centered my-auto">
-            {id ? "แก้ไขแบบทดสอบ" : "สร้างแบบทดสอบ"}
+            {id ? "แก้ไขข้อสอบ" : "สร้างข้อสอบ"}
           </h1>
           <button
             className="delete"

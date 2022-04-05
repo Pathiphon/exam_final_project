@@ -207,7 +207,7 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
 
           {All_question.map((All_questions, index) => (
             <Grid item sx={{ mb: 2 }} key={All_questions.ques_id}>
-              <Card sx={{ display: "flex", borderRadius: 3, padding: 1 }}>
+              <Card sx={{ display: "flex", borderRadius: 3, padding: 1 }} >
                 <Grid justify="space-between" sx={{ ml: 2 }} container>
                   <Box
                     sx={{
@@ -298,7 +298,7 @@ export default function Table_Ques({ exam_id, get_modal_create_exam }) {
           </Stack>
         </div>
       ) : (
-        <Divider sx={{ my: 10 }}>ทำการสร้างแบบทดสอบใหม่</Divider>
+        <Divider sx={{ my: 10 }}>ทำการสร้างข้อสอบใหม่</Divider>
       )}
     </div>
   );

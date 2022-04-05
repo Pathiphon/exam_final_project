@@ -74,7 +74,7 @@ const App = () => {
                             <Button variant="contained" endIcon={<ArrowForwardIosIcon />} sx={{
                               backgroundColor: "#000000", ':hover': { bgcolor: '#000033' }, borderRadius: '30px'
                             }} style={{ fontSize: '18px', maxWidth: '500px', maxHeight: '150px', minWidth: '200px', minHeight: '60px' }}>
-                              เริ่มต้นใช้งาน
+                              สมัครสมาชิก
                             </Button>
                           </Link>
                           <Link to="./Login" className='mx-4'>

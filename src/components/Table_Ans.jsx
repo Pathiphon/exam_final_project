@@ -101,7 +101,7 @@ export default function Table_Ans({
     const list_select = alreadySelecteRows.list_SelectAns;
     Swal.fire({
       title: "ยืนยันที่จะลบเฉลย?",
-      text: `เลือกไว้ ${list_select.length} จำนวน`,
+      html: `<p>เลือกไว้ <strong class="text-red-600">${list_select.length}</strong> จำนวน</p>`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",

@@ -23,7 +23,7 @@ import {
 let futureDate = add(new Date(), {
   days: 0,
   hours: 0,
-  minutes: 10,
+  minutes: 30,
   seconds: 10,
 });
 
